@@ -32,12 +32,4 @@ class BasicJournal(private val printToConsole: Boolean = false) : Journal {
         return "time=$lastTime items=$nItems orders=$nOrders max-positions=$maxPositions"
     }
 
-    override fun reset() {
-        nItems = 0L
-        nOrders = 0L
-        nEvents = 0L
-        maxPositions = 0
-        lastTime = null
-    }
-
 }

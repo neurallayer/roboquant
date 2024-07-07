@@ -83,6 +83,7 @@ suspend fun runAsync(
     } else null
 
     try {
+        val thread = Thread.currentThread()
         while (true) {
             val event = channel.receive(timeOutMillis)
             progressBar?.update(event.time)
@@ -94,6 +95,7 @@ suspend fun runAsync(
             broker.place(instructions)
 
             journal?.track(event, account, instructions)
+            if (thread.isInterrupted) throw InterruptedException()
         }
     } catch (_: ClosedReceiveChannelException) {
         // intentionally empty

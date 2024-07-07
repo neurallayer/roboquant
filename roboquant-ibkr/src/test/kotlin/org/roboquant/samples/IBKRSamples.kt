@@ -93,6 +93,8 @@ internal class IBKRSamples {
         Thread.sleep(5_000)
         val account2 = broker.sync()
         println(account2)
+        println(account2.openOrders)
+        println(account2.closedOrders)
         broker.disconnect()
         println("done")
     }

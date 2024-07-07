@@ -137,6 +137,8 @@ internal class AlpacaSamples {
             Thread.sleep(5_000)
             val account = broker.sync()
             println(account)
+            println(account.openOrders)
+            println(account.closedOrders)
         }
 
         val cancellations = broker.sync().openOrders.map { it.cancel() }

@@ -52,7 +52,7 @@ class IBKRBroker(
 
     private val accountId: String?
     private var client: EClientSocket
-    private var _account = InternalAccount(Currency.USD)
+    private var account = InternalAccount(Currency.USD)
     private var accountUpdateLock = Object()
     private var orderIds = mutableSetOf<Int>()
     private var nextOrderId = 0
@@ -122,14 +122,14 @@ class IBKRBroker(
         ibOrder.log(contract)
         val id = ibOrder.orderId()
         client.placeOrder(id, contract, ibOrder)
-        _account.openOrders.add(order)
+        account.openOrders.add(order)
     }
 
     override fun sync(event: Event?): Account {
         if (event != null) {
             if (event.time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
         }
-        return _account.toAccount()
+        return account.toAccount()
     }
 
     /**
@@ -190,6 +190,10 @@ class IBKRBroker(
         result.totalQuantity(qty)
 
         if (accountId != null) result.account(accountId)
+
+        if (order.id.isBlank()) {
+            order.id = nextOrderId++.toString()
+        }
         result.orderId(order.id.toInt())
         orderIds.add(order.id.toInt())
         return result
@@ -259,22 +263,22 @@ class IBKRBroker(
         override fun openOrder(orderId: Int, contract: Contract, order: IBOrder, orderState: IBOrderSate) {
             logger.debug { "orderId=$orderId asset=${contract.symbol()} qty=${order.totalQuantity()} status=${orderState.status}" }
             logger.trace { "$orderId $contract $order $orderState" }
-            val openOrder = _account.getOpenOrder(orderId.toString())
+            val openOrder = account.getOpenOrder(orderId.toString())
             if (openOrder != null) {
                 logger.info {"update order orderId=$orderId status=${orderState.status}" }
                 if (orderState.completedStatus() == "true") {
-                    val o = _account.getOpenOrder(openOrder.id)
+                    val o = account.getOpenOrder(openOrder.id)
                     if (o != null) {
-                        _account.updateOrder(o, Instant.parse(orderState.completedTime()), OrderStatus.COMPLETED)
+                        account.updateOrder(o, Instant.parse(orderState.completedTime()), OrderStatus.COMPLETED)
                     }
                 }
             } else if (orderId !in orderIds){
                 logger.info { "existing order orderId=$orderId parentId=${order.parentId()} status=${orderState.status}" }
                 // if (order.parentId() > 0) return // right now no support for open bracket orders
                 val newOrder = toOrder(order, contract)
-                _account.openOrders.add(newOrder)
+                account.openOrders.add(newOrder)
                 val newStatus = toStatus(orderState.status)
-                _account.updateOrder(newOrder, Instant.now(), newStatus)
+                account.updateOrder(newOrder, Instant.now(), newStatus)
             }
         }
 
@@ -285,11 +289,11 @@ class IBKRBroker(
             lastFillPrice: Double, clientId: Int, whyHeld: String?, mktCapPrice: Double
         ) {
             logger.info { "orderstatus oderId=$orderId status=$status filled=$filled" }
-            val order = _account.getOpenOrder(orderId.toString())
+            val order = account.getOpenOrder(orderId.toString())
             if (order != null) {
                 val newStatus = toStatus(status)
-                _account.updateOrder(order, Instant.now(), newStatus)
-                _account.lastUpdate = Instant.now()
+                account.updateOrder(order, Instant.now(), newStatus)
+                account.lastUpdate = Instant.now()
             } else {
                 logger.warn { "Received orderStatus for unknown order with orderId=$orderId" }
             }
@@ -311,9 +315,9 @@ class IBKRBroker(
                     // pnlValue = commissionReport.realizedPNL()
                 )
                 // Add this trade as a separate trade
-                _account.addTrade(commisionTrade)
+                account.addTrade(commisionTrade)
                 tradeMap.remove(id)
-                _account.lastUpdate = Instant.now()
+                account.lastUpdate = Instant.now()
             } else {
                 logger.warn("Ignoring commission for none existing trade ${commissionReport.execId()}")
             }
@@ -344,7 +348,7 @@ class IBKRBroker(
                 execution.orderId().toString()
             )
             tradeMap[id] = trade
-            _account.addTrade(trade)
+            account.addTrade(trade)
 
         }
 
@@ -372,13 +376,13 @@ class IBKRBroker(
                 when (key) {
                     "BuyingPower" -> {
                         if (! initialized) {
-                            _account.baseCurrency = c
+                            account.baseCurrency = c
                             exchangeRates.baseCurrency = c
                         }
-                        _account.buyingPower = Amount(c, value.toDouble())
+                        account.buyingPower = Amount(c, value.toDouble())
 
                     }
-                    "CashBalance" -> _account.cash.set(c, value.toDouble())
+                    "CashBalance" -> account.cash.set(c, value.toDouble())
                     "ExchangeRate" -> {
                         exchangeRates.setRate(c,value.toDouble())
                     }
@@ -401,8 +405,8 @@ class IBKRBroker(
             val asset = contract.toAsset()
             val size = Size(position.value())
             val p = Position(asset, size, averageCost, marketPrice, Instant.now())
-            _account.setPosition(p)
-            _account.lastUpdate = Instant.now()
+            account.setPosition(p)
+            account.lastUpdate = Instant.now()
         }
 
         override fun position(account: String?, contract: Contract?, pos: Decimal?, avgCost: Double) {

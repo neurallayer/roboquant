@@ -14,13 +14,6 @@ interface Journal {
      */
     fun track(event: Event, account: Account, instructions: List<Instruction>)
 
-    /**
-     * reset the state
-     */
-    fun reset() {
-        // NOP
-    }
-
 }
 
 

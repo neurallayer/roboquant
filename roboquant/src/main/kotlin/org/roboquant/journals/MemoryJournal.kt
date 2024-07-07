@@ -43,10 +43,6 @@ class MemoryJournal(private vararg val metrics: Metric) : MetricsJournal {
         history[event.time] = result
     }
 
-    override fun reset() {
-        history.clear()
-    }
-
     override fun getMetricNames() : Set<String> {
         return history.values.map { it.keys }.flatten().toSet()
     }
