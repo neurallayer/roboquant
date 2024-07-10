@@ -56,13 +56,6 @@ internal class Ta4JSignalStrategyTest {
         }
     }
 
-    @Test
-    fun noRules() {
-        // Default rule is false, meaning no signals
-        val strategy = Ta4jStrategy(maxBarCount = 30)
-        val feed = RandomWalk.lastYears(1, nAssets = 2)
-        val account = run(feed, strategy)
-        assertTrue(account.closedOrders.isEmpty())
-    }
+
 
 }

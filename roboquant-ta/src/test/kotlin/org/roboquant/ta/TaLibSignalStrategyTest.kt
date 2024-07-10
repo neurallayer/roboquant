@@ -195,14 +195,7 @@ internal class TaLibSignalStrategyTest {
         assertTrue(s.values.last().isNotEmpty())
     }
 
-    @Test
-    fun noRules() {
-        // Default rule is false, meaning no signals
-        val strategy = TaLibStrategy(30)
-        val feed = RandomWalk.lastYears(1, nAssets = 2)
-        val account = run(feed, strategy)
-        assertTrue(account.closedOrders.isEmpty())
-    }
+
 
 }
 

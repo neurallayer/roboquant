@@ -123,6 +123,7 @@ class Amount(val currency: Currency, val value: Double) : Comparable<Number> {
      */
     fun convert(to: Currency, time: Instant = Instant.now()): Amount {
         if (currency == to) return this
+        if (value == 0.0) return Amount(to, 0.0)
         return Config.exchangeRates.convert(this, to, time)
     }
 

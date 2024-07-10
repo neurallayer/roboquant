@@ -123,8 +123,9 @@ private object Performance {
             // sequential runs
             trades = 0
             repeat(backTests) {
-                val account = run(feed, getStrategy(SKIP))
-                trades += account.trades.size
+                val broker = SimBroker()
+                val account = run(feed, getStrategy(SKIP), broker = broker)
+                trades += broker.trades.size
             }
 
         }

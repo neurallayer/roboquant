@@ -38,7 +38,6 @@ import java.time.format.DateTimeFormatter
  * @property type type of asset class, default is [AssetType.STOCK]
  * @property currency currency, default is [Currency.USD]
  * @property exchange Exchange this asset is traded on, default is [Exchange.DEFAULT]
- * @property id asset identifier, default is an empty string
  * @constructor Create a new asset
  */
 open class Asset(
@@ -46,7 +45,6 @@ open class Asset(
     val type: AssetType = AssetType.STOCK,
     val currency: Currency = Currency.USD,
     val exchange: Exchange = Exchange.DEFAULT,
-    val id: String = ""
 ) : Comparable<Asset> {
 
     /**
@@ -57,19 +55,22 @@ open class Asset(
         type: AssetType = AssetType.STOCK,
         currencyCode: String,
         exchangeCode: String = "",
-        id: String = ""
-    ) : this(symbol, type, Currency.getInstance(currencyCode), Exchange.getInstance(exchangeCode), id)
+    ) : this(symbol, type, Currency.getInstance(currencyCode), Exchange.getInstance(exchangeCode))
 
     init {
         require(symbol.isNotBlank()) { "Symbol in an asset cannot be empty or blank" }
     }
 
     fun copy(symbol: String = this.symbol): Asset {
-        return Asset(symbol, this.type, this.currency, this.exchange, this.id)
+        return Asset(symbol, this.type, this.currency, this.exchange)
     }
 
     override fun toString(): String {
         return symbol
+    }
+
+    open fun serialize() : String {
+        return "$symbol$SEPARATOR$type$SEPARATOR$currency$SEPARATOR${exchange.exchangeCode}"
     }
 
     /**
@@ -77,6 +78,18 @@ open class Asset(
      * generate the appropriate symbol name.
      */
     companion object {
+
+        const val SEPARATOR = ";"
+
+        private val cache = mutableMapOf<String, Asset>()
+
+        @Synchronized
+        fun deserialize(value: String): Asset {
+            return cache.getOrPut(value) {
+                val (symbol, type, currency, exchange) = value.split(SEPARATOR)
+                Asset(symbol, AssetType.valueOf(type), currency, exchange)
+            }
+        }
 
 
         /**
@@ -89,13 +102,12 @@ open class Asset(
             year: Int,
             currencyCode: String = "USD",
             exchangeCode: String = "",
-            id: String = ""
         ): Asset {
             val months = arrayOf('F', 'G', 'H', 'J', 'K', 'M', 'N', 'Q', 'U', 'V', 'X', 'Z')
             val monthEncoding = months[month.value - 1]
             val yearCode = year.toString()
             val futureSymbol = "$symbol$monthEncoding${yearCode.takeLast(2)}"
-            return Asset(futureSymbol, AssetType.FUTURES, currencyCode, exchangeCode, id)
+            return Asset(futureSymbol, AssetType.FUTURES, currencyCode, exchangeCode)
         }
 
         /**
@@ -176,8 +188,7 @@ open class Asset(
         if (symbol != other.symbol) return false
         if (type != other.type) return false
         if (currency != other.currency) return false
-        if (exchange != other.exchange) return false
-        return id == other.id
+        return exchange == other.exchange
     }
 
 }
@@ -187,8 +198,7 @@ open class OptionContract(
     currency: Currency = Currency.USD,
     exchange: Exchange = Exchange.DEFAULT,
     val contractSize: Double = 100.0,
-    id: String = ""
-) : Asset(symbol, AssetType.OPTION, currency, exchange, id) {
+) : Asset(symbol, AssetType.OPTION, currency, exchange) {
 
     override fun value(size: Size, price: Double): Amount {
         return if (size.iszero) Amount(currency, 0.0) else Amount(currency, size.toDouble() * contractSize * price)
@@ -212,8 +222,7 @@ open class OptionContract(
             price: BigDecimal,
             currencyCode: String = "USD",
             exchangeCode: String = "",
-            contractSize: Double = 100.0,
-            id: String = ""
+            contractSize: Double = 100.0
         ): OptionContract {
             require(symbol.isNotBlank()) { "Symbol cannot be blank" }
             require(type in setOf('P', 'C')) { "Type should be P or C" }
@@ -228,7 +237,6 @@ open class OptionContract(
                 Currency.getInstance(currencyCode),
                 Exchange.getInstance(exchangeCode),
                 contractSize,
-                id
             )
         }
     }
@@ -268,18 +276,6 @@ fun Collection<Asset>.findByCurrencies(currencyCodes: Collection<String>): List<
  */
 val Collection<Asset>.symbols: Array<String>
     get() = map { it.symbol }.distinct().toTypedArray()
-
-/**
- * Find all assets based on their [exchangeCodes]. Returns an empty list if no matching assets can be found.
- */
-fun Collection<Asset>.findByExchanges(exchangeCodes: Collection<String>): List<Asset> =
-    filter { it.exchange.exchangeCode in exchangeCodes }
-
-/**
- * Find all assets based on their [exchangeCodes]. Returns an empty list if no matching assets can be found.
- */
-fun Collection<Asset>.findByExchanges(vararg exchangeCodes: String): List<Asset> =
-    findByExchanges(exchangeCodes.asList())
 
 /**
  * Select [n] random assets from a collection, without duplicates. [n] has to equal or smaller than the size of the

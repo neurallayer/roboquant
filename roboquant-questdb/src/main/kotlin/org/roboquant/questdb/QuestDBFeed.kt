@@ -28,8 +28,6 @@ import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.*
-import org.roboquant.feeds.util.AssetSerializer.deserialize
-import org.roboquant.feeds.util.AssetSerializer.serialize
 import org.roboquant.questdb.PriceActionHandler.Companion.getHandler
 import java.nio.file.Files
 import java.nio.file.Path
@@ -60,7 +58,7 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
         engine.query("SELECT DISTINCT asset FROM $tableName;") {
             while (hasNext()) {
                 val str = record.getSymA(0).toString()
-                result.add(str.deserialize())
+                result.add(Asset.deserialize(str))
             }
         }
         result.toSortedSet()
@@ -179,7 +177,7 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
                 }
 
                 val str = record.getSymA(0).toString()
-                val asset = lookup.getOrPut(str) { str.deserialize() }
+                val asset = lookup.getOrPut(str) { Asset.deserialize(str) }
                 val price = handler.getPriceAction(asset, record)
                 actions.add(price)
             }

@@ -28,19 +28,14 @@ internal class AccountMetricTest {
         val metric = AccountMetric()
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(account, event)
-        assertEquals(7, result.size)
+        assertEquals(6, result.size)
         assertContains(result, "account.orders")
-        assertContains(result, "account.trades")
         assertContains(result, "account.equity")
         assertContains(result, "account.positions")
         assertContains(result, "account.buyingpower")
         assertContains(result, "account.cash")
         assertContains(result, "account.mdd")
 
-        assertEquals(
-            account.openOrders.size.toDouble() + account.closedOrders.size.toDouble(),
-            result["account.orders"]
-        )
         assertEquals(account.positions.size.toDouble(), result["account.positions"])
     }
 }

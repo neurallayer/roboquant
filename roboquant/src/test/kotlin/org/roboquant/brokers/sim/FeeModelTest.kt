@@ -17,6 +17,7 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.TestData
+import org.roboquant.brokers.Trade
 import org.roboquant.brokers.sim.execution.Execution
 import org.roboquant.common.Size
 import org.roboquant.common.percent
@@ -26,7 +27,7 @@ import kotlin.test.assertEquals
 
 internal class FeeModelTest {
 
-    private val trades = TestData.internalAccount().toAccount().trades
+    private val trades = listOf<Trade>()
 
     @Test
     fun testDefaultCostModel() {

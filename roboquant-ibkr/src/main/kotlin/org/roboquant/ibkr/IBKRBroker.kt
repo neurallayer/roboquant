@@ -122,7 +122,7 @@ class IBKRBroker(
         ibOrder.log(contract)
         val id = ibOrder.orderId()
         client.placeOrder(id, contract, ibOrder)
-        account.openOrders.add(order)
+        account.orders.add(order)
     }
 
     override fun sync(event: Event?): Account {
@@ -276,7 +276,7 @@ class IBKRBroker(
                 logger.info { "existing order orderId=$orderId parentId=${order.parentId()} status=${orderState.status}" }
                 // if (order.parentId() > 0) return // right now no support for open bracket orders
                 val newOrder = toOrder(order, contract)
-                account.openOrders.add(newOrder)
+                account.orders.add(newOrder)
                 val newStatus = toStatus(orderState.status)
                 account.updateOrder(newOrder, Instant.now(), newStatus)
             }
@@ -299,58 +299,6 @@ class IBKRBroker(
             }
         }
 
-        /**
-         * This is called with fee and pnl of a trade.
-         */
-        override fun commissionReport(commissionReport: CommissionReport) {
-            logger.info { "commissionReport execId=${commissionReport.execId()} currency=${commissionReport.currency()} fee=${commissionReport.commission()} pnl=${commissionReport.realizedPNL()}" }
-            val id = commissionReport.execId().substringBeforeLast('.')
-            val trade = tradeMap[id]
-            if (trade != null) {
-                val commisionTrade = trade.copy(
-                    time = Instant.now(),
-                    size = Size.ZERO,
-                    feeValue = commissionReport.commission()
-                    // Bug in value making it huge
-                    // pnlValue = commissionReport.realizedPNL()
-                )
-                // Add this trade as a separate trade
-                account.addTrade(commisionTrade)
-                tradeMap.remove(id)
-                account.lastUpdate = Instant.now()
-            } else {
-                logger.warn("Ignoring commission for none existing trade ${commissionReport.execId()}")
-            }
-        }
-
-
-        override fun execDetails(reqId: Int, contract: Contract, execution: Execution) {
-            logger.info { "execDetails execId: ${execution.execId()} asset: ${contract.symbol()} side: ${execution.side()} qty: ${execution.cumQty()} price: ${execution.avgPrice()}" }
-
-            // The last number is to correct an existing execution, so not a new execution
-            val id = execution.execId().substringBeforeLast('.')
-
-            if (id in tradeMap) {
-                logger.info("trade already handled, no support for corrections")
-                return
-            }
-
-            // Possible values BOT and SLD
-            val size = if (execution.side() == "SLD") -execution.cumQty().value() else execution.cumQty().value()
-
-            val trade = Trade(
-                Instant.now(),
-                contract.toAsset(),
-                Size(size),
-                execution.avgPrice(),
-                Double.NaN,
-                Double.NaN,
-                execution.orderId().toString()
-            )
-            tradeMap[id] = trade
-            account.addTrade(trade)
-
-        }
 
         override fun openOrderEnd() {
             logger.info("openOrderEnd")

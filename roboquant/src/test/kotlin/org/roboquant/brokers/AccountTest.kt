@@ -43,8 +43,6 @@ internal class AccountTest {
 
         assertEquals(Size.ZERO, account.positionSize(Asset("Dummy")))
 
-        assertTrue(account.trades.isEmpty())
-        assertTrue(account.trades.realizedPNL.isEmpty())
     }
 
 

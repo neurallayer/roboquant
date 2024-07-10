@@ -16,10 +16,7 @@
 
 package org.roboquant.brokers.sim
 
-import org.roboquant.brokers.Account
-import org.roboquant.brokers.Broker
-import org.roboquant.brokers.Position
-import org.roboquant.brokers.Trade
+import org.roboquant.brokers.*
 import org.roboquant.brokers.sim.execution.Execution
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.brokers.sim.execution.OrderExecutor
@@ -53,6 +50,10 @@ open class SimBroker(
     constructor(deposit: Number, currencyCode: String = "USD") : this(
         Amount(Currency.getInstance(currencyCode), deposit).toWallet()
     )
+
+    val trades = mutableListOf<Trade>()
+
+    val closedOrders = mutableListOf<Order>()
 
     // Internally used account to store the state
     private val account = InternalAccount(baseCurrency)
@@ -98,7 +99,7 @@ open class SimBroker(
         val position = Position(asset, execution.size, execution.price)
 
         // Calculate the fees that apply to this execution
-        val fee = feeModel.calculate(execution, time, this.account.trades)
+        val fee = feeModel.calculate(execution, time, trades)
 
         // PNL includes the fee
         val pnl = updatePosition(position) - fee
@@ -112,10 +113,16 @@ open class SimBroker(
             execution.order.id
         )
 
-        account.addTrade(newTrade)
+        trades.add(newTrade)
         account.cash.withdraw(newTrade.totalCost)
     }
 
+    /**
+     * Return the realized PNL of the trades, optionally filter by one or more asset.
+     */
+    fun realizedPNL(vararg assets: Asset): Wallet {
+        return trades.filter { assets.isEmpty() || it.asset in assets }.realizedPNL
+    }
 
     private fun simulateMarket(event: Event) {
         // Add new orders to the execution engine and run it with the latest events
@@ -144,6 +151,9 @@ open class SimBroker(
             account.lastUpdate = event.time
             accountModel.updateAccount(account)
         }
+        val newlyClosed = account.orders.filter { it.closed }.toSet()
+        closedOrders.addAll(newlyClosed)
+        account.orders.removeAll(newlyClosed)
         return account.toAccount()
     }
 
@@ -158,7 +168,7 @@ open class SimBroker(
                 is Order -> {
                     order.id = nextOrderId++.toString()
                     orderExecutors[order.id] = OrderExecutorFactory.getExecutor(order)
-                    account.openOrders.add(order)
+                    account.orders.add(order)
                 }
                 is Cancellation -> {
                     val success = orderExecutors[order.orderId]?.cancel(Instant.now()) ?: false
@@ -182,6 +192,8 @@ open class SimBroker(
         account.clear()
         account.cash.deposit(initialDeposit)
         accountModel.updateAccount(account)
+        trades.clear()
+        closedOrders.clear()
     }
 
 }

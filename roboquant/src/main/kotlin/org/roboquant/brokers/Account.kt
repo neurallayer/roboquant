@@ -29,7 +29,7 @@ import java.time.Instant
  * - All the [cash] balances in the account
  * - All the open [positions] with its assets
  * - The past [trades]
- * - The [openOrders] and [closedOrders] state
+ * - The [orders] and [closedOrders] state
  *
  * Some convenience methods convert a multi-currency Wallet to a single-currency Amount.
  * For this to work, you'll
@@ -38,9 +38,7 @@ import java.time.Instant
  * @property baseCurrency the base currency of the account
  * @property lastUpdate time that the account was last updated
  * @property cash cash balances
- * @property trades List of all executed trades
- * @property openOrders List of [Order] of all open orders
- * @property closedOrders List of [Order] of all closed orders
+ * @property orders List of [Order] of all open orders
  * @property positions List of all open [Position], with maximum one entry per asset
  * @property buyingPower amount of buying power available for trading
  * @constructor Create a new Account
@@ -50,9 +48,7 @@ interface Account {
     val baseCurrency: Currency
     val lastUpdate: Instant
     val cash: Wallet
-    val trades: List<Trade>
-    val openOrders: List<Order>
-    val closedOrders: List<Order>
+    val orders: List<Order>
     val positions: Map<Asset, Position>
     val buyingPower: Amount
 
@@ -100,20 +96,13 @@ interface Account {
     }
 
     /**
-     * Return the realized PNL of the trades, optionally filter by one or more asset.
-     */
-    fun realizedPNL(vararg assets: Asset): Wallet {
-        return trades.filter { assets.isEmpty() || it.asset in assets }.realizedPNL
-    }
-
-    /**
      * Convert an [amount] to the account [baseCurrency] using last update of the account as a timestamp
      */
-    fun convert(amount: Amount, time: Instant = lastUpdate): Amount = amount.convert(baseCurrency, time)
+    fun convert(amount: Amount): Amount = amount.convert(baseCurrency, lastUpdate)
 
     /**
      * Convert a [wallet] to the account [baseCurrency] using last update of the account as a timestamp
      */
-    fun convert(wallet: Wallet, time: Instant = lastUpdate): Amount = wallet.convert(baseCurrency, time)
+    fun convert(wallet: Wallet): Amount = wallet.convert(baseCurrency, lastUpdate)
 
 }

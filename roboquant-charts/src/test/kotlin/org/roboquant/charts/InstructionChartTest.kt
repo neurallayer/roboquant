@@ -19,12 +19,12 @@ package org.roboquant.charts
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-internal class InstructionChartTest {
+internal class OrderChartTest {
 
     @Test
     fun test() {
         val account = TestData.fullAccount
-        val chart = OrderChart(account.closedOrders)
+        val chart = OrderChart(account.orders)
         assertTrue(chart.renderJson().isNotBlank())
     }
 

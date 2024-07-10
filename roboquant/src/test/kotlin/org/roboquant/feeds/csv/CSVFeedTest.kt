@@ -95,17 +95,5 @@ internal class CSVFeedTest {
         assertTrue(feed1.assets.isEmpty())
     }
 
-    @Test
-    fun customConfig() {
-        val template = Asset("TEMPLATE", currencyCode = "USD", exchangeCode = "TEST123")
-        val path = TestData.dataDir() / "US/AAPL.csv"
-
-        val feed = CSVFeed(path) {
-            assetBuilder = DefaultAssetBuilder(template)
-        }
-        val first = feed.first().items.first() as PriceItem
-        assertEquals("TEST123", first.asset.exchange.exchangeCode)
-    }
-
 
 }

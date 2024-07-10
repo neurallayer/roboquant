@@ -125,7 +125,7 @@ class AlpacaBroker(
      * Update the status of the open orders in the account with the latest order status from Alpaca
      */
     private fun syncOrders() {
-        _account.openOrders.forEach {
+        _account.orders.forEach {
             if (it.open) {
                 // println("orderid=${it.order.id}")
                 val orderId = UUID.fromString(it.id)
@@ -145,7 +145,7 @@ class AlpacaBroker(
         for (order in openOrders) {
             logger.debug { "received open $order" }
             val rqOrder = toOrder(order)
-            _account.openOrders.add(rqOrder)
+            _account.orders.add(rqOrder)
         }
     }
 

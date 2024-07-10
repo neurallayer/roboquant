@@ -18,7 +18,6 @@ package org.roboquant.brokers.sim.execution
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
-import org.roboquant.brokers.Trade
 import org.roboquant.brokers.marketValue
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
@@ -44,20 +43,10 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
     override var lastUpdate: Instant = Instant.MIN
 
     /**
-     * The trades that have been executed.
-     */
-    override val trades = mutableListOf<Trade>()
-
-    /**
      * Open orders
      */
-    override val openOrders = mutableListOf<Order>()
+    override val orders = mutableListOf<Order>()
 
-    /**
-     * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
-     * closed.
-     */
-    override val closedOrders = mutableListOf<Order>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -79,10 +68,8 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
      */
     @Synchronized
     fun clear() {
-        closedOrders.clear()
-        trades.clear()
         lastUpdate = Instant.MIN
-        openOrders.clear()
+        orders.clear()
         positions.clear()
         cash.clear()
     }
@@ -107,16 +94,9 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
      */
     @Synchronized
     fun initializeOrders(orders: Collection<Order>) {
-        openOrders.addAll(orders)
+        this.orders.addAll(orders)
     }
 
-    /**
-     * Add a new [trade] to this internal account
-     */
-    @Synchronized
-    fun addTrade(trade: Trade) {
-        trades.add(trade)
-    }
 
     /**
      * Update the open positions in the portfolio with the current market prices as found in the [event]
@@ -141,9 +121,6 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
      */
     @Synchronized
     fun toAccount(): Account {
-        val newlyClosed = openOrders.filter { it.closed }.toSet()
-        closedOrders.addAll(newlyClosed)
-        openOrders.removeAll(newlyClosed)
         return this
     }
 
@@ -159,7 +136,7 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
     /**
      * Get an open order with the provided [orderId], or null if not found
      */
-    fun getOpenOrder(orderId: String): Order? = openOrders.find { it.id == orderId }
+    fun getOpenOrder(orderId: String): Order? = orders.find { it.id == orderId }
 
     fun updateOrder(order: Order, now: Instant?, status: OrderStatus) {
         order.status = status
@@ -181,9 +158,7 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
             buying Power : $buyingPower
             equity       : ${equity()}
             positions    : ${positionString.ifEmpty { "-" }}
-            open orders  : ${openOrders.size}
-            closed orders: ${closedOrders.size}
-            trades       : ${trades.size}
+            open orders  : ${orders.size}
         """.trimIndent()
 
     }

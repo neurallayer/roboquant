@@ -16,6 +16,7 @@
 
 package org.roboquant.charts
 
+import org.roboquant.brokers.Trade
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -23,15 +24,15 @@ internal class TradeChartTest {
 
     @Test
     fun test() {
-        val account = TestData.fullAccount
-        val chart = TradeChart(account.trades)
+        val trades = mutableListOf<Trade>()
+        val chart = TradeChart(trades)
         assertTrue(chart.renderJson().isNotBlank())
     }
 
     @Test
     fun test2() {
-        val account = TestData.fullAccount
-        val chart = TradeChart(account.trades, perAsset = true)
+        val trades = mutableListOf<Trade>()
+        val chart = TradeChart(trades, perAsset = true)
         assertTrue(chart.renderJson().isNotBlank())
     }
 

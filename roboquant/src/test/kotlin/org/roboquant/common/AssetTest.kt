@@ -90,7 +90,6 @@ internal class AssetTest {
 
         assertEquals(a, assets.getBySymbol("TEST"))
         assertEquals(a, assets.findBySymbols("TEST").first())
-        assertEquals(b, assets.findByExchanges("NYSE")[0])
         assertEquals(b, assets.findByCurrencies("USD")[0])
 
         val asset = assets.random(1)

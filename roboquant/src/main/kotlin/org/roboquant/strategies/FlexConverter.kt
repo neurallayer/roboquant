@@ -284,7 +284,7 @@ open class FlexConverter(
                     continue
                 }
 
-                if (config.oneOrderOnly && account.openOrders.contains(asset)) {
+                if (config.oneOrderOnly && account.orders.contains(asset)) {
                     log(signal, priceItem, position, "one order only")
                     continue
                 }

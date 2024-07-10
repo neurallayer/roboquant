@@ -103,28 +103,24 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
                     is LimitOrder -> {
                         trade(currencyPair, order, orderId)
                         placedOrders[orderId] = order
-                        _account.openOrders.add(order)
+                        _account.orders.add(order)
                     }
 
                     is MarketOrder -> {
                         trade(currencyPair, order)
                         placedOrders[orderId] = order
-                        _account.openOrders.add(order)
+                        _account.orders.add(order)
                     }
 
                     else -> {
                         logger.warn {
                             "only market and limit instructions are supported, received $order instead"
                         }
-                        order.status = OrderStatus.REJECTED
-                        _account.closedOrders.add(order)
                     }
                 }
 
             } else {
                 logger.warn { "only CRYPTO assets are supported, received ${asset.type} instead" }
-                order.status = OrderStatus.REJECTED
-                _account.closedOrders.add(order)
             }
         }
 
