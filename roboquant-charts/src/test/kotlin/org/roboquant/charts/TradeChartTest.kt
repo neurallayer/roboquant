@@ -16,7 +16,7 @@
 
 package org.roboquant.charts
 
-import org.roboquant.brokers.Trade
+import org.roboquant.brokers.sim.Trade
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

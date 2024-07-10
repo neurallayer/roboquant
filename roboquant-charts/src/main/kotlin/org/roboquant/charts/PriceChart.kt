@@ -27,7 +27,7 @@ import org.icepear.echarts.components.legend.Legend
 import org.icepear.echarts.components.marker.MarkPoint
 import org.icepear.echarts.components.series.ItemStyle
 import org.icepear.echarts.components.series.LineStyle
-import org.roboquant.brokers.Trade
+import org.roboquant.brokers.sim.Trade
 import org.roboquant.common.*
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed

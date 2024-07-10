@@ -19,14 +19,12 @@ package org.roboquant.ta
 import com.tictactec.ta.lib.Compatibility
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.roboquant.run
 import org.roboquant.common.Asset
 import org.roboquant.common.plus
 import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
-import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.SignalStrategy

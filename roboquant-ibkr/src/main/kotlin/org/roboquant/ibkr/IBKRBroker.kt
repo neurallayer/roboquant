@@ -64,9 +64,6 @@ class IBKRBroker(
 
     private val logger = Logging.getLogger(IBKRBroker::class)
 
-    // Track IB Trades and Feed ids with roboquant trades
-    private val tradeMap = mutableMapOf<String, Trade>()
-
     init {
         config.configure()
         require(config.account.isBlank() || config.account.startsWith('D')) { "only paper trading is supported" }

@@ -26,7 +26,6 @@ import org.ta4j.core.rules.CrossedUpIndicatorRule
 import org.ta4j.core.rules.StopGainRule
 import org.ta4j.core.rules.StopLossRule
 import kotlin.test.Test
-import kotlin.test.assertTrue
 
 internal class Ta4JSignalStrategyTest {
 

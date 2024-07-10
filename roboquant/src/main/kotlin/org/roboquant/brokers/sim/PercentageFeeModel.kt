@@ -15,7 +15,6 @@
  */
 package org.roboquant.brokers.sim
 
-import org.roboquant.brokers.Trade
 import org.roboquant.brokers.sim.execution.Execution
 import org.roboquant.common.percent
 import java.time.Instant

@@ -26,7 +26,7 @@ import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.toolbox.ToolboxDataZoomFeature
 import org.icepear.echarts.components.tooltip.Tooltip
-import org.roboquant.brokers.Trade
+import org.roboquant.brokers.sim.Trade
 import org.roboquant.common.Asset
 import org.roboquant.common.Currency
 import org.roboquant.common.UnsupportedException

@@ -54,7 +54,6 @@ class AlpacaBroker(
 
 
     private val alpacaAPI: AlpacaAPI
-    // private val handledTrades = mutableSetOf<String>()
     private val logger = Logging.getLogger(AlpacaBroker::class)
     private val orderPlacer: AlpaceOrderPlacer
 
@@ -222,39 +221,6 @@ class AlpacaBroker(
         return Position(asset, size, pos.avgEntryPrice.toDouble(), pos.currentPrice.toDouble())
     }
 
-    /**
-     * Sync the trades from the Alpaca account with the roboquant internal account
-
-    private fun syncTrades() {
-        val now = ZonedDateTime.now()
-        val accountActivities = alpacaAPI.accountActivities().get(
-            now, null, null, SortDirection.ASCENDING, 100, "", ActivityType.FILL
-        )
-        logger.debug { "Found ${accountActivities.size} FILL account activities" }
-        for (activity in accountActivities.filterIsInstance<TradeActivity>()) {
-            // Only add trades we know the order id of, ignore the rest
-            logger.debug { "Found trade $activity" }
-            val order = orderPlacer.findByAlapacaId(activity.orderId)
-            if (order == null) {
-                logger.warn { "Couldn't find order for trade=$activity" }
-                continue
-            }
-            if (order is Order && activity.id !in handledTrades) {
-                val trade = Trade(
-                    activity.transactionTime.toInstant(),
-                    order.asset,
-                    Size(activity.quantity.toBigDecimal()),
-                    activity.price.toDouble(),
-                    0.0,
-                    Double.NaN,
-                    order.id
-                )
-                _account.addTrade(trade)
-                handledTrades.add(activity.id)
-            }
-        }
-    }
-     */
 
     /**
      * @see Broker.sync
@@ -267,7 +233,6 @@ class AlpacaBroker(
         syncAccount()
         syncPositions()
         syncOrders()
-        // syncTrades()
         return _account.toAccount()
     }
 

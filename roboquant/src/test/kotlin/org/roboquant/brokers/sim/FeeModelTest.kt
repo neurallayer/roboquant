@@ -17,7 +17,6 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.TestData
-import org.roboquant.brokers.Trade
 import org.roboquant.brokers.sim.execution.Execution
 import org.roboquant.common.Size
 import org.roboquant.common.percent

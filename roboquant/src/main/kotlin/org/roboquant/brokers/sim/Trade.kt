@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.brokers
+package org.roboquant.brokers.sim
 
 import org.roboquant.common.*
 import java.time.Instant

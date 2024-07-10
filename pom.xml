@@ -59,7 +59,6 @@
         <module>roboquant-jupyter</module>
         <module>roboquant-alpaca</module>
         <module>roboquant-polygon</module>
-        <module>roboquant-xchange</module>
         <module>roboquant-server</module>
         <module>roboquant-questdb</module>
         <module>roboquant-ssr</module>

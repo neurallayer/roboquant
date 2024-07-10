@@ -17,8 +17,10 @@
 package org.roboquant.feeds.csv
 
 import org.roboquant.TestData
-import org.roboquant.common.*
-import org.roboquant.feeds.PriceItem
+import org.roboquant.common.Asset
+import org.roboquant.common.Currency
+import org.roboquant.common.Exchange
+import org.roboquant.common.getBySymbol
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

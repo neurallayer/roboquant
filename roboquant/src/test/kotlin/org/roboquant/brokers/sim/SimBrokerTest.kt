@@ -46,6 +46,7 @@ internal class SimBrokerTest {
         assertTrue(account.orders.isEmpty())
         assertTrue(broker.closedOrders.isEmpty())
         assertTrue(broker.trades.isEmpty())
+        assertTrue(broker.realizedPNL().isEmpty())
     }
 
     @Test

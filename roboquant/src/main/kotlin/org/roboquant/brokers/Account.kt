@@ -22,14 +22,13 @@ import java.time.Instant
 
 /**
  * An account represents a brokerage trading account and is unified across all broker implementations.
- * This is an immutable class, and it holds the following state:
+ * It holds the following state:
  *
  * - The buying power
  * - The base currency
  * - All the [cash] balances in the account
  * - All the open [positions] with its assets
- * - The past [trades]
- * - The [orders] and [closedOrders] state
+ * - The [orders]
  *
  * Some convenience methods convert a multi-currency Wallet to a single-currency Amount.
  * For this to work, you'll

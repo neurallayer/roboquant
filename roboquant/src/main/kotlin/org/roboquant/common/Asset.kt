@@ -86,8 +86,8 @@ open class Asset(
         @Synchronized
         fun deserialize(value: String): Asset {
             return cache.getOrPut(value) {
-                val (symbol, type, currency, exchange) = value.split(SEPARATOR)
-                Asset(symbol, AssetType.valueOf(type), currency, exchange)
+                val v = value.split(SEPARATOR)
+                Asset(v[0], AssetType.valueOf(v[1]), v[2], v[3])
             }
         }
 
