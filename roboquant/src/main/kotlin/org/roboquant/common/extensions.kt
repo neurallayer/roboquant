@@ -25,6 +25,8 @@ import java.lang.Integer.min
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
@@ -61,6 +63,12 @@ suspend fun Instant.delayUntil() {
  */
 fun Instant.toUTC(): ZonedDateTime = atZone(ZoneOffset.UTC)
 
+
+fun Instant.sameDay(other: Instant, zoneId: ZoneId = ZoneOffset.UTC): Boolean {
+    val dt1 = LocalDate.ofInstant(this, zoneId)
+    val dt2 = LocalDate.ofInstant(other, zoneId)
+    return dt1 == dt2
+}
 
 /**
  * Extension function to allow *numpy* like indexing for lists. To stay close to Kotlin, the end value is

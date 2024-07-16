@@ -133,11 +133,6 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
         }
 
 
-    /**
-     * Get an open order with the provided [orderId], or null if not found
-     */
-    fun getOpenOrder(orderId: String): Order? = orders.find { it.id == orderId }
-
     fun updateOrder(order: Order, now: Instant?, status: OrderStatus) {
         order.status = status
         if (now != null) {
@@ -149,15 +144,12 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
 
     override fun toString(): String {
 
-        val positionString  = positions.values.joinToString(limit = 20) { "${it.size}@${it.asset.symbol}" }
-
         return """
             last update  : $lastUpdate
-            base currency: $baseCurrency
             cash         : $cash
             buying Power : $buyingPower
             equity       : ${equity()}
-            positions    : ${positionString.ifEmpty { "-" }}
+            positions    : ${positions.size}
             open orders  : ${orders.size}
         """.trimIndent()
 

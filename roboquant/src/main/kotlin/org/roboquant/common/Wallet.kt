@@ -245,7 +245,8 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
      */
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        return if (other is Wallet) toMap() == other.toMap() else false
+        if (other !is Wallet) return false
+        return toMap() == other.toMap()
     }
 
     /**
@@ -259,7 +260,7 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
      * Convert this Wallet into a single [currency] amount. Under the hood is uses [Amount.convert] to perform the
      * actual conversions. Optional a [time] can be provided, the default is [Instant.now].
      */
-    fun convert(currency: Currency, time: Instant = Instant.now()): Amount {
+    fun convert(currency: Currency, time: Instant): Amount {
 
         // Optimization for single currency trading
         if (data.size == 1 && data.contains(currency)) return Amount(currency, data.getValue(currency))

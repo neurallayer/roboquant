@@ -16,6 +16,7 @@
 
 package org.roboquant.samples
 
+import kotlinx.coroutines.runBlocking
 import org.roboquant.avro.AvroFeed
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
@@ -25,6 +26,7 @@ import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.TimeParser
 import org.roboquant.strategies.FlexConverter
 import org.roboquant.run
+import org.roboquant.runAsync
 import org.roboquant.strategies.EMACrossover
 import java.time.Instant
 import java.time.LocalDateTime
@@ -39,7 +41,7 @@ internal class AvroSamples {
 
     @Test
     @Ignore
-    internal fun generate() {
+    internal fun generate_sp25() {
         val path = Path("/tmp/us")
         val path1 = path / "nasdaq stocks"
         val path2 =  path / "nyse stocks"
@@ -48,7 +50,7 @@ internal class AvroSamples {
         val tmp = CSVFeed(path2.toString(), CSVConfig.stooq())
         feed.merge(tmp)
 
-        val avroFeed = AvroFeed("/tmp/sp25.avro")
+        val avroFeed = AvroFeed("/tmp/sp25_v1.0.avro")
 
         val s = "MSFT,NVDA,AAPL,AMZN,META,GOOGL,GOOG,BRK.B,LLY,AVGO,JPM,XOM,TSLA,UNH,V,PG,MA,COST,JNJ,HD,MRK,NFLX,WMT,ABBV,CVX"
         val symbols = s.split(',').toTypedArray()
@@ -66,46 +68,53 @@ internal class AvroSamples {
 
     @Test
     @Ignore
-    internal fun cfd() {
-        val dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
+    internal fun generate_all() {
+        val path = Path("/tmp/us")
+        val path1 = path / "nasdaq stocks"
+        val path2 =  path / "nyse stocks"
 
-        fun parse(line: List<String>, asset: Asset): Instant {
-            val text = line[0] + " " + line[1]
-            val dt = LocalDateTime.parse(text, dtf)
-            return asset.exchange.getInstant(dt)
-        }
+        val feed = CSVFeed(path1.toString(), CSVConfig.stooq())
+        val tmp = CSVFeed(path2.toString(), CSVConfig.stooq())
+        feed.merge(tmp)
 
-        val feed = CSVFeed("/tmp/DE40CASH.csv") {
-            template = Asset("TEMPLATE", AssetType.CFD, Currency.EUR, Exchange.DEX)
-            separator = '\t'
-            timeParser = TimeParser { a, b -> parse(a, b) }
-        }
+        val avroFeed = AvroFeed("/tmp/us_stocks_all.avro")
 
-        require(feed.assets.size == 1)
+        avroFeed.record(
+            feed,
+            true
+        )
 
-        val strategy = EMACrossover()
-
-        // We don't want the default initial deposit in USD, since then we need a currency convertor
-        val initialDeposit = 10_000.EUR.toWallet()
-
-        // We configure a large leverage of 50x, so we 10_000 x 50 = 500_000K buyingpower to start with
-        val leverage = 50.0
-        val broker = SimBroker(initialDeposit, accountModel = MarginAccount(leverage = leverage))
-
-        // Since we only trade in one asset and have leverage, we allow up to 1000% of our equity (10k) allocated to
-        // one order
-        val converter = FlexConverter.capitalBased {
-            shorting = true
-            orderPercentage = 90.percent
-            safetyMargin = 10.percent
-        }
-        strategy.signalConverter = converter
-
-        val account = run(feed, strategy, broker = broker)
-
-        println(account)
     }
 
+    @Test
+    @Ignore
+    internal fun generate_nasdaq() {
+        val path = Path("/tmp/us")
+        val path1 = path / "nasdaq stocks"
+
+        val feed = CSVFeed(path1.toString(), CSVConfig.stooq())
+        val avroFeed = AvroFeed("/tmp/nasdaq_stocks.avro")
+
+        avroFeed.record(
+            feed,
+            true
+        )
+
+    }
+
+    @Test
+    @Ignore
+    internal fun run_all() = runBlocking {
+        val feed = AvroFeed("/tmp/us_stocks_all.avro")
+        val jobs = ParallelJobs()
+        feed.timeframe.split(10.years).forEach {
+            jobs.add {
+                val account = runAsync(feed, EMACrossover(), timeframe = it)
+                println("$it => ${account.equityAmount()}")
+            }
+        }
+        jobs.joinAll()
+    }
 
 
 

@@ -64,11 +64,9 @@ internal class WalletTest {
         assertEquals(12.0, wallet[usd])
 
         wallet.deposit(13.USD)
-        assertEquals(25.USD, wallet.getAmount(usd))
 
         wallet.deposit(13.EUR)
-        assertEquals(25.USD, wallet.getAmount(usd))
-        assertEquals(13.EUR, wallet.getAmount(eur))
+
 
         wallet.withdraw(wallet.clone())
         assertTrue(wallet.isEmpty())

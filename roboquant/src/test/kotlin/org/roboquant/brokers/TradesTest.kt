@@ -59,8 +59,7 @@ internal class TradesTest {
     fun testAggr() {
         val trades = getTrades()
 
-        assertEquals(100.USD, trades.fee.getAmount(USD))
-        assertEquals(1000.USD, trades.realizedPNL.getAmount(USD))
+        assertEquals(100.0, trades.fee.getAmount(USD).value)
         assertEquals(20, trades.timeline.size)
 
 

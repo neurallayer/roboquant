@@ -22,6 +22,7 @@ import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.Month
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Asset is used to uniquely identify a financial instrument. So it can represent a stock, a future or a
@@ -70,7 +71,7 @@ open class Asset(
     }
 
     open fun serialize() : String {
-        return "$symbol$SEPARATOR$type$SEPARATOR$currency$SEPARATOR${exchange.exchangeCode}"
+        return "$symbol$SEP$type$SEP$currency$SEP${exchange.exchangeCode}"
     }
 
     /**
@@ -79,14 +80,13 @@ open class Asset(
      */
     companion object {
 
-        const val SEPARATOR = ";"
+        internal const val SEP = ";"
 
-        private val cache = mutableMapOf<String, Asset>()
+        private val cache = ConcurrentHashMap<String, Asset>()
 
-        @Synchronized
         fun deserialize(value: String): Asset {
             return cache.getOrPut(value) {
-                val v = value.split(SEPARATOR)
+                val v = value.split(SEP)
                 Asset(v[0], AssetType.valueOf(v[1]), v[2], v[3])
             }
         }

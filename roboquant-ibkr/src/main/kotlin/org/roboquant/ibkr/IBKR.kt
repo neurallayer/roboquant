@@ -110,12 +110,7 @@ object IBKR {
      */
     internal fun Asset.toContract(): Contract {
         val contract = Contract()
-        val exchange = when (exchange.exchangeCode) {
-            "NASDAQ" -> "ISLAND"
-            "" -> "SMART"
-            else -> exchange.exchangeCode
-        }
-        contract.exchange(exchange)
+        contract.exchange("SMART")
 
         val id = assetCache.filterValues { it == this }.keys.firstOrNull()
         if (id != null) {

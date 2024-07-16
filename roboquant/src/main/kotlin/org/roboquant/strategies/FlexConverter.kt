@@ -245,7 +245,7 @@ open class FlexConverter(
      */
     private fun meetsMinPrice(asset: Asset, price: Double, time: Instant): Boolean {
         val minPrice = config.minPrice
-        return minPrice == null || minPrice.convert(asset.currency, time) <= price
+        return minPrice == null || minPrice.convert(asset.currency, time).value <= price
     }
 
     /**
@@ -299,7 +299,7 @@ open class FlexConverter(
                 } else {
                     if (position.open) continue // we don't increase position sizing
                     if (!signal.entry) continue // signal doesn't allow opening new positions
-                    if (amountPerOrder > buyingPower) continue // not enough buying power left
+                    if (amountPerOrder.value > buyingPower.value) continue // not enough buying power left
 
                     val assetAmount = amountPerOrder.convert(asset.currency, time).value
                     val size = calcSize(assetAmount, signal, price)

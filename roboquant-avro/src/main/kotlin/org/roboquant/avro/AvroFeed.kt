@@ -47,7 +47,7 @@ internal const val SCHEMA = """{
              "name": "PriceItemV2",
              "fields": [
                  {"name": "timestamp", "type" : "string"},
-                 {"name": "symbol", "type": "string"},
+                 {"name": "asset", "type": "string"},
                  {"name": "type", "type": { "type": "enum", "name": "type", "symbols" : ["BAR", "TRADE", "QUOTE", "BOOK"]}},
                  {"name": "values",  "type": {"type": "array", "items" : "double"}},
                  {"name": "meta", "type": ["null", "string"], "default": null}
@@ -62,11 +62,10 @@ internal const val SCHEMA = """{
  * The internal resolution is nanoseconds and stored as a single Long value
  *
  * @property file the Avro file
- * @property template template to use to convert the stored symbols into assets
  *
  * @constructor Create new Avro Feed
  */
-class AvroFeed(private val file: File, private val template: Asset = Asset("TEMPLATE")) : Feed {
+class AvroFeed(private val file: File) : Feed {
 
     /**
      * Instantiate an Avro Feed based on the Avro file at [path]
@@ -104,10 +103,9 @@ class AvroFeed(private val file: File, private val template: Asset = Asset("TEMP
      */
     override suspend fun play(channel: EventChannel) {
         val timeframe = channel.timeframe
-        var last = Instant.MIN
+        var last = Utf8(Instant.MIN.toString())
         var items = ArrayList<PriceItem>()
         val serializer = PriceItemSerializer()
-        val cache = mutableMapOf<String, Asset>()
         getReader().use {
             val name = it.schema.fullName
             assert(name == "org.roboquant.avro.schema.PriceItemV2") { "invalid avro schema $name" }
@@ -116,20 +114,18 @@ class AvroFeed(private val file: File, private val template: Asset = Asset("TEMP
                 val rec = it.next()
 
                 // Optimize unnecessary parsing of the whole record
-                val now = Instant.parse(rec[0] as Utf8)
-                if (now < timeframe) continue
+                val now = rec[0] as Utf8
 
                 if (now != last) {
-                    channel.sendNotEmpty(Event(last, items))
+                    val time = Instant.parse(last)
+                    channel.sendNotEmpty(Event(time, items))
                     last = now
                     items = ArrayList<PriceItem>(items.size)
                 }
 
-                if (now > timeframe) break
-
                 // Parse the remaining attributes
-                val symbol = rec.get(1).toString()
-                val asset = cache.getOrPut(symbol) { template.copy(symbol = symbol) }
+                val assetString = rec.get(1).toString()
+                val asset = Asset.deserialize(assetString)
                 val priceItemType = PriceItemType.valueOf(rec.get(2).toString())
 
                 @Suppress("UNCHECKED_CAST")
@@ -138,7 +134,8 @@ class AvroFeed(private val file: File, private val template: Asset = Asset("TEMP
                 val item = serializer.deserialize(asset, priceItemType, values, meta?.toString())
                 items.add(item)
             }
-            channel.sendNotEmpty(Event(last, items))
+            val time = Instant.parse(last)
+            channel.sendNotEmpty(Event(time, items))
         }
     }
 
@@ -227,14 +224,13 @@ class AvroFeed(private val file: File, private val template: Asset = Asset("TEMP
             while (true) {
                 val event = channel.receive()
 
-                for (action in event.items.filterIsInstance<PriceItem>()) {
-                    if (!assetFilter.filter(action.asset, event.time)) continue
+                for (item in event.items.filterIsInstance<PriceItem>()) {
+                    if (!assetFilter.filter(item.asset, event.time)) continue
 
-                    val asset = action.asset
                     record.put(0, event.time.toString())
-                    record.put(1, asset.symbol)
+                    record.put(1, item.asset.serialize())
 
-                    val serialization = serializer.serialize(action)
+                    val serialization = serializer.serialize(item)
                     val t = GenericData.EnumSymbol(enumSchema, serialization.type)
                     record.put(2, t)
 

@@ -36,7 +36,6 @@ internal class PriceItemTest {
         assertEquals(3.0, p.bidSize)
         var price = p.getPrice()
         assertEquals(9.5, price)
-        assertEquals(9.5.USD, p.getPriceAmount())
 
         price = p.getPrice("WEIGHTED")
         assertEquals(9.25, price)

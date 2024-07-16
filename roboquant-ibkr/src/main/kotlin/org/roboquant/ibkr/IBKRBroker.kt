@@ -19,6 +19,7 @@ package org.roboquant.ibkr
 
 import com.ib.client.*
 import com.ib.client.Types.Action
+import com.ib.controller.AccountSummaryTag
 import org.roboquant.brokers.*
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
@@ -27,6 +28,7 @@ import org.roboquant.ibkr.IBKR.toAsset
 import org.roboquant.ibkr.IBKR.toContract
 import org.roboquant.orders.*
 import org.roboquant.orders.OrderStatus
+import java.math.BigDecimal
 import java.time.Instant
 import com.ib.client.Order as IBOrder
 import com.ib.client.OrderState as IBOrderSate
@@ -126,6 +128,11 @@ class IBKRBroker(
         if (event != null) {
             if (event.time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
         }
+        val tags = "${AccountSummaryTag.BuyingPower}, ${AccountSummaryTag.TotalCashValue}"
+        client.reqPositions()
+        client.reqAllOpenOrders()
+        client.reqAccountSummary(1, "All", tags)
+
         return account.toAccount()
     }
 
@@ -218,6 +225,11 @@ class IBKRBroker(
      */
     private inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 
+        val accountTags = mutableMapOf(
+            AccountSummaryTag.TotalCashValue to Amount(Currency.USD, 0),
+            AccountSummaryTag.BuyingPower to Amount(Currency.USD, 0),
+        )
+
         /**
          * Convert an IBOrder to a roboquant Instruction.
          * This is only used during initial connection when retrieving any open orders linked to the account.
@@ -260,11 +272,11 @@ class IBKRBroker(
         override fun openOrder(orderId: Int, contract: Contract, order: IBOrder, orderState: IBOrderSate) {
             logger.debug { "orderId=$orderId asset=${contract.symbol()} qty=${order.totalQuantity()} status=${orderState.status}" }
             logger.trace { "$orderId $contract $order $orderState" }
-            val openOrder = account.getOpenOrder(orderId.toString())
+            val openOrder = account.getOrder(orderId.toString())
             if (openOrder != null) {
                 logger.info {"update order orderId=$orderId status=${orderState.status}" }
                 if (orderState.completedStatus() == "true") {
-                    val o = account.getOpenOrder(openOrder.id)
+                    val o = account.getOrder(openOrder.id)
                     if (o != null) {
                         account.updateOrder(o, Instant.parse(orderState.completedTime()), OrderStatus.COMPLETED)
                     }
@@ -286,7 +298,7 @@ class IBKRBroker(
             lastFillPrice: Double, clientId: Int, whyHeld: String?, mktCapPrice: Double
         ) {
             logger.info { "orderstatus oderId=$orderId status=$status filled=$filled" }
-            val order = account.getOpenOrder(orderId.toString())
+            val order = account.getOrder(orderId.toString())
             if (order != null) {
                 val newStatus = toStatus(status)
                 account.updateOrder(order, Instant.now(), newStatus)
@@ -319,7 +331,7 @@ class IBKRBroker(
             if (currency != null && "BASE" != currency) {
                 val c = Currency.getInstance(currency)
                 when (key) {
-                    "BuyingPower" -> {
+                    AccountSummaryTag.BuyingPower.name -> {
                         if (! initialized) {
                             account.baseCurrency = c
                             exchangeRates.baseCurrency = c
@@ -327,7 +339,7 @@ class IBKRBroker(
                         account.buyingPower = Amount(c, value.toDouble())
 
                     }
-                    "CashBalance" -> account.cash.set(c, value.toDouble())
+                    AccountSummaryTag.TotalCashValue.name -> account.cash.set(c, value.toDouble())
                     "ExchangeRate" -> {
                         exchangeRates.setRate(c,value.toDouble())
                     }
