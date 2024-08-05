@@ -205,7 +205,7 @@ open class FlexTrader(
     }
 
     /**
-     * Return the size that can be bought/sold with the provided [amount] and [price] of the asset. This implementation
+     * Return the size that can be bought/sold with the provided  of the asset. This implementation
      * also takes into consideration the configured [FlexPolicyConfig.fractions] and the strength of the rating in the
      * signal.
      *

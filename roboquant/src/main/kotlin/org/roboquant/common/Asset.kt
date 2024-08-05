@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Asset is used to uniquely identify a financial instrument. So it can represent a stock, a future or a
- * cryptocurrency. See the [AssetType] for the supported types.
+ * cryptocurrency.
  *
  * For asset types that require additional information (like options or futures), the symbol name is expected to
  * contain this information.
@@ -67,7 +67,7 @@ interface Asset : Comparable<Asset> {
     /**
      * Return the value of the asset given the provided [size] and [price].
      */
-    open fun value(size: Size, price: Double): Amount {
+    fun value(size: Size, price: Double): Amount {
         // If size is zero, an unknown price (Double.NanN) is fine
         return if (size.iszero) Amount(currency, 0.0) else Amount(currency, size.toDouble() * price)
     }

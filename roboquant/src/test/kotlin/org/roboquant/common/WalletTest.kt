@@ -22,7 +22,6 @@ import kotlin.test.*
 internal class WalletTest {
 
     private val usd = Currency.getInstance("USD")
-    private val eur = Currency.getInstance("EUR")
 
     @Test
     fun getCurrencies() {

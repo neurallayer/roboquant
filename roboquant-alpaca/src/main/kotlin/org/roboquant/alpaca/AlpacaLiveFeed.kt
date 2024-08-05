@@ -27,7 +27,6 @@ import net.jacobpeterson.alpaca.websocket.marketdata.streams.crypto.CryptoMarket
 import net.jacobpeterson.alpaca.websocket.marketdata.streams.crypto.CryptoMarketDataWebsocketInterface
 import net.jacobpeterson.alpaca.websocket.marketdata.streams.stock.StockMarketDataListenerAdapter
 import net.jacobpeterson.alpaca.websocket.marketdata.streams.stock.StockMarketDataWebsocketInterface
-import org.roboquant.common.Asset
 import org.roboquant.common.ConfigurationException
 import org.roboquant.common.Logging
 import org.roboquant.common.Stock

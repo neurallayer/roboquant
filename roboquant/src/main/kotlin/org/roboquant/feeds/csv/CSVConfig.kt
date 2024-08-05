@@ -140,7 +140,6 @@ data class CSVConfig(
         /**
          * Returns a CSVConfig suited for parsing Yahoo Finance ASCII CSV files
          *
-         * @param template the asset template to use to map symbols to assets
          */
         fun yahoo(currency: Currency = Currency.USD): CSVConfig {
             val result = CSVConfig(

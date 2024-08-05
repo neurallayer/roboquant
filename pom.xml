@@ -467,14 +467,6 @@
             <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <artifactId>roboquant</artifactId>
-            <groupId>org.roboquant</groupId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <!-- Dependencies used by some modules -->

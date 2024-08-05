@@ -19,7 +19,6 @@ package org.roboquant.feeds.csv
 import org.roboquant.common.Asset
 import org.roboquant.common.Currency
 import org.roboquant.common.Stock
-import java.io.File
 
 
 /**

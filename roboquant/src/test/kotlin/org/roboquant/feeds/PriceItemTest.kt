@@ -18,7 +18,6 @@ package org.roboquant.feeds
 
 import org.roboquant.TestData
 import org.roboquant.common.Stock
-import org.roboquant.common.USD
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals

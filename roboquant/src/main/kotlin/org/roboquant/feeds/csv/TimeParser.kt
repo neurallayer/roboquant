@@ -16,7 +16,6 @@
 
 package org.roboquant.feeds.csv
 
-import org.roboquant.common.Asset
 import org.roboquant.common.ConfigurationException
 import org.roboquant.common.Exchange
 import java.time.Instant

@@ -34,7 +34,7 @@
     </description>
 
     <properties>
-        <graalvm.version>24.0.1</graalvm.version>
+        <graalvm.version>24.0.2</graalvm.version>
     </properties>
 
     <build>

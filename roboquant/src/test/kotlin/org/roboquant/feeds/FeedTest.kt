@@ -20,27 +20,14 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
-import org.roboquant.common.Asset
-import org.roboquant.common.Stock
 import org.roboquant.common.Timeframe
-import java.util.*
 import kotlin.test.Test
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class FeedTest {
 
     class MyFeed : Feed {
-        override suspend fun play(channel: EventChannel) {
-            // Intentional empty
-        }
-    }
-
-    class MyFeed2 : AssetFeed {
-        override val assets: SortedSet<Asset>
-            get() = sortedSetOf(Stock("AAA"), Stock("AAB"))
-
         override suspend fun play(channel: EventChannel) {
             // Intentional empty
         }

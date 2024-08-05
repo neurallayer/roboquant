@@ -18,7 +18,6 @@ package org.roboquant.strategies
 
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Instruction
 
 /**
  * The Strategy is the interface that any trading strategy will need to implement. A strategy receives an
@@ -30,7 +29,7 @@ import org.roboquant.orders.Instruction
 interface Strategy  {
 
     /**
-     * Generate zero or more [instructions][Instruction] based on received [event] and latest [account].
+     * Generate zero or more [signals][Signal] based on received [event].
      */
     fun create(event: Event): List<Signal>
 

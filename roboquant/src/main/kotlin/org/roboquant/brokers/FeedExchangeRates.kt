@@ -29,12 +29,10 @@ import java.util.*
  *
  * @param feed the feed to use
  * @property priceType the type of price, by default "DEFAULT"
- * @property assetTypes the types of asset to consider, by default CRYPTO and FOREX
  */
 class FeedExchangeRates(
     feed: Feed,
     private val priceType: String = "DEFAULT",
-    private val assetTypes: Set<AssetType> = setOf(AssetType.CRYPTO, AssetType.FOREX)
 ) : ExchangeRates {
 
     private val exchangeRates = mutableMapOf<Pair<Currency, Currency>, NavigableMap<Instant, Double>>()
