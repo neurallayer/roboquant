@@ -16,6 +16,8 @@
 
 package org.roboquant.feeds
 
+import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.common.*
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.runAsync
@@ -99,6 +101,11 @@ internal class AggregatorFeedTest {
         aggFeed.timeframe.split(3.months).forEach {
             jobs.add {
                 runAsync(aggFeed, EMACrossover(), timeframe = it)
+            }
+        }
+        assertDoesNotThrow {
+            runBlocking {
+                jobs.joinAll()
             }
         }
     }
