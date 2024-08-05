@@ -269,14 +269,14 @@ class AvroFeed(private val file: File) : Feed {
          * This is sample data and should NOT be relies on for real back testing.
          */
         fun sp25(): AvroFeed {
-            val path = copy("/sp25.avro")
+            val path = copyFirstTime("/sp25_v1.0.avro")
             return AvroFeed(path)
         }
 
         /**
          * Copy file from jar to local filesystem
          */
-        private fun copy(fileName: String): Path {
+        private fun copyFirstTime(fileName: String): Path {
             val path = Paths.get(Config.home.toString(), fileName)
             if (Files.notExists(path)) {
                 val stream = AvroFeed::class.java.getResourceAsStream(fileName)
