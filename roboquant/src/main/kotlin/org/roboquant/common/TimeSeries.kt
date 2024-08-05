@@ -236,28 +236,6 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
 
 
 /**
- * Flatten a Map of TimeSeries to a single TimeSeries sorted by their time. If there is overlap in time between runs and
- * [noOverlap] is set to true, the earlier run observations will be used and later runs observations that overlap will
- * be ignored.
- */
-fun Map<String, TimeSeries>.flatten(noOverlap: Boolean = true): TimeSeries {
-    // Optimized path for a map with only one entry
-    if (size == 1) return values.first()
-    val sortedTimeSeries = values.sortedBy { it.timeline.first() }
-    val result = mutableListOf<Observation>()
-    var last = Instant.MIN
-    for (timeSeries in sortedTimeSeries) {
-        for (entry in timeSeries) {
-            if (noOverlap && entry.time <= last) continue
-            result.add(entry)
-            last = entry.time
-        }
-
-    }
-    return TimeSeries(result)
-}
-
-/**
  * Normalize all the timeseries in his map
  */
 fun Map<String, TimeSeries>.index(start: Double = 1.0): Map<String, TimeSeries> {

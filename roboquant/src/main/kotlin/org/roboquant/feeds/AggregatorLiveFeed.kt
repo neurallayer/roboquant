@@ -45,6 +45,7 @@ import kotlin.reflect.KClass
  * @property remaining should any remaining actions be sent, default is true
  *
  */
+@Suppress("unused")
 class AggregatorLiveFeed(
     private val feed: LiveFeed,
     private val aggregationPeriod: TimeSpan,

@@ -149,28 +149,6 @@ data class Forex(override val symbol: String, override val currency: Currency) :
 fun Collection<Asset>.getBySymbol(symbol: String): Asset = first { it.symbol == symbol }
 
 /**
- * Find an asset based on its [symbols] name. Will return an empty list if no assets are matched.
- */
-fun Collection<Asset>.findBySymbols(vararg symbols: String): List<Asset> = findBySymbols(symbols.asList())
-
-/**
- * Find an asset based on its [symbols] name. Will return an empty list if no assets are matched.
- */
-fun Collection<Asset>.findBySymbols(symbols: Collection<String>): List<Asset> = filter { it.symbol in symbols }
-
-/**
- * Find all assets based on their [currencyCodes]. Returns an empty list if no matching assets can be found.
- */
-fun Collection<Asset>.findByCurrencies(vararg currencyCodes: String): List<Asset> =
-    findByCurrencies(currencyCodes.asList())
-
-/**
- * Find all assets based on their [currencyCodes]. Returns an empty list if no matching assets can be found.
- */
-fun Collection<Asset>.findByCurrencies(currencyCodes: Collection<String>): List<Asset> =
-    filter { it.currency.currencyCode in currencyCodes }
-
-/**
  * Get all unique symbols from the assets
  */
 val Collection<Asset>.symbols: Array<String>

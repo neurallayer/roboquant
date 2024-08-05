@@ -17,6 +17,7 @@
 package org.roboquant.feeds
 
 import org.roboquant.TestData
+import org.roboquant.common.Amount
 import org.roboquant.common.Stock
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -35,6 +36,9 @@ internal class PriceItemTest {
         assertEquals(3.0, p.bidSize)
         var price = p.getPrice()
         assertEquals(9.5, price)
+
+        val amt = p.getPriceAmount()
+        assertEquals(Amount("USD", 9.5), amt)
 
         price = p.getPrice("WEIGHTED")
         assertEquals(9.25, price)

@@ -18,7 +18,6 @@ package org.roboquant.traders
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
-import org.roboquant.brokers.exposure
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceItem
@@ -111,22 +110,6 @@ open class FlexTrader(
                 }
             }
             return SingleTrader()
-        }
-
-        /**
-         * Capital-based flex trader.
-         */
-        fun capitalBased(
-            configure: FlexPolicyConfig.() -> Unit = {}
-        ): FlexTrader {
-            class CapiltalBasedTrader : FlexTrader(configure) {
-                override fun amountPerOrder(account: Account): Amount {
-                    val capital = account.positions.values.exposure + account.buyingPower
-                    val amount = account.convert(capital)
-                    return amount * config.orderPercentage
-                }
-            }
-            return CapiltalBasedTrader()
         }
 
         /**

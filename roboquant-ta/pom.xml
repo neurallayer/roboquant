@@ -54,6 +54,12 @@
             <artifactId>ta-lib</artifactId>
             <version>0.4.0</version>
         </dependency>
+        <dependency>
+            <artifactId>roboquant</artifactId>
+            <groupId>org.roboquant</groupId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>

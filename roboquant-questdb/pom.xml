@@ -45,19 +45,17 @@
             <artifactId>roboquant</artifactId>
             <groupId>org.roboquant</groupId>
         </dependency>
+        <dependency>
+            <artifactId>roboquant</artifactId>
+            <groupId>org.roboquant</groupId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.questdb</groupId>
             <artifactId>questdb</artifactId>
             <version>8.1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.roboquant</groupId>
-            <artifactId>roboquant</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-            <type>test-jar</type>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>

@@ -60,6 +60,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <artifactId>roboquant</artifactId>
+            <groupId>org.roboquant</groupId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

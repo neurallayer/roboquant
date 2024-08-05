@@ -230,11 +230,6 @@ class IBKRBroker(
      */
     private inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 
-        val accountTags = mutableMapOf(
-            AccountSummaryTag.TotalCashValue to Amount(Currency.USD, 0),
-            AccountSummaryTag.BuyingPower to Amount(Currency.USD, 0),
-        )
-
         /**
          * Convert an IBOrder to a roboquant Instruction.
          * This is only used during initial connection when retrieving any open orders linked to the account.

@@ -43,25 +43,3 @@ private class SignalShuffleTrader(private val trader: Trader, private val random
  */
 fun Trader.shuffleSignals(random: Random = Config.random): Trader = SignalShuffleTrader(this, random)
 
-/**
- * Shuffle signals before processing them in the trader, avoiding favoring assets that appear always first in the
- * actions of an event.
- *
- * @property trader
- * @constructor Create empty Signal resolver
- */
-private class SkipSymbolsTrader(private val trader: Trader, private val symbols: List<String>) : Trader by trader {
-
-    override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
-        val newSignals = signals.filter { it.asset.symbol !in symbols }
-        return trader.create(newSignals, account, event)
-    }
-}
-
-/**
- * Skip [symbols] that should not be converted into orders by removing them from the signals
- */
-fun Trader.skipSymbols(vararg symbols: String): Trader = SkipSymbolsTrader(this, symbols.asList())
-
-
-

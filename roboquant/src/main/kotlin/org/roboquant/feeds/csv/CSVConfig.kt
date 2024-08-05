@@ -54,7 +54,6 @@ data class CSVConfig(
     var assetBuilder: AssetBuilder = StockBuilder()
 ) {
 
-
     private val pattern by lazy { Pattern.compile(filePattern) }
 
     private var isInitialized = false
@@ -75,10 +74,14 @@ data class CSVConfig(
             return CSVConfig(
                 filePattern = ".*.txt",
                 timeParser = AutoDetectTimeParser(2),
-                assetBuilder = { name: String -> Stock(name.removeSuffix(".us.txt").replace('-', '.').uppercase(), Currency.USD) }
+                assetBuilder = { name: String ->
+                    Stock(
+                        name.removeSuffix(".us.txt").replace('-', '.').uppercase(),
+                        Currency.USD
+                    )
+                }
             )
         }
-
 
         /**
          * Returns a CSVConfig suited for parsing MT5 CSV files
@@ -209,8 +212,6 @@ data class CSVConfig(
         val name = file.name
         return file.isFile && pattern.matcher(name).matches() && name !in fileSkip
     }
-
-
 
     /**
      * Merge a config map into this CSV config

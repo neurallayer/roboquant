@@ -17,7 +17,6 @@
 
 package org.roboquant.common
 
-import kotlinx.coroutines.delay
 import org.hipparchus.stat.descriptive.moment.StandardDeviation
 import org.roboquant.common.Config.EPS
 import java.lang.Integer.max
@@ -28,8 +27,6 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
 import kotlin.math.ln
 
@@ -49,20 +46,6 @@ operator fun Instant.compareTo(timeframe: Timeframe): Int {
         false -> if (this >= timeframe.end) 1 else if (this < timeframe.start) -1 else 0
     }
 }
-
-/**
- * Delay until this time is reached
- */
-suspend fun Instant.delayUntil() {
-    val now = Instant.now()
-    delay(now.until(this, ChronoUnit.MILLIS).coerceAtLeast(0L))
-}
-
-/**
- * Get the instant as ZonedDateTime UTC
- */
-fun Instant.toUTC(): ZonedDateTime = atZone(ZoneOffset.UTC)
-
 
 fun Instant.sameDay(other: Instant, zoneId: ZoneId = ZoneOffset.UTC): Boolean {
     val dt1 = LocalDate.ofInstant(this, zoneId)
