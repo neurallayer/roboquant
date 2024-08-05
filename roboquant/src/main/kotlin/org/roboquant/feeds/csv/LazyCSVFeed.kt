@@ -73,7 +73,7 @@ class LazyCSVFeed internal constructor(
      * Return the assets that are available in this feed
      */
     override val assets
-        get() = filesMap.keys.toSortedSet()
+        get() = filesMap.keys.toSet()
 
     init {
         val path = Path.of(pathStr)
@@ -83,7 +83,7 @@ class LazyCSVFeed internal constructor(
             .walk()
             .filter { config.shouldInclude(it) }
             .map { it.absoluteFile }
-            .map { config.assetBuilder.build(it) to it }
+            .map { config.assetBuilder.build(it.name) to it }
             .toMap()
 
         logger.info { "Scanned $path found ${filesMap.size} files" }

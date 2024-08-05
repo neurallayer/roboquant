@@ -40,7 +40,7 @@ internal class QuestDBJournalTestIT {
 
     private fun simpleRun(journal: Journal) {
         val feed = RandomWalk.lastYears(1)
-        org.roboquant.run(feed, EMACrossover(), journal)
+        org.roboquant.run(feed, EMACrossover(), journal = journal)
     }
 
     @Test
@@ -67,7 +67,7 @@ internal class QuestDBJournalTestIT {
         for (tf in tfs) {
             jobs.add {
                 val journal = mrj.getJournal()
-                org.roboquant.runAsync(feed, EMACrossover(), journal, tf)
+                org.roboquant.runAsync(feed, EMACrossover(), journal = journal, timeframe = tf)
             }
         }
         jobs.joinAll()

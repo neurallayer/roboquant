@@ -21,10 +21,7 @@ import net.jacobpeterson.alpaca.openapi.marketdata.api.StockApi
 import net.jacobpeterson.alpaca.openapi.marketdata.model.Sort
 import net.jacobpeterson.alpaca.openapi.marketdata.model.StockAdjustment
 import net.jacobpeterson.alpaca.openapi.marketdata.model.StockBar
-import org.roboquant.common.Asset
-import org.roboquant.common.Logging
-import org.roboquant.common.TimeSpan
-import org.roboquant.common.Timeframe
+import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceQuote
@@ -71,7 +68,7 @@ class AlpacaHistoricFeed(
                 symbols, start, end, null, "", config.stockFeed, "USD", nextPageToken, Sort.ASC
             )
             for ((symbol, quotes) in resp.quotes) {
-                val asset = Asset(symbol)
+                val asset = USStock(symbol)
                 for (quote in quotes) {
                     val action = PriceQuote(
                         asset,
@@ -102,7 +99,7 @@ class AlpacaHistoricFeed(
                 symbols, start, end, null, "", config.stockFeed, "USD", nextPageToken, Sort.ASC
             )
             for ((symbol, trades) in resp.trades) {
-                val asset = Asset(symbol)
+                val asset = USStock(symbol)
                 for (trade in trades) {
                     val action = TradePrice(asset, trade.p, trade.s.toDouble())
                     val now = trade.t.toInstant()
@@ -116,7 +113,7 @@ class AlpacaHistoricFeed(
     }
 
     private fun processBars(symbol: String, bars: List<StockBar>, timeSpan: TimeSpan?) {
-        val asset = Asset(symbol)
+        val asset = USStock(symbol)
         for (bar in bars) {
             val action = PriceBar(asset, bar.o, bar.h, bar.l, bar.c, bar.v.toDouble(), timeSpan)
             val time = bar.t.toInstant()

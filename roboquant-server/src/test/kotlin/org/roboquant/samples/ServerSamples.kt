@@ -17,7 +17,6 @@
 package org.roboquant.samples
 
 import org.roboquant.common.*
-import org.roboquant.feeds.random.RandomWalkLiveFeed
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.PriceMetric
@@ -33,48 +32,6 @@ internal class ServerSamples {
     private fun getJournal() =
         MemoryJournal(PriceMetric("CLOSE"), AccountMetric())
 
-    /**
-     * You can run this sample to start a server with three runs
-     */
-    @Test
-    @Ignore
-    internal fun run() {
-        val server = WebServer()
 
-        val jobs = ParallelJobs()
-
-        // Start three runs
-        jobs.add {
-            server.addRun(
-                "run-fast",
-                RandomWalkLiveFeed(200.millis, nAssets = 3),
-                EMACrossover(),
-                getJournal(),
-                Timeframe.next(10.minutes),
-            )
-        }
-        jobs.add {
-            server.addRun(
-                "run-medium",
-                RandomWalkLiveFeed(5.seconds, nAssets = 10),
-                EMACrossover(),
-                getJournal(),
-                Timeframe.next(30.minutes),
-            )
-        }
-        jobs.add {
-            server.addRun(
-                "run-slow",
-                RandomWalkLiveFeed(30.seconds, nAssets = 50),
-                EMACrossover(),
-                getJournal(),
-                Timeframe.next(60.minutes),
-            )
-        }
-
-        jobs.joinAllBlocking()
-        server.stop()
-        exitProcess(0)
-    }
 
 }

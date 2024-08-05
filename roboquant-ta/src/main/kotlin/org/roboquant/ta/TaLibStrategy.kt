@@ -21,7 +21,7 @@ package org.roboquant.ta
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.SignalStrategy
+import org.roboquant.strategies.Strategy
 import java.lang.Integer.max
 
 /**
@@ -33,7 +33,7 @@ import java.lang.Integer.max
  * If not enough history is available to calculate the indicators, the capacity will be automatically increased until
  * it is able to perform the calculations.
  */
-class TaLibStrategy(initialCapacity: Int = 1) : SignalStrategy() {
+class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
 
     private var sellFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
     private var buyFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
@@ -190,9 +190,9 @@ class TaLibStrategy(initialCapacity: Int = 1) : SignalStrategy() {
      * Based on a [event], return zero or more signals. Typically, they are for the assets in the event,
      * but this is not a strict requirement.
      *
-     * @see SignalStrategy.generate
+     * @see Strategy.generate
      */
-    override fun generate(event: Event): List<Signal> {
+    override fun create(event: Event): List<Signal> {
         val results = mutableListOf<Signal>()
         val time = event.time
         for (priceBar in event.items.filterIsInstance<PriceBar>()) {

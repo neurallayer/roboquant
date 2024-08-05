@@ -17,7 +17,7 @@
 package org.roboquant.brokers
 
 import org.roboquant.TestData
-import org.roboquant.common.Asset
+import org.roboquant.common.USStock
 import org.roboquant.common.Size
 import java.math.BigDecimal
 import kotlin.random.Random
@@ -48,7 +48,7 @@ internal class PositionTest {
 
     @Test
     fun reduced() {
-        val position = Position(Asset("XYZ"), Size(100))
+        val position = Position(USStock("XYZ"), Size(100))
         assertTrue(position.isReduced(Size(-100)))
         assertTrue(position.isReduced(Size(-150)))
         assertFalse(position.isReduced(Size(1)))
@@ -87,7 +87,7 @@ internal class PositionTest {
     @Test
     fun collection() {
         val positions = mutableListOf<Position>()
-        repeat(5) { positions.add(Position(Asset("ASSET$it"), Size(10), 10.0, 12.0))}
+        repeat(5) { positions.add(Position(USStock("ASSET$it"), Size(10), 10.0, 12.0))}
         val s = positions.toString()
         println(s)
     }

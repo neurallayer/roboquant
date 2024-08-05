@@ -67,16 +67,8 @@ class Signal(
 
     companion object {
 
-        fun buy(symbol: String, type: SignalType = BOTH, tag: String = "") : Signal {
-            return Signal(Asset(symbol), 1.0, type, tag)
-        }
-
-        fun buy(asset: Asset, type: SignalType = BOTH,tag: String = "" ) : Signal {
+        fun buy(asset: Asset, type: SignalType = BOTH, tag: String = "") : Signal {
             return Signal(asset, 1.0, type, tag)
-        }
-
-        fun sell(symbol: String, type: SignalType = BOTH, tag: String = "") : Signal {
-            return Signal(Asset(symbol), -1.0, type, tag)
         }
 
         fun sell(asset: Asset, type: SignalType = BOTH, tag: String = "") : Signal {

@@ -18,6 +18,7 @@ package org.roboquant.ibkr
 
 import com.ib.client.*
 import org.roboquant.common.*
+import org.roboquant.common.Currency
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -122,16 +123,9 @@ object IBKR {
         contract.currency(currency.currencyCode)
         // if (multiplier != 1.0) contract.multiplier(multiplier.toString())
 
-        when (type) {
-            AssetType.STOCK -> contract.secType(Types.SecType.STK)
-            AssetType.FOREX -> contract.secType(Types.SecType.CASH)
-            AssetType.BOND -> contract.secType(Types.SecType.BOND)
-            AssetType.FUTURES -> {
-                contract.secType(Types.SecType.FUT)
-                contract.localSymbol(symbol)
-                contract.symbol("")
-            }
-            else -> throw UnsupportedException("asset type $type is not yet supported")
+        when (this) {
+            is Stock -> contract.secType(Types.SecType.STK)
+            else -> throw UnsupportedException("asset type $this is not yet supported")
         }
 
         logger.info { "$this into $contract" }
@@ -145,12 +139,8 @@ object IBKR {
         val result = assetCache[conid()]
         result != null && return result
 
-        val exchangeCode = exchange() ?: primaryExch() ?: ""
         val asset = when (secType()) {
-            Types.SecType.STK -> Asset(symbol(), AssetType.STOCK, currency(), exchangeCode)
-            Types.SecType.BOND -> Asset(symbol(), AssetType.BOND, currency(), exchangeCode)
-            Types.SecType.CASH -> Asset(symbol(), AssetType.FOREX, currency(), exchangeCode)
-            Types.SecType.FUT -> Asset(localSymbol(), AssetType.FUTURES, currency(), exchangeCode)
+            Types.SecType.STK -> Stock(symbol(), Currency.getInstance(currency()))
             else -> throw UnsupportedException("Unsupported asset type ${secType()}")
         }
 

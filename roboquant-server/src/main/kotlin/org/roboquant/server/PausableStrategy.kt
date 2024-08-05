@@ -19,6 +19,7 @@ package org.roboquant.server
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Instruction
+import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import java.time.Instant
 
@@ -35,9 +36,9 @@ internal class PausableStrategy(private val trader: Strategy, var pause: Boolean
 
     internal var lastUpdate: Instant = Instant.MIN
 
-    override fun create(event: Event, account: Account): List<Instruction> {
+    override fun create(event: Event): List<Signal> {
         // Still invoke the strategy so any state can be updated if required.
-        val orders = trader.create(event, account)
+        val orders = trader.create(event)
 
         totalEvents++
         if (event.items.isEmpty()) emptyEvents++

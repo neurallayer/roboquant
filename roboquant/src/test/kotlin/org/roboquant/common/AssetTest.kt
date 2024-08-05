@@ -27,100 +27,24 @@ internal class AssetTest {
 
     @Test
     fun basic() {
-        val a = Asset("ABC")
-        val b = Asset("XYZ")
-        val c = Asset("ABC")
-        val d = Asset("ABC", AssetType.BOND)
+        val a = USStock("ABC")
+        val c = USStock("ABC")
 
         assertEquals("ABC", a.symbol)
         assertEquals(a, c)
         assertEquals(a, a)
-        assertNotEquals(b, c)
-        assertNotEquals(c, d)
     }
 
 
-
-    @Test
-    fun sorting() {
-        val a = Asset("ABC")
-        val b = Asset("ABD")
-        assertTrue(b > a)
-        assertFalse(a > a)
-    }
-
-    @Test
-    fun optionContract() {
-        val a = OptionContract.from("SPX", LocalDate.parse("2014-11-22"), 'P', BigDecimal("19.50"))
-        assertEquals("SPX   141122P00019500", a.symbol)
-        assertEquals(100.0, a.contractSize)
-    }
-
-
-    @Test
-    fun testAssetTypeConstructors() {
-
-        val b = Asset.futureContract("GC", Month.DECEMBER, 18)
-        val b2 = Asset.futureContract("GC", Month.DECEMBER, 2018)
-        assertEquals("GCZ18", b.symbol)
-        assertEquals(b, b2)
-
-        assertEquals("GCF20", Asset.futureContract("GC", Month.JANUARY, 2020).symbol)
-
-        val c = Asset.forexPair("EUR_USD")
-        assertEquals("EUR/USD", c.symbol)
-
-        assertThrows<UnsupportedException> {
-            Asset.forexPair("dsgTYUYUSDD")
-        }
-
-        val d = Asset.forexPair("EURUSD")
-        assertEquals("EUR/USD", d.symbol)
-
-        val cr = Asset.crypto("BTC", "USDT", "COINBASE")
-        assertEquals("BTC/USDT", cr.symbol)
-
-    }
-
-    @Test
-    fun testCollection() {
-        val a = Asset("TEST", AssetType.STOCK, "EUR", "AEB")
-        val b = Asset("TEST2", AssetType.STOCK, "USD", "NYSE")
-        val assets = listOf(a, b)
-
-        assertEquals(a, assets.getBySymbol("TEST"))
-        assertEquals(a, assets.findBySymbols("TEST").first())
-        assertEquals(b, assets.findByCurrencies("USD")[0])
-
-        val asset = assets.random(1)
-        assertTrue { assets.containsAll(asset) }
-
-        val s = assets.toString()
-        assertTrue { s.isNotEmpty() }
-        assertContains(s, "TEST")
-        assertContains(s, "TEST2")
-
-    }
 
     @Test
     fun contractValue() {
-        val a = Asset("ABC")
+        val a = USStock("ABC")
         assertEquals(250.0.USD, a.value(Size(10), 25.0))
 
         assertEquals((-250.0).USD, a.value(Size(-10), 25.0))
     }
 
-    @Test
-    fun contractSize() {
-        val a = Asset("ABC")
-        val s = a.contractSize(1000.0, 1.0)
-        assertEquals(Size(1000), s)
 
-        val s2 = a.contractSize(1000.0, 1.0, 4)
-        assertEquals(Size(1000), s2)
-
-        // decimal fractions cannot be negative
-        assertThrows<java.lang.IllegalArgumentException> { a.contractSize(250.0, 1.0, -1) }
-    }
 
 }

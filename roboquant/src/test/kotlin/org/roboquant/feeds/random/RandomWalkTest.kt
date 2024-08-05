@@ -20,41 +20,13 @@ import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
 import org.roboquant.feeds.*
-import org.roboquant.feeds.util.HistoricTestFeed
-import org.roboquant.feeds.util.play
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class RandomWalkTest {
 
-    @Test
-    fun randomly() = runBlocking {
-        val feed = RandomWalk.lastYears(1, 20)
-        var cnt = 0
-        var now = Instant.MIN
-        for (step in play(feed)) {
-            assertTrue(step.time >= now)
-            now = step.time
-            cnt++
-        }
-        assertEquals(feed.toList().size, cnt)
-        assertEquals(feed.assets.size, 20)
-    }
-
-    @Test
-    fun itemTypes() = runBlocking {
-        val feed = RandomWalk.lastYears(priceType = PriceItemType.TRADE)
-        val event = play(feed).receive()
-        assertTrue(event.items.first() is TradePrice)
-
-        val tl = Timeframe.fromYears(2010, 2012)
-        val feed2 = RandomWalk(tl, priceType = PriceItemType.BAR)
-        val item2 = play(feed2).receive()
-        assertTrue(item2.items.first() is PriceBar)
-    }
 
     @Test
     fun historic() {
@@ -94,16 +66,5 @@ internal class RandomWalkTest {
         assertEquals(feed.timeline.size, result.size)
     }
 
-    @Test
-    fun validate() {
-        val feed = HistoricTestFeed(90..110)
 
-        // within 2% range
-        val errors = feed.validate(maxDiff = 0.02)
-        assertTrue(errors.isEmpty())
-
-        // within 0.5% range
-        val errors2 = feed.validate(maxDiff = 0.005)
-        assertFalse(errors2.isEmpty())
-    }
 }

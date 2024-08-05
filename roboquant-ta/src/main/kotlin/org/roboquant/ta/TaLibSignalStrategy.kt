@@ -24,7 +24,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.SignalType
-import org.roboquant.strategies.SignalStrategy
+import org.roboquant.strategies.Strategy
 
 /**
  * This strategy that makes it easy to implement different types strategies based on technical analysis indicators from
@@ -41,7 +41,7 @@ import org.roboquant.strategies.SignalStrategy
 class TaLibSignalStrategy(
     private val initialCapacity: Int = 1,
     private var block: TaLib.(asset: Asset, series: PriceBarSeries) -> Signal?
-) : SignalStrategy() {
+) : Strategy {
 
     private val history = mutableMapOf<Asset, PriceBarSeries>()
 
@@ -119,7 +119,7 @@ class TaLibSignalStrategy(
      * @see SignalStrategy.generate
      *
      */
-    override fun generate(event: Event): List<Signal> {
+    override fun create(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
         val time = event.time
         for (priceAction in event.prices.values.filterIsInstance<PriceBar>()) {

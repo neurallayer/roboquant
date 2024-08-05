@@ -19,10 +19,7 @@ package org.roboquant.charts
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.sim.execution.InternalAccount
-import org.roboquant.common.Amount
-import org.roboquant.common.Asset
-import org.roboquant.common.Size
-import org.roboquant.common.USD
+import org.roboquant.common.*
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.journals.MemoryJournal
@@ -50,8 +47,8 @@ object TestData {
 
     fun usAccount(): Account {
         val amount: Amount = 100_000.USD
-        val asset1 = Asset("AAA")
-        val asset2 = Asset("AAB")
+        val asset1 = USStock("AAA")
+        val asset2 = USStock("AAB")
         val account = InternalAccount(amount.currency)
         account.cash.deposit(amount)
         account.buyingPower = amount
@@ -65,7 +62,7 @@ object TestData {
     val data by lazy {
         val feed = HistoricTestFeed(50..150)
         val journal = MemoryJournal(AccountMetric())
-        run(feed, EMACrossover(), journal)
+        run(feed, EMACrossover(), journal = journal)
         journal.getMetric("account.equity")
     }
 

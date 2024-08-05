@@ -23,11 +23,8 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.strategies.FlexConverter
-import org.roboquant.strategies.CombinedStrategy
-import org.roboquant.strategies.EMACrossover
-import org.roboquant.strategies.Signal
-import org.roboquant.strategies.SignalStrategy
+import org.roboquant.strategies.*
+import org.roboquant.traders.FlexTrader
 import java.time.Instant
 import kotlin.math.roundToInt
 import kotlin.system.exitProcess
@@ -38,12 +35,12 @@ import kotlin.system.measureTimeMillis
  *
  * Not realistic, but with minimal overhead to ensure we can measure the performance of the engine and not the strategy.
  */
-private class FastStrategy(private val skip: Int) : SignalStrategy() {
+private class FastStrategy(private val skip: Int) : Strategy {
 
     var steps = 0
     var buy = true
 
-    override fun generate(event: Event): List<Signal> {
+    override fun create(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
         for (action in event.items.filterIsInstance<PriceItem>()) {
             steps++
@@ -72,7 +69,7 @@ private class FastFeed(nAssets: Int, val events: Int) : Feed {
     val size = nAssets * events
 
     init {
-        repeat(nAssets) { assets.add(Asset("TEST-$it")) }
+        repeat(nAssets) { assets.add(USStock("TEST-$it")) }
         val data = doubleArrayOf(100.0, 101.0, 99.0, 100.0, 10000.0)
         for (asset in assets) {
             val action = PriceBar(asset, data)
@@ -99,7 +96,7 @@ private class FastFeed(nAssets: Int, val events: Int) : Feed {
 private object Performance {
 
     private const val SKIP = 999 // create signal in 1 out of 999 price-action
-    private fun getStrategy(skip: Int): SignalStrategy = FastStrategy(skip)
+    private fun getStrategy(skip: Int): Strategy = FastStrategy(skip)
 
     /**
      * Try to make the results more reproducible by running the code multiple times and take the best time.
@@ -136,7 +133,7 @@ private object Performance {
      * Test iterating over the feed while filtering
      */
     private fun feedFilter(feed: FastFeed): Long {
-        val asset = Asset("UNKNOWN")
+        val asset = USStock("UNKNOWN")
         return measure {
             feed.filter<PriceBar> {
                 it.asset == asset
@@ -157,12 +154,11 @@ private object Performance {
             )
 
             val broker = SimBroker(accountModel = MarginAccount())
-            val converter = FlexConverter {
+            val trader = FlexTrader {
                 shorting = true
             }
-            strategy.signalConverter = converter
 
-            run(feed, strategy,  broker = broker)
+            run(feed, strategy, trader = trader, broker = broker)
         }
     }
 

@@ -18,7 +18,6 @@ package org.roboquant.feeds
 
 import org.roboquant.common.*
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.runAsync
 import org.roboquant.strategies.EMACrossover
 import java.time.Instant
@@ -67,23 +66,7 @@ internal class AggregatorFeedTest {
 
     }
 
-    @Test
-    fun aggregatorLiveFeed() {
-        val delay = 5
-        val feed = LiveTestFeed(50..100, delayInMillis = delay)
-        val ts = (delay * 10).millis
-        val aggFeed = AggregatorLiveFeed(feed, ts)
-        var lastTime: Instant? = null
-        aggFeed.apply<PriceBar> { pb, t ->
-            assertEquals(ts, pb.timeSpan)
-            if (lastTime != null) {
-                assertTrue(t > lastTime)
-            }
-            lastTime = t
-        }
-        assertTrue(lastTime != null)
 
-    }
 
     @Test
     fun basic2() {

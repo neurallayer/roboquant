@@ -39,7 +39,7 @@ internal class ReturnsMetricTest {
         val metric = ReturnsMetric2(minSize = 250)
         val feed = RandomWalk.lastYears(2)
         val j = MemoryJournal(metric)
-        org.roboquant.run(feed, EMACrossover(), j)
+        org.roboquant.run(feed, EMACrossover(), journal = j)
         assertContains(j.getMetricNames(), "returns.sharperatio")
     }
 

@@ -24,9 +24,9 @@ import kotlin.test.assertTrue
 
 internal class CombinedSignalStrategyTest {
 
-    class MyStrategy : SignalStrategy() {
+    class MyStrategy : Strategy {
 
-        override fun generate(event: Event): List<Signal> {
+        override fun create(event: Event): List<Signal> {
             return emptyList()
         }
 
@@ -41,7 +41,7 @@ internal class CombinedSignalStrategyTest {
         assertEquals(2, s.strategies.size)
 
         val signals = mutableListOf<Signal>()
-        for (event in TestData.events(10)) signals += s.generate(event)
+        for (event in TestData.events(10)) signals += s.create(event)
         assertTrue(signals.isEmpty())
     }
 
@@ -53,7 +53,7 @@ internal class CombinedSignalStrategyTest {
         assertEquals(2, s.strategies.size)
 
         val signals = mutableListOf<Signal>()
-        for (event in TestData.events(10)) signals += s.generate(event)
+        for (event in TestData.events(10)) signals += s.create(event)
         assertTrue(signals.isEmpty())
     }
 

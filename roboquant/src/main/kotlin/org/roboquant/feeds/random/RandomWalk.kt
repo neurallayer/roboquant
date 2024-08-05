@@ -43,24 +43,22 @@ import java.time.LocalDate
  * @property priceType should PriceBars be generated or plain TradePrice, default is true
  * @property volumeRange what is the volume range, default = 1000
  * @property priceChange the price range, the default is 10 bips.
- * @param template template to use when generating assets
  * @property seed seed to use for initializing the random generator, default is 42
  */
-class   RandomWalk(
+class RandomWalk(
     override val timeframe: Timeframe,
     private val timeSpan: TimeSpan = 1.days,
     nAssets: Int = 10,
     private val priceType: PriceItemType = PriceItemType.BAR,
     private val volumeRange: Int = 1000,
     private val priceChange: Double = 10.bips,
-    template: Asset = Asset("%s"),
     private val seed: Int = 42
 ) : HistoricFeed {
 
     /**
      * The assets contained in this feed. Each asset has a unique symbol name of `template.symbol<nr>`
      */
-    override val assets = randomAssets(template, nAssets)
+    override val assets = randomAssets(nAssets)
 
     /**
      * The timeline

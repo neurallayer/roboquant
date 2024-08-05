@@ -54,10 +54,10 @@ class EventRecorderMetric(val timeSpan: TimeSpan = 1.years) : Metric, AssetFeed 
         }
     }
 
-    override val assets: SortedSet<Asset>
+    override val assets: Set<Asset>
         get() = synchronized(events) {
             events.map { it.items.filterIsInstance<PriceItem>().map { action -> action.asset } }.flatten()
-                .toSortedSet()
+                .toSet()
         }
 
     /**

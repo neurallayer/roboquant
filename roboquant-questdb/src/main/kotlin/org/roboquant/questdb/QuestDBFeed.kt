@@ -53,7 +53,7 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
     /**
      * @see AssetFeed.assets
      */
-    override val assets: SortedSet<Asset> by lazy {
+    override val assets: Set<Asset> by lazy {
         val result = mutableListOf<Asset>()
         engine.query("SELECT DISTINCT asset FROM $tableName;") {
             while (hasNext()) {
@@ -61,7 +61,7 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
                 result.add(Asset.deserialize(str))
             }
         }
-        result.toSortedSet()
+        result.toSet()
     }
 
     /**

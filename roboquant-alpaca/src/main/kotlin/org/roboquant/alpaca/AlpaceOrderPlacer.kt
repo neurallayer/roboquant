@@ -20,7 +20,7 @@ import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderSide
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderType
 import net.jacobpeterson.alpaca.openapi.trader.model.PostOrderRequest
-import org.roboquant.common.AssetType
+
 import org.roboquant.common.UnsupportedException
 import org.roboquant.orders.*
 import net.jacobpeterson.alpaca.openapi.trader.model.TimeInForce as OrderTimeInForce
@@ -83,10 +83,6 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
      * @param order
      */
     fun placeSingleOrder(order: SingleOrder) {
-        val asset = order.asset
-        require(asset.type in setOf(AssetType.STOCK, AssetType.CRYPTO)) {
-            "only stocks and crypto supported, received ${asset.type}"
-        }
 
         val orderRequest = getOrderRequest(order)
         if (orderRequest != null) {

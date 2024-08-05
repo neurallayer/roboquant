@@ -42,6 +42,7 @@ import org.icepear.echarts.origin.util.SeriesOption
 import org.roboquant.brokers.sim.Trade
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
+import org.roboquant.common.USStock
 import org.roboquant.common.getBySymbol
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed
@@ -99,7 +100,7 @@ class PriceBarChart(
         trades: Collection<Trade> = emptyList(),
         timeframe: Timeframe = Timeframe.INFINITE,
         useTime: Boolean = true
-    ) : this(feed, Asset(symbol), trades, timeframe, useTime)
+    ) : this(feed, USStock(symbol), trades, timeframe, useTime)
 
 
     init {

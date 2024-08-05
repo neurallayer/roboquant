@@ -16,7 +16,7 @@
 
 package org.roboquant.feeds.csv
 
-import org.roboquant.common.Asset
+import org.roboquant.common.Exchange
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,9 +25,8 @@ import kotlin.test.assertEquals
 internal class TimeParserTest {
 
     private fun parse(time: String): Instant {
-        val tp = AutoDetectTimeParser(0)
-        val asset = Asset("TEST")
-        return tp.parse(listOf(time), asset)
+        val tp = AutoDetectTimeParser(0,Exchange.AEB)
+        return tp.parse(listOf(time))
     }
 
     @Test

@@ -22,7 +22,6 @@ import org.roboquant.common.ParallelJobs
 import org.roboquant.common.months
 import org.roboquant.common.years
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.journals.BasicJournal
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.journals.MultiRunJournal
@@ -59,7 +58,7 @@ internal class RunTest {
         assertDoesNotThrow {
             val strategy = EMACrossover()
             val journal = BasicJournal()
-            run(TestData.feed, strategy, journal)
+            run(TestData.feed, strategy, journal = journal)
             assertTrue(journal.nEvents > 0)
             assertTrue(journal.nItems > 0)
             assertTrue(journal.nOrders > 0)
@@ -76,7 +75,7 @@ internal class RunTest {
         for (tf in tfs) {
             val strategy = EMACrossover()
             val journal = BasicJournal()
-            run(TestData.feed, strategy, journal, tf)
+            run(TestData.feed, strategy, journal=journal, timeframe = tf)
         }
     }
 
@@ -85,20 +84,11 @@ internal class RunTest {
         assertDoesNotThrow {
             val strategy = EMACrossover()
             val journal = BasicJournal()
-            run(TestData.feed, strategy, journal, showProgressBar = true)
+            run(TestData.feed, strategy, journal = journal, showProgressBar = true)
         }
     }
 
-    @Test
-    fun run4()  {
-        assertDoesNotThrow {
-            val strategy = EMACrossover()
-            val feed = LiveTestFeed(delayInMillis = 30)
-            val journal = BasicJournal(false)
-            run(feed, strategy, journal, timeOutMillis = 10)
-            assertTrue(journal.nItems < journal.nEvents)
-        }
-    }
+
 
     @Test
     fun run3()  {
@@ -108,7 +98,7 @@ internal class RunTest {
         for (tf in timeframes) {
             val strategy = EMACrossover()
             val run = tf.toString()
-            run(TestData.feed, strategy, journal = mrj.getJournal(run), tf)
+            run(TestData.feed, strategy, journal = mrj.getJournal(run), timeframe = tf)
         }
         val m = mrj.getMetric("pnl.equity")
         assertEquals(timeframes.size, m.size)

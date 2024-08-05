@@ -32,7 +32,7 @@ interface Strategy  {
     /**
      * Generate zero or more [instructions][Instruction] based on received [event] and latest [account].
      */
-    fun create(event: Event, account: Account): List<Instruction>
+    fun create(event: Event): List<Signal>
 
 }
 

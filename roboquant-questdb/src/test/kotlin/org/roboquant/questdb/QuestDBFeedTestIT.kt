@@ -67,8 +67,8 @@ internal class QuestDBFeedTestIT {
     fun merge() {
         val recorder = QuestDBFeed("pricebars3", folder.toPath())
         val tf = Timeframe.parse("2020", "2022")
-        val feed1 = RandomWalk(tf, nAssets = 1, template = Asset("ABC"))
-        val feed2 = RandomWalk(tf, nAssets = 1, template = Asset("XYZ"))
+        val feed1 = RandomWalk(tf, nAssets = 1)
+        val feed2 = RandomWalk(tf, nAssets = 1)
 
         // Need to partition when adding out-of-order price actions
         recorder.record<PriceBar>(feed1, partition = "YEAR")
@@ -87,7 +87,7 @@ internal class QuestDBFeedTestIT {
 
         class QuoteFeed : Feed {
             override suspend fun play(channel: EventChannel) {
-                val asset = Asset("TEST")
+                val asset = USStock("TEST")
                 val now = Instant.now()
                 repeat(100) {
                     val action = PriceQuote(asset, 100.0, 10000.0, 100.0, 10000.0)
@@ -117,7 +117,7 @@ internal class QuestDBFeedTestIT {
 
         class TradeFeed : Feed {
             override suspend fun play(channel: EventChannel) {
-                val asset = Asset("TEST")
+                val asset = USStock("TEST")
                 val now = Instant.now()
                 repeat(100) {
                     val action = TradePrice(asset, 100.0, 10000.0)

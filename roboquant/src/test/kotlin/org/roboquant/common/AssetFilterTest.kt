@@ -27,13 +27,13 @@ internal class AssetFilterTest {
     @Test
     fun custom() {
         val fn = AssetFilter { _: Asset, _: Instant -> false }
-        assertFalse(fn.filter(Asset("123"), Instant.now()))
+        assertFalse(fn.filter(USStock("123"), Instant.now()))
     }
 
     @Test
     fun testFilter() {
-        val asset1 = Asset("abc")
-        val assets = listOf(asset1, Asset("BCD"), Asset("CDE"))
+        val asset1 = USStock("abc")
+        val assets = listOf(asset1, USStock("BCD"), USStock("CDE"))
         val time = Instant.now()
         var a = assets.filter { AssetFilter.all().filter(it, time) }
         assertEquals(3, a.size)

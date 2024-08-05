@@ -59,7 +59,7 @@ internal class LiveFeedTest {
                 val scope = CoroutineScope(Dispatchers.Default + Job())
 
                 scope.launch {
-                    val asset = Asset("ABC")
+                    val asset = USStock("ABC")
                     val actions = listOf(TradePrice(asset, 100.0))
 
                     while (true) {
@@ -87,7 +87,7 @@ internal class LiveFeedTest {
         tf.sample(200.millis, 10, resolution = ChronoUnit.MILLIS).forEach {
             jobs.add {
                 val j = MemoryJournal(ProgressMetric())
-                org.roboquant.runAsync(feed, EMACrossover(), j, it)
+                org.roboquant.runAsync(feed, EMACrossover(), journal=j, timeframe=it)
                 val actions = j.getMetric("progress.actions").values.last()
                 assertTrue(actions > 2)
             }

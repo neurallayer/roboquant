@@ -16,6 +16,7 @@
 
 package org.roboquant.ta
 
+import org.roboquant.common.Exchange
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
 
@@ -29,7 +30,7 @@ import java.time.Instant
  *
  * @constructor Create a new instance of PriceBarSeries
  */
-class SameDayPriceBarSeries(capacity: Int) : PriceBarSeries(capacity) {
+class SameDayPriceBarSeries(capacity: Int, private val exchange: Exchange = Exchange.US) : PriceBarSeries(capacity) {
 
     /**
      * Update the existing OHLCV values if [priceBar] is on the same day as the last entry, otherwise add a new entry
@@ -39,7 +40,7 @@ class SameDayPriceBarSeries(capacity: Int) : PriceBarSeries(capacity) {
     override fun add(priceBar: PriceBar, time: Instant): Boolean {
         return when {
             size == 0 -> add(priceBar.ohlcv, time)
-            priceBar.asset.exchange.sameDay(timeline.last(), time) -> update(priceBar.ohlcv, time)
+            exchange.sameDay(timeline.last(), time) -> update(priceBar.ohlcv, time)
             else -> add(priceBar.ohlcv, time)
         }
     }

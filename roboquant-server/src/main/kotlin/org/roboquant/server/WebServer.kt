@@ -108,7 +108,7 @@ open class WebServer(configure: WebServerConfig.() -> Unit = {}) {
         val info = RunInfo(journal, timeframe, pausubaleStrategy, broker)
         runs[name] = info
         logger.info { "Starting new run name=$name timeframe=$timeframe" }
-        org.roboquant.runAsync(feed, pausubaleStrategy, journal, timeframe, broker, channel, timeOutMillis)
+        org.roboquant.runAsync(feed, pausubaleStrategy, journal = journal, timeframe = timeframe, broker = broker, channel = channel, timeOutMillis = timeOutMillis)
     }
 
 }

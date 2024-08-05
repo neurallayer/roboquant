@@ -16,9 +16,7 @@
 
 package org.roboquant.ibkr
 
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Config
+import org.roboquant.common.*
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import kotlin.test.Test
@@ -32,7 +30,7 @@ internal class IBKRHistoricFeedTestIT {
 
         val feed = IBKRHistoricFeed()
         val symbols = listOf("ABN", "ASML", "KPN")
-        val assets = symbols.map { Asset(it, AssetType.STOCK, "EUR", "AEB") }.toTypedArray()
+        val assets = symbols.map { Stock(it, Currency.EUR) }.toTypedArray()
         feed.retrieve(*assets)
         feed.waitTillRetrieved()
         val actions = feed.filter<PriceItem>()
@@ -47,7 +45,7 @@ internal class IBKRHistoricFeedTestIT {
 
         val feed = IBKRHistoricFeed()
         val symbols = listOf("TSLA", "AAPL")
-        val assets = symbols.map { Asset(it, AssetType.STOCK, "USD", "") }.toTypedArray()
+        val assets = symbols.map { USStock(it) }.toTypedArray()
         feed.retrieve(*assets)
         feed.waitTillRetrieved()
         val actions = feed.filter<PriceItem>()

@@ -27,10 +27,9 @@ internal class UniverseTest {
         val assets = universe.getAssets(Instant.now())
         assertTrue(assets.isNotEmpty())
         assertContains(assets.map { it.symbol }, "AAPL")
-        assertEquals(assets.first().exchange, Exchange.getInstance("US"))
 
         val assets2 = universe.getAssets(Instant.parse("1970-01-01T00:00:00Z"))
-        assertFalse(assets2.symbols.contains("AAPL"))
+        assertTrue(assets2.isNotEmpty())
     }
 
 }

@@ -53,7 +53,7 @@ class FeedExchangeRates(
 
 
     private fun setRates(feed: Feed) {
-        val actions = feed.filter<PriceItem> { it.asset.type in assetTypes }
+        val actions = feed.filter<PriceItem>()
         for ((now, action) in actions) {
             val asset = action.asset
             val rate = action.getPrice(priceType)

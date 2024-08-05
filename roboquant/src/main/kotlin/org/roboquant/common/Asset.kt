@@ -17,11 +17,7 @@
 
 package org.roboquant.common
 
-import java.math.BigDecimal
-import java.math.RoundingMode
-import java.time.LocalDate
-import java.time.Month
-import java.time.format.DateTimeFormatter
+import org.roboquant.common.Asset.Companion.SEP
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -36,43 +32,15 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * @property symbol none empty symbol name, for derivatives like options this includes the details that identify the
  * contract
- * @property type type of asset class, default is [AssetType.STOCK]
- * @property currency currency, default is [Currency.USD]
- * @property exchange Exchange this asset is traded on, default is [Exchange.DEFAULT]
+ * @property currency currency,
  * @constructor Create a new asset
  */
-open class Asset(
-    val symbol: String,
-    val type: AssetType = AssetType.STOCK,
-    val currency: Currency = Currency.USD,
-    val exchange: Exchange = Exchange.DEFAULT,
-) : Comparable<Asset> {
+interface Asset : Comparable<Asset> {
 
-    /**
-     * Alternative constructor that allows to use strings to identify the currency and exchange.
-     */
-    constructor(
-        symbol: String,
-        type: AssetType = AssetType.STOCK,
-        currencyCode: String,
-        exchangeCode: String = "",
-    ) : this(symbol, type, Currency.getInstance(currencyCode), Exchange.getInstance(exchangeCode))
+    val symbol: String
+    val currency: Currency
 
-    init {
-        require(symbol.isNotBlank()) { "Symbol in an asset cannot be empty or blank" }
-    }
-
-    fun copy(symbol: String = this.symbol): Asset {
-        return Asset(symbol, this.type, this.currency, this.exchange)
-    }
-
-    override fun toString(): String {
-        return symbol
-    }
-
-    open fun serialize() : String {
-        return "$symbol$SEP$type$SEP$currency$SEP${exchange.exchangeCode}"
-    }
+    fun serialize() : String
 
     /**
      * Contains methods to create specific asset types, like options or futures using international standards to
@@ -84,58 +52,15 @@ open class Asset(
 
         private val cache = ConcurrentHashMap<String, Asset>()
 
+        val registry = mutableMapOf<String, (String) -> Asset>()
+
         fun deserialize(value: String): Asset {
             return cache.getOrPut(value) {
-                val v = value.split(SEP)
-                Asset(v[0], AssetType.valueOf(v[1]), v[2], v[3])
+                val (assetType, serString) = value.split(SEP, limit = 2)
+                registry.getValue(assetType)(serString)
             }
         }
 
-
-        /**
-         * Returns a future contract based on the provided parameters. It will generate a [symbol] name using the
-         * Future Contract Trading Code standard.
-         */
-        fun futureContract(
-            symbol: String,
-            month: Month,
-            year: Int,
-            currencyCode: String = "USD",
-            exchangeCode: String = "",
-        ): Asset {
-            val months = arrayOf('F', 'G', 'H', 'J', 'K', 'M', 'N', 'Q', 'U', 'V', 'X', 'Z')
-            val monthEncoding = months[month.value - 1]
-            val yearCode = year.toString()
-            val futureSymbol = "$symbol$monthEncoding${yearCode.takeLast(2)}"
-            return Asset(futureSymbol, AssetType.FUTURES, currencyCode, exchangeCode)
-        }
-
-        /**
-         * Return a Crypto asset based on the [base] currency, [quote] currency and [exchangeCode]
-         */
-        fun crypto(base: String, quote: String, exchangeCode: String) =
-            Asset("$base/$quote", AssetType.CRYPTO, quote, exchangeCode)
-
-        /**
-         * Returns a forex currency pair asset based on the provided [symbol]. This method will try to determine the
-         * base and quote currency based on the provided symbol name.
-         */
-        fun forexPair(symbol: String): Asset {
-            val codes = symbol.split('_', '-', ' ', '/', ':')
-            val (base, quote) = if (codes.size == 2) {
-                val c1 = codes.first().uppercase()
-                val c2 = codes.last().uppercase()
-                Pair(c1, c2)
-            } else if (codes.size == 1 && symbol.length == 6) {
-                // We assume a 3-3 split
-                val c1 = symbol.substring(0, 3).uppercase()
-                val c2 = symbol.substring(3, 6).uppercase()
-                Pair(c1, c2)
-            } else {
-                throw UnsupportedException("Cannot parse $symbol to currency pair")
-            }
-            return Asset("$base/$quote", AssetType.FOREX, quote, "FOREX")
-        }
 
     }
 
@@ -147,101 +72,88 @@ open class Asset(
         return if (size.iszero) Amount(currency, 0.0) else Amount(currency, size.toDouble() * price)
     }
 
-    /**
-     * Faster hashcode that is well distributed than the default data class generated one
-     */
-    override fun hashCode(): Int {
-        return symbol.hashCode()
-    }
 
-    /**
-     * Compares this asset with the [other] asset for order based on the [symbol] name. Returns zero if this asset
-     * is equal to the specified [other] asset, a negative number if it's less than [other], or a positive number
-     * if it's greater than [other].
-     */
     override fun compareTo(other: Asset): Int {
-        return symbol.compareTo(other.symbol)
+        return this.symbol.compareTo(other.symbol)
     }
 
-    /**
-     * Return the contract size for a given [amount] and [price]. The provided amount and price should be denoted in
-     * the currency of the asset. When rounding is required, this method will always round down.
-     *
-     * It supports fractional sizes by providing a number of [fractions] bigger than 0.
-     */
-    fun contractSize(amount: Double, price: Double, fractions: Int = 0): Size {
-        require(fractions >= 0) { "factions has to be >= 0, found $fractions" }
-        val singleContractValue = value(Size.ONE, price).value
-        val size = BigDecimal(amount / singleContractValue).setScale(fractions, RoundingMode.DOWN)
-        return Size(size)
-    }
 
-    /**
-     * @see Object.equals
-     */
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Asset
-
-        if (symbol != other.symbol) return false
-        if (type != other.type) return false
-        if (currency != other.currency) return false
-        return exchange == other.exchange
-    }
 
 }
 
-open class OptionContract(
-    symbol: String,
-    currency: Currency = Currency.USD,
-    exchange: Exchange = Exchange.DEFAULT,
-    val contractSize: Double = 100.0,
-) : Asset(symbol, AssetType.OPTION, currency, exchange) {
 
-    override fun value(size: Size, price: Double): Amount {
-        return if (size.iszero) Amount(currency, 0.0) else Amount(currency, size.toDouble() * contractSize * price)
+data class Crypto(override val symbol: String, override val currency: Currency) :Asset {
+
+    override fun serialize(): String {
+        return "Crypto$SEP$symbol$SEP$currency"
     }
 
     companion object {
 
-        /**
-         * Returns an option contract using the OCC (`Options Clearing Corporation`) option symbol standard.
-         * The OCC option symbol string consists of four parts:
-         *
-         * 1. Uppercase [symbol] of the underlying stock or ETF, padded with trailing spaces to six characters
-         * 2. The [expiration] date, in the format `yymmdd`
-         * 3. The Option [type], single character either P(ut) or C(all)
-         * 4. The strike price, as the [price] x 1000, front padded with zeros to make it eight digits
-         */
-        fun from(
-            symbol: String,
-            expiration: LocalDate,
-            type: Char,
-            price: BigDecimal,
-            currencyCode: String = "USD",
-            exchangeCode: String = "",
-            contractSize: Double = 100.0
-        ): OptionContract {
-            require(symbol.isNotBlank()) { "Symbol cannot be blank" }
-            require(type in setOf('P', 'C')) { "Type should be P or C" }
-            val formatter = DateTimeFormatter.ofPattern("yyMMdd")
-            val optionSymbol = "%-6s".format(symbol.uppercase()) +
-                    expiration.format(formatter) +
-                    type.uppercase() +
-                    "%08d".format(price.multiply(BigDecimal(1000)).toInt())
+        init {
+            Asset.registry["Crypto"] = Crypto::deserialize
+        }
 
-            return OptionContract(
-                optionSymbol,
-                Currency.getInstance(currencyCode),
-                Exchange.getInstance(exchangeCode),
-                contractSize,
-            )
+        private fun deserialize(value: String): Asset {
+            val (symbol, currencyCode) = value.split(SEP)
+            return Crypto(symbol, Currency.getInstance(currencyCode))
+        }
+
+        fun fromSymbol(symbol: String): Crypto {
+            return Crypto(symbol, Currency.USD) // TODO
         }
     }
 
 }
+
+
+data class Stock(override val symbol: String, override val currency: Currency = Currency.USD) :Asset {
+
+    override fun serialize(): String {
+        return "Stock$SEP$symbol$SEP$currency"
+    }
+}
+
+
+
+data class Forex(override val symbol: String, override val currency: Currency) :Asset {
+
+    override fun serialize(): String {
+        return "Forex$SEP$symbol$SEP$currency"
+    }
+
+    companion object {
+        fun fromSymbol(symbol: String): Forex {
+            return Forex(symbol, Currency.USD) // TODO
+        }
+    }
+}
+
+
+
+data class USStock(override val symbol: String) :Asset {
+
+    override val currency: Currency
+        get() = Currency.USD
+
+    override fun serialize() : String {
+        return "USStock$SEP$symbol"
+    }
+
+    companion object {
+
+        init {
+            Asset.registry["USStock"] = USStock::deserialize
+        }
+
+        private fun deserialize(value: String): Asset {
+            return USStock(value)
+        }
+    }
+
+}
+
+
 
 /**
  * Get an asset based on its [symbol] name. Will throw a NoSuchElementException if no asset is found. If there are
@@ -277,8 +189,12 @@ fun Collection<Asset>.findByCurrencies(currencyCodes: Collection<String>): List<
 val Collection<Asset>.symbols: Array<String>
     get() = map { it.symbol }.distinct().toTypedArray()
 
-/**
- * Select [n] random assets from a collection, without duplicates. [n] has to equal or smaller than the size of the
- * collection
- */
-fun Collection<Asset>.random(n: Int): List<Asset> = shuffled().take(n)
+
+fun main() {
+    val apple = USStock("AAPL")
+    val appleSer = apple.serialize()
+    println(Asset.deserialize(appleSer))
+
+    val abn = Stock("ABNA", Currency.EUR)
+    println(abn.serialize())
+}

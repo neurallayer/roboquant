@@ -31,10 +31,10 @@ internal class IBKRLiveFeedTestIT {
         Config.getProperty("test.ibkr") ?: return
 
         val feed = IBKRLiveFeed()
-        val assets = listOf(Asset("ABN", AssetType.STOCK, "EUR", "AEB"))
+        val assets = listOf(Stock("ABN", Currency.EUR))
         feed.subscribe(assets, interval = 1)
 
-        feed.subscribe(Asset("KPN", AssetType.STOCK, "EUR", "AEB"))
+        feed.subscribe(Stock("KPN", Currency.EUR))
 
         val actions = feed.filter<PriceItem>(Timeframe.next(2.minutes)) {
             logger.info("received price $it")

@@ -67,7 +67,7 @@ private class SP500 : Universe {
             val us = Exchange.getInstance("US")
             assets = builder.map {
                 val symbol = it.getField("Symbol")
-                val asset = Asset(symbol, currency = USD)
+                val asset = Stock(symbol, USD)
                 val date = it.getField("Date")
                 val startDate = if (date.isNotEmpty()) LocalDate.parse(it.getField("Date")) else startSP500
                 val start = startDate.atTime(0, 0).atZone(us.zoneId).toInstant()

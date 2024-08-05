@@ -20,7 +20,7 @@ internal class MultiRunJournalTest {
         }
         val tfs = feed.timeframe.split(1.years)
         for (tf in tfs) {
-            run(feed, EMACrossover(), mrj.getJournal(), timeframe=tf)
+            run(feed, EMACrossover(), journal=mrj.getJournal(), timeframe=tf)
         }
         assertContains(mrj.getMetricNames(), "account.equity")
         assertEquals(tfs.size, mrj.getRuns().size)

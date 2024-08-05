@@ -34,15 +34,15 @@ import org.roboquant.feeds.Event
  * @property strategies The strategies to process in parallel
  * @constructor Create a new parallel strategy
  */
-class ParallelStrategy(val strategies: Collection<SignalStrategy>, private val signalResolver: SignalResolver? = null) :
-    SignalStrategy() {
+class ParallelStrategy(val strategies: Collection<Strategy>, private val signalResolver: SignalResolver? = null) :
+    Strategy {
 
     private val scope = CoroutineScope(Dispatchers.Default + Job())
 
     /**
      * Create a new parallel strategy using the provided [strategies]
      */
-    constructor(vararg strategies: SignalStrategy, signalResolver: SignalResolver? = null) : this(
+    constructor(vararg strategies: Strategy, signalResolver: SignalResolver? = null) : this(
         strategies.toList(),
         signalResolver
     )
@@ -50,13 +50,13 @@ class ParallelStrategy(val strategies: Collection<SignalStrategy>, private val s
     /**
      * @see SignalStrategy.generate
      */
-    override fun generate(event: Event): List<Signal> {
+    override fun create(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
         runBlocking {
             val deferredList = mutableListOf<Deferred<List<Signal>>>()
             for (strategy in strategies) {
                 val deferred = scope.async {
-                    strategy.generate(event)
+                    strategy.create(event)
                 }
                 deferredList.add(deferred)
             }

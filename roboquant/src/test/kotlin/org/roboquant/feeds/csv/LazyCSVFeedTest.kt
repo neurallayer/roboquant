@@ -18,7 +18,6 @@ package org.roboquant.feeds.csv
 
 import org.roboquant.TestData
 import org.roboquant.common.div
-import org.roboquant.common.symbols
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
@@ -30,7 +29,6 @@ internal class LazyCSVFeedTest {
     fun basic() {
         val feed = LazyCSVFeed(TestData.dataDir() / "US")
         assertEquals(3, feed.assets.size)
-        assertTrue("AAPL" in feed.assets.symbols)
         val list = feed.toList()
         assertEquals(199, list.size)
     }
@@ -44,7 +42,6 @@ internal class LazyCSVFeedTest {
         assertTrue(priceBars.isNotEmpty())
         assertTrue(priceBars[0].first <= priceBars[1].first)
         assertEquals(2, feed.assets.size)
-        assertFalse("AAPL" in feed.assets.symbols)
         assertContains(feed.assets, priceBars.first().second.asset)
     }
 

@@ -51,7 +51,7 @@ internal class QuestDBSamples {
 
         for (tf in feed.timeframe.split(1.years)) {
             jobs.add {
-                val acc = runAsync(feed, EMACrossover(),mrj.getJournal(), timeframe = tf)
+                val acc = runAsync(feed, EMACrossover(), journal = mrj.getJournal(), timeframe = tf)
                 println(acc)
             }
         }

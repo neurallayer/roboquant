@@ -82,7 +82,7 @@ internal class IBKRSamples {
         val account = broker.sync()
         println(account)
 
-        val asset = Asset("TSLA", AssetType.STOCK, "USD", "SMART")
+        val asset = USStock("TSLA")
         val order = BracketOrder.limitTrailStop(
             asset,
             Size.ONE,
@@ -101,9 +101,9 @@ internal class IBKRSamples {
     @Test
     internal fun simplePaperTrade() {
         // Lets trade these 3 tech stock
-        val tsla = Asset("TSLA", AssetType.STOCK, "USD")
-        val msft = Asset("MSFT", AssetType.STOCK, "USD")
-        val googl = Asset("GOOGL", AssetType.STOCK, "USD")
+        val tsla = USStock("TSLA")
+        val msft = USStock("MSFT")
+        val googl = USStock("GOOGL")
 
         // Link the asset to an IBKR contract-id.
         IBKR.register(76792991, tsla)
@@ -129,7 +129,7 @@ internal class IBKRSamples {
     @Test
     internal fun liveFeedEU() {
         val feed = IBKRLiveFeed()
-        val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
+        val asset = Stock("ABN", Currency.EUR)
         feed.subscribe(listOf(asset))
         val tf = Timeframe.next(10.minutes)
         val data = feed.filter<PriceItem>(tf) {
@@ -143,7 +143,7 @@ internal class IBKRSamples {
     @Test
     internal fun liveFeedUS() {
         val feed = IBKRLiveFeed()
-        val asset = Asset("TSLA", AssetType.STOCK, "USD")
+        val asset = USStock("TSLA")
         feed.subscribe(listOf(asset))
         val tf = Timeframe.next(1.minutes)
         val data = feed.filter<PriceItem>(tf) {
@@ -160,7 +160,7 @@ internal class IBKRSamples {
 
         // This assumes you have a valid market subscription for European stocks
         val symbols = listOf("ABN", "ASML", "KPN")
-        val assets = symbols.map { Asset(it, AssetType.STOCK, "EUR", "AEB") }
+        val assets = symbols.map { Stock(it, Currency.EUR) }
         feed.retrieve(assets)
         feed.waitTillRetrieved()
         println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
@@ -173,7 +173,7 @@ internal class IBKRSamples {
 
         // This assumes you have a valid market subscription for European stocks
         val symbols = listOf("TSLA", "GOOGL", "JPM")
-        val assets = symbols.map { Asset(it, AssetType.STOCK, "USD", "") }
+        val assets = symbols.map { USStock(it) }
         feed.retrieve(assets)
         feed.waitTillRetrieved()
         println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
@@ -186,26 +186,13 @@ internal class IBKRSamples {
 
         // This assumes you have a valid market subscription for European stocks
         val symbols = listOf("ABN", "ASML", "KPN")
-        val assets = symbols.map { Asset(it, AssetType.STOCK, "EUR", "AEB") }
+        val assets = symbols.map { Stock(it, Currency.EUR) }
         feed.retrieve(assets, duration = "5 D", barSize = "1 min")
         feed.waitTillRetrieved()
         println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
         feed.disconnect()
     }
 
-    @Test
-    internal fun historicFuturesFeed() {
-        val feed = IBKRHistoricFeed()
 
-        // This assumes you have a valid market data subscriptions for these futures
-        val assets = listOf(
-            Asset("FGBL MAR 23", AssetType.FUTURES, "EUR", "EUREX"),
-            Asset("GCZ2", AssetType.FUTURES, "USD", "NYMEX"),
-        )
-        feed.retrieve(assets)
-        feed.waitTillRetrieved()
-        println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
-        feed.disconnect()
-    }
 
 }

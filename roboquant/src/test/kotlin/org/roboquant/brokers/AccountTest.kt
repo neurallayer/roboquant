@@ -44,7 +44,7 @@ internal class AccountTest {
         val e = account.equity()
         assertTrue(e.isEmpty())
 
-        assertEquals(Size.ZERO, account.positionSize(Asset("Dummy")))
+        assertEquals(Size.ZERO, account.positionSize(USStock("Dummy")))
 
     }
 
@@ -58,7 +58,7 @@ internal class AccountTest {
     @Test
     fun trades() {
         val time = Instant.now()
-        val trades = listOf(Trade(time, Asset("ABC"), Size(10), 10.0, 0.0, 0.0, "1"))
+        val trades = listOf(Trade(time, USStock("ABC"), Size(10), 10.0, 0.0, 0.0, "1"))
         assertEquals(1, trades.timeline.size)
         assertEquals(Timeframe(time, time, true), trades.timeframe)
     }

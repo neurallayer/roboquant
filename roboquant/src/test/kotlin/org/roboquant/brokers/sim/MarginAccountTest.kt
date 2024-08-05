@@ -19,11 +19,9 @@ package org.roboquant.brokers.sim
 import org.roboquant.TestData
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
-import org.roboquant.common.Amount
-import org.roboquant.common.Asset
+import org.roboquant.common.*
+import org.roboquant.common.Currency.Companion.JPY
 import org.roboquant.common.Currency.Companion.USD
-import org.roboquant.common.JPY
-import org.roboquant.common.USD
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.MarketOrder
@@ -74,7 +72,7 @@ internal class MarginAccountTest {
         // Slide-2 example in code
         val initial = 1_000_000.JPY
         val broker = getSimBroker(initial, MarginAccount())
-        val abc = Asset("ABC", currencyCode = "JPY")
+        val abc = Stock("ABC", JPY)
 
         var account = update(broker, abc, 1000)
         assertEquals(2_000_000.JPY, account.buyingPower)
@@ -102,7 +100,7 @@ internal class MarginAccountTest {
         // The example on slide-3 in code
         val initial = 20_000.USD
         val broker = getSimBroker(initial, MarginAccount())
-        val abc = Asset("ABC", currencyCode = "USD")
+        val abc = USStock("ABC")
 
         var account = update(broker, abc, 200, -50)
         assertEquals(34_000.USD, account.buyingPower)

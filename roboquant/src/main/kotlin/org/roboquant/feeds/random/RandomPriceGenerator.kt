@@ -18,6 +18,8 @@ package org.roboquant.feeds.random
 
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
+import org.roboquant.common.Currency
+import org.roboquant.common.Stock
 import org.roboquant.common.TimeSpan
 import org.roboquant.feeds.*
 import java.util.*
@@ -99,11 +101,10 @@ private fun randomNames(size: Int, len: Int): Set<String> {
 /**
  * Create assets with random names based on a template
  */
-internal fun randomAssets(template: Asset, nAssets: Int): SortedSet<Asset> {
+internal fun randomAssets(nAssets: Int): Set<Asset> {
     val uniqueNames = randomNames(nAssets, 5)
     val assets = uniqueNames.map {
-        val symbol = template.symbol.format(it)
-        template.copy(symbol = symbol)
+        Stock(symbol = it, Currency.USD)
     }
-    return assets.toSortedSet()
+    return assets.toSet()
 }

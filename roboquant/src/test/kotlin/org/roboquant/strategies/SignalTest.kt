@@ -16,7 +16,8 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.common.Asset
+import org.roboquant.common.Currency
+import org.roboquant.common.Stock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -25,14 +26,14 @@ internal class SignalTest {
 
     @Test
     fun basic() {
-        val c = Asset("AAPL")
-        val s = Signal.buy("AAPL")
+        val c = Stock("AAPL", Currency.USD)
+        val s = Signal.buy(c)
 
         assertEquals(s.asset, c)
 
         assertEquals(1.0, s.rating)
 
-        val s2 = Signal.sell("AAPL")
+        val s2 = Signal.sell(c)
         assertTrue(s2.conflicts(s))
         assertTrue(!s2.conflicts(s2))
 

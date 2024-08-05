@@ -17,6 +17,7 @@
 package org.roboquant.feeds.csv
 
 import org.roboquant.common.*
+import org.roboquant.common.Currency
 import java.io.File
 import java.nio.file.Path
 import java.time.Instant
@@ -36,7 +37,6 @@ import kotlin.io.path.div
  *
  * @property filePattern file patterns to take into considerations
  * @property fileSkip list of files to skip
- * @property template The template to use in the default [assetBuilder]
  * @property hasHeader do the CSV files have a header, default is true
  * @property separator the field separator character, default is ',' (comma)
  * @property timeParser the parser to use for parsing the time column(s)
@@ -47,13 +47,13 @@ import kotlin.io.path.div
 data class CSVConfig(
     var filePattern: String = ".*.csv",
     var fileSkip: List<String> = emptyList(),
-    var template: Asset = Asset("TEMPLATE"),
     var hasHeader: Boolean = true,
     var separator: Char = ',',
     var timeParser: TimeParser = AutoDetectTimeParser(),
     var priceParser: PriceParser = PriceBarParser(),
-    var assetBuilder: AssetBuilder = DefaultAssetBuilder(template)
+    var assetBuilder: AssetBuilder = StockBuilder()
 ) {
+
 
     private val pattern by lazy { Pattern.compile(filePattern) }
 
@@ -69,37 +69,31 @@ data class CSVConfig(
 
         /**
          * Returns a CSVConfig suited for parsing stooq.pl CSV files
-         *
-         * @param template the asset template to use to map symbols to assets
          */
-        fun stooq(template: Asset = Asset("TEMPLATE")): CSVConfig {
-            fun file2Symbol(file: File): String {
-                return file.name.removeSuffix(".us.txt").replace('-', '.').uppercase()
-            }
+        fun stooq(): CSVConfig {
 
             return CSVConfig(
                 filePattern = ".*.txt",
                 timeParser = AutoDetectTimeParser(2),
-                assetBuilder = { file: File -> template.copy(symbol = file2Symbol(file)) }
+                assetBuilder = { name: String -> Stock(name.removeSuffix(".us.txt").replace('-', '.').uppercase(), Currency.USD) }
             )
         }
+
 
         /**
          * Returns a CSVConfig suited for parsing MT5 CSV files
          *
-         * @param template the asset template to use to map symbols to assets
          * @param priceQuote does the CSV file contain quotes, default is false (meaning price-bars are implied)
          * @param timeSpan the timespan to use when creating price bars, default is null
          */
         fun mt5(
-            template: Asset = Asset("TEMPLATE"),
             priceQuote: Boolean = false,
             timeSpan: TimeSpan? = null
         ): CSVConfig {
 
-            fun assetBuilder(file: File): Asset {
-                val symbol = file.name.split('_').first().uppercase()
-                return template.copy(symbol = symbol)
+            fun assetBuilder(name: String): Asset {
+                val symbol = name.split('_').first().uppercase()
+                return Stock(symbol, Currency.USD)
             }
 
             val dtf = if (priceQuote)
@@ -119,7 +113,7 @@ data class CSVConfig(
             return CSVConfig(
                 assetBuilder = { assetBuilder(it) },
                 separator = '\t',
-                timeParser = { a, _ -> parse(a) },
+                timeParser = { a -> parse(a) },
                 priceParser = priceParser
             )
 
@@ -134,9 +128,10 @@ data class CSVConfig(
                 timeParser = AutoDetectTimeParser(0),
                 separator = ';',
                 hasHeader = false,
-                assetBuilder = { file: File ->
-                    val currencyPair = file.name.split('_')[2]
-                    Asset.forexPair(currencyPair)
+                assetBuilder = { name: String ->
+                    val symbol = name.split('_')[2]
+                    val currency = symbol.toCurrencyPair()!!
+                    Forex(symbol, currency.second)
                 }
             )
             return result
@@ -147,15 +142,15 @@ data class CSVConfig(
          *
          * @param template the asset template to use to map symbols to assets
          */
-        fun yahoo(template: Asset = Asset("TEMPLATE")): CSVConfig {
+        fun yahoo(currency: Currency = Currency.USD): CSVConfig {
             val result = CSVConfig(
                 priceParser = PriceBarParser(1, 2, 3, 4, autodetect = false),
-                timeParser = { columns, _ -> Instant.parse(columns[0]) },
+                timeParser = { columns -> Instant.parse(columns[0]) },
                 separator = ',',
                 hasHeader = true,
-                assetBuilder = { file: File ->
-                    val symbol = file.name.split(' ')[0].uppercase()
-                    template.copy(symbol = symbol)
+                assetBuilder = { name: String ->
+                    val symbol = name.split(' ')[0].uppercase()
+                    Stock(symbol = symbol, currency)
                 }
             )
             return result
@@ -168,18 +163,13 @@ data class CSVConfig(
          * the same asset at the same time.
          */
         fun kraken(): CSVConfig {
-            val exchange = Exchange.CRYPTO
             val result = CSVConfig(
                 priceParser = TradePriceParser(1, 2),
-                timeParser = { columns, _ -> Instant.ofEpochSecond(columns[0].toLong()) },
+                timeParser = { columns -> Instant.ofEpochSecond(columns[0].toLong()) },
                 hasHeader = false,
-                assetBuilder = { file: File ->
-                    val currencyPair = file.nameWithoutExtension.toCurrencyPair()!!
-                    Asset.crypto(
-                        currencyPair.first.currencyCode,
-                        currencyPair.second.currencyCode,
-                        exchange.exchangeCode
-                    )
+                assetBuilder = { name: String ->
+                    val currencyPair = name.toCurrencyPair()!!
+                    Crypto(name, currencyPair.second)
                 }
             )
             return result
@@ -221,14 +211,7 @@ data class CSVConfig(
         return file.isFile && pattern.matcher(name).matches() && name !in fileSkip
     }
 
-    private fun getAssetTemplate(config: Map<String, String>): Asset {
-        return Asset(
-            symbol = config.getOrDefault("symbol", "TEMPLATE"),
-            type = AssetType.valueOf(config.getOrDefault("type", "STOCK")),
-            currencyCode = config.getOrDefault("currency", "USD"),
-            exchangeCode = config.getOrDefault("exchange", "")
-        )
-    }
+
 
     /**
      * Merge a config map into this CSV config
@@ -236,8 +219,6 @@ data class CSVConfig(
      * @param config
      */
     private fun merge(config: Map<String, String>) {
-        val assetConfig = config.filter { it.key.startsWith("asset.") }.mapKeys { it.key.substring(6) }
-        template = getAssetTemplate(assetConfig)
         for ((key, value) in config) {
             logger.debug { "Found property key=$key value=$value" }
             when (key) {
@@ -257,7 +238,7 @@ data class CSVConfig(
      * @return
      */
     internal fun processLine(line: List<String>, asset: Asset): PriceEntry {
-        val now = timeParser.parse(line, asset)
+        val now = timeParser.parse(line)
         val action = priceParser.parse(line, asset)
         return PriceEntry(now, action)
     }

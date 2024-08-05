@@ -19,6 +19,7 @@ package org.roboquant.strategies
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.Asset
+import org.roboquant.common.USStock
 import org.roboquant.common.RoboquantException
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -51,32 +52,32 @@ internal class HistoricPriceSignalStrategyTest {
     fun test() {
         val c = MySubClass1()
         val event = TestData.event()
-        val signals = c.generate(event)
+        val signals = c.create(event)
         assertTrue(signals.isEmpty())
         assertFalse(c.called)
 
-        repeat(10) { c.generate(event) }
+        repeat(10) { c.create(event) }
         assertTrue(c.called)
 
         c.reset()
         c.called = false
-        c.generate(event)
+        c.create(event)
         assertFalse(c.called)
     }
 
     @Test
     fun test2() {
         val c = MySubClass2()
-        val signals = c.generate(TestData.event2())
+        val signals = c.create(TestData.event2())
         assertTrue(signals.isEmpty())
         assertFalse(c.called)
 
-        repeat(10) { c.generate(TestData.event2()) }
+        repeat(10) { c.create(TestData.event2()) }
         assertTrue(c.called)
 
         c.reset()
         c.called = false
-        c.generate(TestData.event2())
+        c.create(TestData.event2())
         assertFalse(c.called)
     }
 
@@ -84,9 +85,9 @@ internal class HistoricPriceSignalStrategyTest {
     fun test3() {
         val c = MySubclass3()
         assertThrows<RoboquantException> {
-            c.generate(TestData.event())
-            c.generate(TestData.event())
-            c.generate(TestData.event())
+            c.create(TestData.event())
+            c.create(TestData.event())
+            c.create(TestData.event())
         }
 
     }

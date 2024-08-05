@@ -18,6 +18,7 @@ package org.roboquant.orders
 
 import org.roboquant.TestData
 import org.roboquant.common.Asset
+import org.roboquant.common.USStock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

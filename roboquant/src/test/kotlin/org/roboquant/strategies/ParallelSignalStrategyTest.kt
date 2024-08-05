@@ -29,9 +29,9 @@ internal class ParallelSignalStrategyTest {
         val s3 = ParallelStrategy(s1, s2)
 
         for (event in TestData.events(100)) {
-            val r1 = s1.generate(event)
-            val r2 = s2.generate(event)
-            val r3 = s3.generate(event)
+            val r1 = s1.create(event)
+            val r2 = s2.create(event)
+            val r3 = s3.create(event)
             assertEquals(setOf(r1 + r2), setOf(r3))
         }
     }

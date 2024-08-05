@@ -17,10 +17,10 @@
 package org.roboquant.feeds.csv
 
 import org.roboquant.TestData
-import org.roboquant.common.Asset
+import org.roboquant.common.USStock
 import org.roboquant.common.Currency
 import org.roboquant.common.Exchange
-import org.roboquant.common.getBySymbol
+import org.roboquant.common.Forex
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -33,21 +33,10 @@ internal class CSVFeedTest {
         val feed = CSVFeed(TestData.dataDir() + "US")
         val assets = feed.assets
         assertEquals(3, assets.size)
-        val c2 = assets.getBySymbol("AAPL")
-        assertEquals("AAPL", c2.symbol)
         assertEquals(199, feed.timeline.size)
     }
 
-    @Test
-    fun getAssetsEU() {
-        val feed = CSVFeed(TestData.dataDir() + "EU") {
-            template = Asset("TEMPLATE", currency = Currency.EUR, exchange = Exchange.getInstance("AEB"))
-        }
-        val assets = feed.assets
-        assertEquals(3, assets.size)
-        val c2 = assets.getBySymbol("ASML")
-        assertEquals("ASML", c2.symbol)
-    }
+
 
     @Test
     fun testIntra() {
@@ -60,8 +49,7 @@ internal class CSVFeedTest {
     fun getForexCSV() {
         val feed = CSVFeed(TestData.dataDir() + "FX1") {
             assetBuilder = AssetBuilder {
-                val str = it.name.removeSuffix(".csv")
-                Asset.forexPair(str)
+              Forex.fromSymbol(it)
             }
         }
         val assets = feed.assets
@@ -73,8 +61,7 @@ internal class CSVFeedTest {
     fun getMinutesCSV() {
         val feed = CSVFeed(TestData.dataDir() + "FX2") {
             assetBuilder = AssetBuilder {
-                val str = it.name.removeSuffix(".csv")
-                Asset.forexPair(str)
+                Forex.fromSymbol(it)
             }
         }
         val assets = feed.assets

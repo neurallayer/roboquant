@@ -46,7 +46,7 @@ class EMACrossover(
     smoothing: Double = 2.0,
     private val minEvents: Int = slowPeriod,
     private val priceType: String = "DEFAULT"
-) : SignalStrategy() {
+) : Strategy {
 
     private val fast = 1.0 - (smoothing / (fastPeriod + 1))
     private val slow = 1.0 - (smoothing / (slowPeriod + 1))
@@ -96,7 +96,7 @@ class EMACrossover(
         fun getDirection() = if (emaFast > emaSlow) 1.0 else -1.0
     }
 
-    override fun generate(event: Event): List<Signal> {
+    override fun create(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
         for ((asset, priceItem) in event.prices) {
             val price = priceItem.getPrice(priceType)

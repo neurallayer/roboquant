@@ -37,7 +37,7 @@ internal class AlphaBetaMetricTest {
         val strategy = EMACrossover.PERIODS_5_15
         val alphaBetaMetric = AlphaBetaMetric(50)
         val logger = MemoryJournal(alphaBetaMetric)
-        org.roboquant.run(feed, strategy,logger)
+        org.roboquant.run(feed, strategy, journal = logger)
 
         val alpha = logger.getMetric("account.alpha").last().value
         assertTrue(!alpha.isNaN())

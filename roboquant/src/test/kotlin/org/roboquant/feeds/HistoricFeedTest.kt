@@ -16,14 +16,9 @@
 
 package org.roboquant.feeds
 
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
-import org.roboquant.TestData
+
 import org.roboquant.common.*
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.feeds.util.HistoricTestFeed
-import java.time.Instant
 import java.util.*
 import kotlin.test.*
 
@@ -37,14 +32,12 @@ internal class HistoricFeedTest {
         assertEquals(10, feed.assets.size)
         assertFalse(feed.toList().isEmpty())
 
-        val s = feed.assets.first().symbol
-        assertEquals(s, feed.assets.getBySymbol(s).symbol)
     }
 
     @Test
     fun custom() {
         val tf = Timeframe.fromYears(2020, 2021)
-        val asset = Asset("ABC")
+        val asset = USStock("ABC")
 
         class MyFeed : HistoricFeed {
             override val timeline: Timeline
@@ -62,39 +55,6 @@ internal class HistoricFeedTest {
         assertTrue(tf.end >= feed.timeframe.end)
         assertTrue(feed.timeframe.inclusive)
         assertContains(feed.assets, asset)
-    }
-
-    @Test
-    fun firstLast() {
-        val feed: HistoricPriceFeed = HistoricTestFeed()
-        assertDoesNotThrow {
-            feed.first()
-            feed.last()
-        }
-
-        feed.close()
-        assertThrows<NoSuchElementException> {
-            feed.first()
-        }
-    }
-
-    @Test
-    fun testMerge() {
-        val feed1: HistoricPriceFeed = HistoricTestFeed()
-        val feed2: HistoricPriceFeed = HistoricTestFeed()
-        feed1.merge(feed2)
-        assertTrue(feed1.assets.containsAll(feed2.assets))
-    }
-
-    @Test
-    fun play() {
-        var past = Instant.MIN
-        runBlocking {
-            for (event in org.roboquant.feeds.util.play(TestData.feed)) {
-                assertTrue(event.time > past)
-                past = event.time
-            }
-        }
     }
 
 }

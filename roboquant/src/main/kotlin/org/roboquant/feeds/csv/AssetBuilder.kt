@@ -17,7 +17,10 @@
 package org.roboquant.feeds.csv
 
 import org.roboquant.common.Asset
+import org.roboquant.common.Currency
+import org.roboquant.common.Stock
 import java.io.File
+
 
 /**
  *
@@ -25,27 +28,24 @@ import java.io.File
 fun interface AssetBuilder {
 
     /**
-     * Based on a [file], return an instance of [Asset]
+     * Based on a [name], return an instance of [Asset]
      */
-    fun build(file: File): Asset
+    fun build(name: String): Asset
 }
 
 /**
- * The default asset builder uses a file name without its extension as the symbol name. It uses the [template] for
- * the other attributes of the asset.
- *
- * @property template the asset to use as a template.
+ * The default asset builder uses a file name without its extension as the symbol name.
  */
-class DefaultAssetBuilder(private val template: Asset) : AssetBuilder {
+class StockBuilder(private val currency: Currency = Currency.USD) : AssetBuilder {
 
     private val notCapital = Regex("[^A-Z]")
 
     /**
      * @see AssetBuilder.build
      */
-    override fun build(file: File): Asset {
-        val symbol = file.nameWithoutExtension.uppercase().replace(notCapital, ".")
-        return template.copy(symbol = symbol)
+    override fun build(name: String): Asset {
+        val symbol = name.uppercase().replace(notCapital, ".")
+        return Stock(symbol, currency)
     }
 
 }

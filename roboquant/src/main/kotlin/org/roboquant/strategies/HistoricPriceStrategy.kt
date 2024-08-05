@@ -32,14 +32,14 @@ import org.roboquant.feeds.Event
 abstract class HistoricPriceStrategy(
     private val period: Int,
     private val priceType: String = "DEFAULT",
-) : SignalStrategy() {
+) : Strategy {
 
     /**
      * Contain the history of all assets
      */
     private val history = mutableMapOf<Asset, PriceSeries>()
 
-    override fun generate(event: Event): List<Signal> {
+    override fun create(event: Event): List<Signal> {
         val assets = history.addAll(event, period, priceType)
         val result = mutableListOf<Signal>()
         for (asset in assets) {

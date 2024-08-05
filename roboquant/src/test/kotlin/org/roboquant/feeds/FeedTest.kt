@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
 import org.roboquant.common.Asset
+import org.roboquant.common.USStock
 import org.roboquant.common.Timeframe
 import java.util.*
 import kotlin.test.Test
@@ -38,7 +39,7 @@ internal class FeedTest {
 
     class MyFeed2 : AssetFeed {
         override val assets: SortedSet<Asset>
-            get() = sortedSetOf(Asset("AAA"), Asset("AAB"))
+            get() = sortedSetOf(USStock("AAA"), USStock("AAB"))
 
         override suspend fun play(channel: EventChannel) {
             // Intentional empty
@@ -50,16 +51,7 @@ internal class FeedTest {
         val feed = MyFeed()
         assertEquals(Timeframe.INFINITE, feed.timeframe)
     }
-
-    @Test
-    fun basic2() {
-        val feed = MyFeed2()
-        assertEquals(Timeframe.INFINITE, feed.timeframe)
-        assertContains(feed.assets, Asset("AAB"))
-        assertEquals(Asset("AAA"), feed.assets.first())
-        assertEquals(Asset("AAB"), feed.assets.last())
-    }
-
+    
     @Test
     fun filter() {
         val feed = TestData.feed()

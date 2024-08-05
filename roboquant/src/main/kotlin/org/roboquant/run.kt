@@ -26,6 +26,8 @@ import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import org.roboquant.journals.Journal
 import org.roboquant.strategies.Strategy
+import org.roboquant.traders.FlexTrader
+import org.roboquant.traders.Trader
 import java.time.Instant
 import java.util.*
 import kotlin.math.min
@@ -38,6 +40,7 @@ import kotlin.math.roundToInt
 fun run(
     feed: Feed,
     strategy: Strategy,
+    trader: Trader = FlexTrader(),
     journal: Journal? = null,
     timeframe: Timeframe = Timeframe.INFINITE,
     broker: Broker = SimBroker(),
@@ -48,6 +51,7 @@ fun run(
     return@runBlocking runAsync(
         feed,
         strategy,
+        trader,
         journal,
         timeframe,
         broker,
@@ -67,6 +71,7 @@ fun run(
 suspend fun runAsync(
     feed: Feed,
     strategy: Strategy,
+    trader: Trader = FlexTrader(),
     journal: Journal? = null,
     timeframe: Timeframe = Timeframe.INFINITE,
     broker: Broker = SimBroker(),
@@ -91,7 +96,8 @@ suspend fun runAsync(
             val account = broker.sync(event)
 
             // Generate signals and place orders
-            val instructions = strategy.create(event, account)
+            val signals = strategy.create(event)
+            val instructions = trader.create(signals, account, event)
             broker.place(instructions)
 
             journal?.track(event, account, instructions)

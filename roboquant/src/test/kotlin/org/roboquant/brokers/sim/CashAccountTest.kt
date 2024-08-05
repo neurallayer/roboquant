@@ -20,12 +20,9 @@ import org.roboquant.TestData
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.FixedExchangeRates
-import org.roboquant.common.Amount
-import org.roboquant.common.Asset
-import org.roboquant.common.Config
+import org.roboquant.common.*
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
-import org.roboquant.common.EUR
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.MarketOrder
@@ -83,8 +80,8 @@ internal class CashAccountTest {
         // Slide one example in code
         val initial = 10_000.EUR
         val broker = getSimBroker(initial, accountModel = CashAccount())
-        val abc = Asset("ABC", currencyCode = "EUR")
-        val xyz = Asset("XYZ", currencyCode = "USD")
+        val abc = Stock("ABC", EUR)
+        val xyz = USStock("XYZ")
 
         Config.exchangeRates = FixedExchangeRates(EUR, USD to 0.9)
 

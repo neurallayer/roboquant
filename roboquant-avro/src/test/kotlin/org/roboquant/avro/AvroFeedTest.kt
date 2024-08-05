@@ -26,7 +26,6 @@ import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalk
 import java.io.File
 import java.time.Instant
-import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -34,7 +33,7 @@ import kotlin.test.assertTrue
 @TestMethodOrder(Alphanumeric::class)
 internal class AvroFeedTest {
 
-    private class MyFeed(override val assets: SortedSet<Asset>) : AssetFeed {
+    private class MyFeed(override val assets: Set<Asset>) : AssetFeed {
 
         val events = mutableListOf<Event>()
 
@@ -78,7 +77,7 @@ internal class AvroFeedTest {
 
     @Test
     fun supportedPriceActions() {
-        val asset = Asset("DUMMY")
+        val asset = USStock("DUMMY")
         val p1 = PriceBar(asset, 10.0, 10.0, 10.0, 10.0, 1000.0)
         val p2 = TradePrice(asset, 10.0, 1000.0)
         val p3 = PriceQuote(asset, 10.0, 1000.0, 10.0, 1000.0)
@@ -87,7 +86,7 @@ internal class AvroFeedTest {
             listOf(OrderBook.OrderBookEntry(100.0, 11.0)),
             listOf(OrderBook.OrderBookEntry(50.0, 9.0))
         )
-        val feed = MyFeed(sortedSetOf(asset))
+        val feed = MyFeed(setOf(asset))
         val now = Instant.now()
         feed.events.add(Event(now + 1.millis, listOf(p1)))
         feed.events.add(Event(now + 2.millis, listOf(p2)))
@@ -122,7 +121,7 @@ internal class AvroFeedTest {
 
     @Test
     fun assetSerialization() {
-        val asset1 = Asset("XYZ")
+        val asset1 = USStock("XYZ")
         val str = asset1.serialize()
         val asset2 = Asset.deserialize(str)
         assertEquals(asset1, asset2)

@@ -19,7 +19,7 @@ package org.roboquant.ta
 import com.tictactec.ta.lib.Compatibility
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.roboquant.common.Asset
+import org.roboquant.common.USStock
 import org.roboquant.common.plus
 import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
@@ -27,7 +27,7 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.SignalStrategy
+import org.roboquant.strategies.Strategy
 import java.time.Instant
 import kotlin.collections.set
 import kotlin.test.*
@@ -115,7 +115,7 @@ internal class TaLibSignalStrategyTest {
 
 
     private fun getPriceBarBuffer(size: Int): PriceBarSeries {
-        val asset = Asset("XYZ")
+        val asset = USStock("XYZ")
         val result = PriceBarSeries(size)
         repeat(size) {
             val pb = PriceBar(asset, 10.0, 12.0, 8.0, 11.0, 100 + it)
@@ -124,14 +124,14 @@ internal class TaLibSignalStrategyTest {
         return result
     }
 
-    private fun run(s: SignalStrategy, n: Int = 150): Map<Instant, List<Signal>> {
+    private fun run(s: Strategy, n: Int = 150): Map<Instant, List<Signal>> {
         val nHalf = n / 2
         val feed = HistoricTestFeed(100 until 100 + nHalf, 100 + nHalf - 1 downTo 100, priceBar = true)
         val events = feed.filter<PriceBar>()
         val result = mutableMapOf<Instant, List<Signal>>()
         var now = Instant.now()
         for (event in events) {
-            val signals = s.generate(Event(event.first, listOf(event.second)))
+            val signals = s.create(Event(event.first, listOf(event.second)))
             result[now] = signals
             now += 1.seconds
         }

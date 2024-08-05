@@ -17,12 +17,9 @@
 package org.roboquant.brokers
 
 import org.junit.jupiter.api.assertThrows
-import org.roboquant.common.Asset
-import org.roboquant.common.CAD
-import org.roboquant.common.ConfigurationException
+import org.roboquant.common.*
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
-import org.roboquant.common.USD
 import org.roboquant.feeds.util.HistoricTestFeed
 import java.time.Instant
 import kotlin.test.Test
@@ -33,7 +30,7 @@ internal class FeedExchangeRatesTest {
     @Test
     fun basic() {
         val rates = listOf(1.15, 1.16, 1.20, 1.18)
-        val feed = HistoricTestFeed(rates, asset = Asset.forexPair("USD_EUR"))
+        val feed = HistoricTestFeed(rates, asset = Forex.fromSymbol("USD_EUR"))
         val er = FeedExchangeRates(feed)
         assertEquals(setOf(EUR, USD), er.currencies)
         val r = er.convert(100.USD, EUR, Instant.now())

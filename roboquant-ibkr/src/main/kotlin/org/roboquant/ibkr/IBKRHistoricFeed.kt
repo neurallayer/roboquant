@@ -18,10 +18,7 @@ package org.roboquant.ibkr
 
 import com.ib.client.Bar
 import com.ib.client.EClientSocket
-import org.roboquant.common.Asset
-import org.roboquant.common.Logging
-import org.roboquant.common.millis
-import org.roboquant.common.plus
+import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.ibkr.IBKR.toContract
@@ -133,7 +130,7 @@ class IBKRHistoricFeed(
             val time = if (timeStr.length > 10)
                 LocalDateTime.parse(timeStr, dtf).toInstant(ZoneOffset.UTC)
             else
-                asset.exchange.getClosingTime(LocalDate.parse(timeStr, df))
+                Exchange.US.getClosingTime(LocalDate.parse(timeStr, df))
             add(time, action)
             logger.trace { "bar at $timeStr tranlated into $time and $action" }
         }

@@ -26,19 +26,19 @@ import org.roboquant.feeds.Event
  * @property strategies the strategies to combine
  * @constructor Create a new instance of a Combined SignalStrategy
  */
-open class CombinedStrategy(val strategies: Collection<SignalStrategy>, private val signalResolver: SignalResolver? = null) :
-    SignalStrategy() {
+open class CombinedStrategy(val strategies: Collection<Strategy>, private val signalResolver: SignalResolver? = null) :
+    Strategy {
 
-    constructor(vararg strategies: SignalStrategy, signalResolver: SignalResolver? = null) : this(
+    constructor(vararg strategies: Strategy, signalResolver: SignalResolver? = null) : this(
         strategies.toList(),
         signalResolver
     )
 
-    override fun generate(event: Event): List<Signal> {
+    override fun create(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
 
         for (strategy in strategies) {
-            val s = strategy.generate(event)
+            val s = strategy.create(event)
             signals.addAll(s)
         }
         return signalResolver?.let { signals } ?: signals

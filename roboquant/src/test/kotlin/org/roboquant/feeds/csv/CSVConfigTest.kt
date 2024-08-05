@@ -34,7 +34,6 @@ internal class CSVConfigTest {
     @Test
     fun defaultConfig() {
         val config = CSVConfig()
-        assertEquals(Asset("TEMPLATE"), config.template)
         assertTrue(config.fileSkip.isEmpty())
         assertEquals(true, config.hasHeader)
         assertEquals(',', config.separator)
@@ -117,8 +116,7 @@ internal class CSVConfigTest {
     @Test
     fun basic() {
         val config = CSVConfig()
-        assertEquals(Asset("TEMPLATE"), config.template)
-        assertEquals(Asset("ABN"), config.assetBuilder.build(File("ABN.csv")))
+        assertEquals(USStock("ABN"), config.assetBuilder.build("ABN.csv"))
         assertFalse(config.shouldInclude(File("some_non_existing_file.csv")))
         assertFalse(config.shouldInclude(File("somefile.dummy_extension")))
     }
@@ -126,7 +124,7 @@ internal class CSVConfigTest {
     @Test
     fun process() {
         val config = CSVConfig()
-        val asset = Asset("ABC")
+        val asset = USStock("ABC")
         config.configure(listOf("TIME", "OPEN", "HIGH", "LOW", "CLOSE", "VOLUME"))
 
         assertDoesNotThrow {

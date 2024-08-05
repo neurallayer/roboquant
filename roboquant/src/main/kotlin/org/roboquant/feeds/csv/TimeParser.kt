@@ -38,25 +38,25 @@ fun interface TimeParser {
     }
 
     /**
-     * Return an [Instant] given the provided [line] of strings and [asset]
+     * Return an [Instant] given the provided [line] of strings
      */
-    fun parse(line: List<String>, asset: Asset): Instant
+    fun parse(line: List<String>): Instant
 }
 
 
 private fun interface AuteDetectParser {
 
-    fun parse(text: String, exchange: Exchange): Instant
+    fun parse(text: String): Instant
 }
 
 /**
  * Datetime parser that parses local date-time
  */
-private class LocalTimeParser(pattern: String) : AuteDetectParser {
+private class LocalTimeParser(pattern: String, val exchange: Exchange = Exchange.US) : AuteDetectParser {
 
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
 
-    override fun parse(text: String, exchange: Exchange): Instant {
+    override fun parse(text: String): Instant {
         val dt = LocalDateTime.parse(text, dtf)
         return exchange.getInstant(dt)
     }
@@ -67,14 +67,14 @@ private class LocalTimeParser(pattern: String) : AuteDetectParser {
  * Parser that parses local dates and uses the exchange closing time to determine the time.
  * @param pattern
  */
-private class LocalDateParser(pattern: String) : AuteDetectParser {
+private class LocalDateParser(pattern: String, val exchange: Exchange = Exchange.US) : AuteDetectParser {
 
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
 
     /**
      * @see TimeParser.parse
      */
-    override fun parse(text: String, exchange: Exchange): Instant {
+    override fun parse(text: String): Instant {
         val date = LocalDate.parse(text, dtf)
         return exchange.getClosingTime(date)
     }
@@ -86,7 +86,7 @@ private class LocalDateParser(pattern: String) : AuteDetectParser {
  *
  * @constructor Create new AutoDetect time parser
  */
-class AutoDetectTimeParser(private var timeColumn: Int = -1) : TimeParser {
+class AutoDetectTimeParser(private var timeColumn: Int = -1, val exchange: Exchange = Exchange.US) : TimeParser {
 
     private lateinit var parser: AuteDetectParser
 
@@ -107,11 +107,11 @@ class AutoDetectTimeParser(private var timeColumn: Int = -1) : TimeParser {
     /**
      * @see TimeParser.parse
      */
-    override fun parse(line: List<String>, asset: Asset): Instant {
+    override fun parse(line: List<String>): Instant {
         // If this is the first time calling, detect the format and parser to use
         val text = line[timeColumn]
         if (!this::parser.isInitialized) detect(text)
-        return parser.parse(text, asset.exchange)
+        return parser.parse(text)
     }
 
     /**
@@ -124,13 +124,13 @@ class AutoDetectTimeParser(private var timeColumn: Int = -1) : TimeParser {
             """19\d{6}""".toRegex() to LocalDateParser("yyyyMMdd"),
             """20\d{6}""".toRegex() to LocalDateParser("yyyyMMdd"),
             """\d{8} \d{6}""".toRegex() to LocalTimeParser("yyyyMMdd HHmmss"),
-            """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z""".toRegex() to AuteDetectParser { text, _ -> Instant.parse(text) },
+            """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z""".toRegex() to AuteDetectParser { text -> Instant.parse(text) },
             """\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd HH:mm:ss"),
             """\d{4}-\d{2}-\d{2} \d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd HH:mm"),
             """\d{4}-\d{2}-\d{2}""".toRegex() to LocalDateParser("yyyy-MM-dd"),
             """\d{8} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd HH:mm:ss"),
             """\d{8}  \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd  HH:mm:ss"),
-            """-?\d{1,19}""".toRegex() to AuteDetectParser { text, _ -> Instant.ofEpochMilli(text.toLong()) }
+            """-?\d{1,19}""".toRegex() to AuteDetectParser { text -> Instant.ofEpochMilli(text.toLong()) }
         )
     }
 

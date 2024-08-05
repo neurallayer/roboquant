@@ -95,7 +95,7 @@ class CSVFeed internal constructor(
 
         val jobs = ParallelJobs()
         for (file in files) {
-            val asset = config.assetBuilder.build(file)
+            val asset = config.assetBuilder.build(file.nameWithoutExtension)
             jobs.add {
                 val steps = readFile(asset, file)
                 for (step in steps) {

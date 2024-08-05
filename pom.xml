@@ -58,7 +58,7 @@
         <module>roboquant-ta</module>
         <module>roboquant-jupyter</module>
         <module>roboquant-alpaca</module>
-        <module>roboquant-polygon</module>
+        <!-- module>roboquant-polygon</module -->
         <module>roboquant-server</module>
         <module>roboquant-questdb</module>
         <module>roboquant-ssr</module>
@@ -469,6 +469,14 @@
             <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <artifactId>roboquant</artifactId>
+            <groupId>org.roboquant</groupId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <!-- Dependencies used by some modules -->

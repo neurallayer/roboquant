@@ -18,7 +18,7 @@ package org.roboquant.feeds.csv
 
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.roboquant.common.Asset
+import org.roboquant.common.USStock
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceQuote
 import kotlin.test.Test
@@ -39,7 +39,7 @@ internal class PriceParserTest {
             parser.init(listOf("open", "high", "low", "close", "volume"))
         }
 
-        val asset = Asset("TEST")
+        val asset = USStock("TEST")
         val pb = parser.parse(listOf("10.0", "11.0", "9.0", "10.50", ""), asset)
         assertEquals(11.0, pb.high)
     }
@@ -47,7 +47,7 @@ internal class PriceParserTest {
     @Test
     fun priceBarParser2() {
         val parser = PriceBarParser(open = 4, high = 3, low = 2, close = 1, volume = 5)
-        val asset = Asset("TEST")
+        val asset = USStock("TEST")
         val pb = parser.parse(listOf("dummy", "10.50", "9.0", "11.0", "10", "100"), asset)
 
         val e = PriceBar(asset, 10.0, 11.0, 9.0, 10.50, 100)
@@ -66,7 +66,7 @@ internal class PriceParserTest {
             parser.init(listOf("ask", "bid", "asksize", "bidsize"))
         }
 
-        val asset = Asset("TEST")
+        val asset = USStock("TEST")
         val pb = parser.parse(listOf("11.0", "10.0", "1000", "2000"), asset)
 
         val e = PriceQuote(asset, 11.0, 1000.0, 10.0, 2000.0)

@@ -86,7 +86,7 @@ interface AssetFeed : Feed {
     /**
      * Returns a sorted set of all the assets contained in this feed
      */
-    val assets: SortedSet<Asset>
+    val assets: Set<Asset>
 
 }
 

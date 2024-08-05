@@ -24,8 +24,7 @@ import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.feeds.util.HistoricTestFeed
-import org.roboquant.feeds.util.play
+import org.roboquant.feeds.util.*
 import org.roboquant.orders.MarketOrder
 import java.io.File
 import java.time.Instant
@@ -36,11 +35,11 @@ import kotlin.test.assertTrue
  */
 internal object TestData {
 
-    fun usStock() = Asset("XYZ")
+    fun usStock() = USStock("XYZ")
 
     fun internalAccount(): InternalAccount {
-        val asset1 = Asset("AAA")
-        val asset2 = Asset("AAB")
+        val asset1 = USStock("AAA")
+        val asset2 = USStock("AAB")
         val account = InternalAccount(Currency.USD)
         account.cash.deposit(100_000.USD)
         account.setPosition(Position(asset1, Size(100), 10.0))
@@ -54,8 +53,8 @@ internal object TestData {
     }
 
     fun usAccount(): Account {
-        val asset1 = Asset("AAA")
-        val asset2 = Asset("AAB")
+        val asset1 = USStock("AAA")
+        val asset2 = USStock("AAB")
         val account = InternalAccount(Currency.USD)
         account.cash.deposit(100_000.USD)
         account.setPosition(Position(asset1, Size(100), 10.0))
@@ -67,7 +66,7 @@ internal object TestData {
         return account.toAccount()
     }
 
-    fun euStock() = Asset("ABC", currencyCode = "EUR", exchangeCode = "AEB")
+    fun euStock() = Stock("ABC", Currency.EUR)
 
     fun feed(): HistoricFeed {
         return HistoricTestFeed(90..110, 110 downTo 80, 80..125, priceBar = true, asset = usStock())
