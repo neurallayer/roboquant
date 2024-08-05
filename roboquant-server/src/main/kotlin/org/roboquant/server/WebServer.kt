@@ -26,6 +26,8 @@ import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.strategies.Strategy
+import org.roboquant.traders.FlexTrader
+import org.roboquant.traders.Trader
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
@@ -97,6 +99,7 @@ open class WebServer(configure: WebServerConfig.() -> Unit = {}) {
         name: String = getRunName(),
         feed: Feed,
         strategy: Strategy,
+        trader: Trader = FlexTrader(),
         journal: MemoryJournal = MemoryJournal(),
         timeframe: Timeframe = Timeframe.INFINITE,
         broker: Broker = SimBroker(),
@@ -108,7 +111,16 @@ open class WebServer(configure: WebServerConfig.() -> Unit = {}) {
         val info = RunInfo(journal, timeframe, pausubaleStrategy, broker)
         runs[name] = info
         logger.info { "Starting new run name=$name timeframe=$timeframe" }
-        org.roboquant.runAsync(feed, pausubaleStrategy, journal = journal, timeframe = timeframe, broker = broker, channel = channel, timeOutMillis = timeOutMillis)
+        org.roboquant.runAsync(
+            feed,
+            pausubaleStrategy,
+            trader,
+            journal = journal,
+            timeframe = timeframe,
+            broker = broker,
+            channel = channel,
+            timeOutMillis = timeOutMillis
+        )
     }
 
 }
