@@ -59,7 +59,7 @@ internal class LiveFeedTest {
                 val scope = CoroutineScope(Dispatchers.Default + Job())
 
                 scope.launch {
-                    val asset = USStock("ABC")
+                    val asset = Stock("ABC")
                     val actions = listOf(TradePrice(asset, 100.0))
 
                     while (true) {

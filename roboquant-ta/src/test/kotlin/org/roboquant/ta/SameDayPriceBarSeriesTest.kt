@@ -16,7 +16,7 @@
 
 package org.roboquant.ta
 
-import org.roboquant.common.USStock
+import org.roboquant.common.Stock
 import org.roboquant.common.days
 import org.roboquant.common.millis
 import org.roboquant.common.plus
@@ -30,7 +30,7 @@ internal class SameDayPriceBarSeriesTest {
     @Test
     fun sameDay() {
 
-        val asset = USStock("DEMO")
+        val asset = Stock("DEMO")
         val pb = PriceBar(asset, 10, 11, 9, 10, 100)
 
         val pbs = SameDayPriceBarSeries(50)

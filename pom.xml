@@ -58,11 +58,9 @@
         <module>roboquant-ta</module>
         <module>roboquant-jupyter</module>
         <module>roboquant-alpaca</module>
-        <!-- module>roboquant-polygon</module -->
         <module>roboquant-server</module>
         <module>roboquant-questdb</module>
         <module>roboquant-ssr</module>
-        <module>roboquant-perf</module>
         <!-- module roboquant-ibkr is part of ibkr profile since it relies on a locally installed library -->
     </modules>
 

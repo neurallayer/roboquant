@@ -81,7 +81,7 @@ internal class CashAccountTest {
         val initial = 10_000.EUR
         val broker = getSimBroker(initial, accountModel = CashAccount())
         val abc = Stock("ABC", EUR)
-        val xyz = USStock("XYZ")
+        val xyz = Stock("XYZ")
 
         Config.exchangeRates = FixedExchangeRates(EUR, USD to 0.9)
 

@@ -72,7 +72,7 @@ internal class SimBrokerTest {
 
     private fun getFilledSimbroker(): SimBroker {
         val broker = SimBroker()
-        val asset = USStock("TEST")
+        val asset = Stock("TEST")
         val order = MarketOrder(asset, 10)
         val price = TradePrice(asset, 100.0)
         val now = Instant.now()
@@ -97,7 +97,7 @@ internal class SimBrokerTest {
     fun placeSingleCurrencyOrder() {
         val broker = SimBroker()
 
-        val asset = USStock("TEST")
+        val asset = Stock("TEST")
         val order = MarketOrder(asset, 10)
         val price = TradePrice(asset, 100.0)
         val now = Instant.now()
@@ -147,7 +147,7 @@ internal class SimBrokerTest {
     @Test
     fun updateOrder() {
         val broker = SimBroker()
-        val asset = USStock("TEST")
+        val asset = Stock("TEST")
         val order = LimitOrder(asset,Size.ONE, 99.0)
         val price = TradePrice(asset, 100.0)
         val now = Instant.now()

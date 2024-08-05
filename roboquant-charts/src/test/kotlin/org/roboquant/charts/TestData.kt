@@ -47,8 +47,8 @@ object TestData {
 
     fun usAccount(): Account {
         val amount: Amount = 100_000.USD
-        val asset1 = USStock("AAA")
-        val asset2 = USStock("AAB")
+        val asset1 = Stock("AAA")
+        val asset2 = Stock("AAB")
         val account = InternalAccount(amount.currency)
         account.cash.deposit(amount)
         account.buyingPower = amount

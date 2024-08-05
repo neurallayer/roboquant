@@ -30,7 +30,7 @@ import net.jacobpeterson.alpaca.websocket.marketdata.streams.stock.StockMarketDa
 import org.roboquant.common.Asset
 import org.roboquant.common.ConfigurationException
 import org.roboquant.common.Logging
-import org.roboquant.common.USStock
+import org.roboquant.common.Stock
 import org.roboquant.feeds.*
 import java.io.IOException
 import java.time.Instant
@@ -179,14 +179,14 @@ class AlpacaLiveFeed(
         return object : StockMarketDataListenerAdapter() {
 
             override fun onTrade(trade: StockTradeMessage) {
-                val asset = USStock(trade.symbol)
+                val asset = Stock(trade.symbol)
                 val item = TradePrice(asset, trade.price)
                 val time = trade.timestamp.toInstant()
                 send(time, item)
             }
 
             override fun onQuote(quote: StockQuoteMessage) {
-                val asset = USStock(quote.symbol)
+                val asset = Stock(quote.symbol)
                 val item = PriceQuote(
                     asset,
                     quote.askPrice,
@@ -199,7 +199,7 @@ class AlpacaLiveFeed(
             }
 
             override fun onMinuteBar(bar: StockBarMessage) {
-                val asset = USStock(bar.symbol)
+                val asset = Stock(bar.symbol)
                 val item = PriceBar(
                     asset,
                     bar.open,
@@ -220,14 +220,14 @@ class AlpacaLiveFeed(
         return object : CryptoMarketDataListenerAdapter() {
 
             override fun onTrade(trade: CryptoTradeMessage) {
-                val asset = USStock(trade.symbol)
+                val asset = Stock(trade.symbol)
                 val item = TradePrice(asset, trade.price)
                 val time = trade.timestamp.toInstant()
                 send(time, item)
             }
 
             override fun onQuote(quote: CryptoQuoteMessage) {
-                val asset = USStock(quote.symbol)
+                val asset = Stock(quote.symbol)
                 val item = PriceQuote(
                     asset,
                     quote.askPrice,
@@ -240,7 +240,7 @@ class AlpacaLiveFeed(
             }
 
             override fun onMinuteBar(bar: CryptoBarMessage) {
-                val asset = USStock(bar.symbol)
+                val asset = Stock(bar.symbol)
                 val item = PriceBar(
                     asset,
                     bar.open,

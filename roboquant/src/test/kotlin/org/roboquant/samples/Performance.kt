@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.perf
+package org.roboquant.samples
 
 import org.roboquant.run
 import org.roboquant.runAsync
@@ -69,7 +69,7 @@ private class FastFeed(nAssets: Int, val events: Int) : Feed {
     val size = nAssets * events
 
     init {
-        repeat(nAssets) { assets.add(USStock("TEST-$it")) }
+        repeat(nAssets) { assets.add(Stock("TEST-$it")) }
         val data = doubleArrayOf(100.0, 101.0, 99.0, 100.0, 10000.0)
         for (asset in assets) {
             val action = PriceBar(asset, data)
@@ -133,7 +133,7 @@ private object Performance {
      * Test iterating over the feed while filtering
      */
     private fun feedFilter(feed: FastFeed): Long {
-        val asset = USStock("UNKNOWN")
+        val asset = Stock("UNKNOWN")
         return measure {
             feed.filter<PriceBar> {
                 it.asset == asset

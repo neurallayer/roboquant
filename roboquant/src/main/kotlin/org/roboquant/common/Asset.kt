@@ -112,6 +112,18 @@ data class Stock(override val symbol: String, override val currency: Currency = 
     override fun serialize(): String {
         return "Stock$SEP$symbol$SEP$currency"
     }
+
+    companion object {
+
+        init {
+            Asset.registry["Stock"] = Stock::deserialize
+        }
+
+        private fun deserialize(value: String): Asset {
+            val (symbol, currencyCode) = value.split(SEP)
+            return Stock(symbol, Currency.getInstance(currencyCode))
+        }
+    }
 }
 
 
@@ -128,31 +140,6 @@ data class Forex(override val symbol: String, override val currency: Currency) :
         }
     }
 }
-
-
-
-data class USStock(override val symbol: String) :Asset {
-
-    override val currency: Currency
-        get() = Currency.USD
-
-    override fun serialize() : String {
-        return "USStock$SEP$symbol"
-    }
-
-    companion object {
-
-        init {
-            Asset.registry["USStock"] = USStock::deserialize
-        }
-
-        private fun deserialize(value: String): Asset {
-            return USStock(value)
-        }
-    }
-
-}
-
 
 
 /**
@@ -191,7 +178,7 @@ val Collection<Asset>.symbols: Array<String>
 
 
 fun main() {
-    val apple = USStock("AAPL")
+    val apple = Stock("AAPL")
     val appleSer = apple.serialize()
     println(Asset.deserialize(appleSer))
 

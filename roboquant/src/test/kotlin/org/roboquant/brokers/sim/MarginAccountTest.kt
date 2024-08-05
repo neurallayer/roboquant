@@ -100,7 +100,7 @@ internal class MarginAccountTest {
         // The example on slide-3 in code
         val initial = 20_000.USD
         val broker = getSimBroker(initial, MarginAccount())
-        val abc = USStock("ABC")
+        val abc = Stock("ABC")
 
         var account = update(broker, abc, 200, -50)
         assertEquals(34_000.USD, account.buyingPower)

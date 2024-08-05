@@ -27,7 +27,7 @@ import kotlin.test.assertTrue
 
 internal class PriceBarSeriesTest {
 
-    private val asset = USStock("DEMO")
+    private val asset = Stock("DEMO")
     private val pb = PriceBar(asset, 10, 11, 9, 10, 100)
 
     private fun getPBS(size: Int): PriceBarSeries {
@@ -37,7 +37,7 @@ internal class PriceBarSeriesTest {
         repeat(size) {
             val newOhlcv = ohlvc + it
             newOhlcv[4] = 10000.0
-            val pb = PriceBar(USStock("ABC"), newOhlcv)
+            val pb = PriceBar(Stock("ABC"), newOhlcv)
             pbs.add(pb, now + 1.millis )
         }
         return pbs

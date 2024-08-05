@@ -82,7 +82,7 @@ internal class IBKRSamples {
         val account = broker.sync()
         println(account)
 
-        val asset = USStock("TSLA")
+        val asset = Stock("TSLA")
         val order = BracketOrder.limitTrailStop(
             asset,
             Size.ONE,
@@ -101,9 +101,9 @@ internal class IBKRSamples {
     @Test
     internal fun simplePaperTrade() {
         // Lets trade these 3 tech stock
-        val tsla = USStock("TSLA")
-        val msft = USStock("MSFT")
-        val googl = USStock("GOOGL")
+        val tsla = Stock("TSLA")
+        val msft = Stock("MSFT")
+        val googl = Stock("GOOGL")
 
         // Link the asset to an IBKR contract-id.
         IBKR.register(76792991, tsla)
@@ -143,7 +143,7 @@ internal class IBKRSamples {
     @Test
     internal fun liveFeedUS() {
         val feed = IBKRLiveFeed()
-        val asset = USStock("TSLA")
+        val asset = Stock("TSLA")
         feed.subscribe(listOf(asset))
         val tf = Timeframe.next(1.minutes)
         val data = feed.filter<PriceItem>(tf) {
@@ -173,7 +173,7 @@ internal class IBKRSamples {
 
         // This assumes you have a valid market subscription for European stocks
         val symbols = listOf("TSLA", "GOOGL", "JPM")
-        val assets = symbols.map { USStock(it) }
+        val assets = symbols.map { Stock(it) }
         feed.retrieve(assets)
         feed.waitTillRetrieved()
         println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")

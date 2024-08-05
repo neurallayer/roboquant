@@ -68,7 +68,7 @@ class AlpacaHistoricFeed(
                 symbols, start, end, null, "", config.stockFeed, "USD", nextPageToken, Sort.ASC
             )
             for ((symbol, quotes) in resp.quotes) {
-                val asset = USStock(symbol)
+                val asset = Stock(symbol)
                 for (quote in quotes) {
                     val action = PriceQuote(
                         asset,
@@ -99,7 +99,7 @@ class AlpacaHistoricFeed(
                 symbols, start, end, null, "", config.stockFeed, "USD", nextPageToken, Sort.ASC
             )
             for ((symbol, trades) in resp.trades) {
-                val asset = USStock(symbol)
+                val asset = Stock(symbol)
                 for (trade in trades) {
                     val action = TradePrice(asset, trade.p, trade.s.toDouble())
                     val now = trade.t.toInstant()
@@ -113,7 +113,7 @@ class AlpacaHistoricFeed(
     }
 
     private fun processBars(symbol: String, bars: List<StockBar>, timeSpan: TimeSpan?) {
-        val asset = USStock(symbol)
+        val asset = Stock(symbol)
         for (bar in bars) {
             val action = PriceBar(asset, bar.o, bar.h, bar.l, bar.c, bar.v.toDouble(), timeSpan)
             val time = bar.t.toInstant()

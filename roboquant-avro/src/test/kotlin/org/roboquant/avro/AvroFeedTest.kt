@@ -77,7 +77,7 @@ internal class AvroFeedTest {
 
     @Test
     fun supportedPriceActions() {
-        val asset = USStock("DUMMY")
+        val asset = Stock("DUMMY")
         val p1 = PriceBar(asset, 10.0, 10.0, 10.0, 10.0, 1000.0)
         val p2 = TradePrice(asset, 10.0, 1000.0)
         val p3 = PriceQuote(asset, 10.0, 1000.0, 10.0, 1000.0)
@@ -121,7 +121,7 @@ internal class AvroFeedTest {
 
     @Test
     fun assetSerialization() {
-        val asset1 = USStock("XYZ")
+        val asset1 = Stock("XYZ")
         val str = asset1.serialize()
         val asset2 = Asset.deserialize(str)
         assertEquals(asset1, asset2)

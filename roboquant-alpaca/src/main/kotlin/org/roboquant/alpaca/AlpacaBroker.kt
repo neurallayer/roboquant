@@ -74,7 +74,7 @@ class AlpacaBroker(
 
     private fun getAsset(symbol: String, assetClass: AssetClass?): Asset {
         val asset = when (assetClass) {
-            AssetClass.US_EQUITY-> USStock(symbol)
+            AssetClass.US_EQUITY-> Stock(symbol)
             AssetClass.CRYPTO -> Crypto.fromSymbol(symbol)
             else -> throw RoboquantException("Unknown asset class=$assetClass")
         }

@@ -45,7 +45,7 @@ internal class IBKRHistoricFeedTestIT {
 
         val feed = IBKRHistoricFeed()
         val symbols = listOf("TSLA", "AAPL")
-        val assets = symbols.map { USStock(it) }.toTypedArray()
+        val assets = symbols.map { Stock(it) }.toTypedArray()
         feed.retrieve(*assets)
         feed.waitTillRetrieved()
         val actions = feed.filter<PriceItem>()

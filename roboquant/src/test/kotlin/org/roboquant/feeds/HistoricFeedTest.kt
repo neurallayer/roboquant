@@ -37,7 +37,7 @@ internal class HistoricFeedTest {
     @Test
     fun custom() {
         val tf = Timeframe.fromYears(2020, 2021)
-        val asset = USStock("ABC")
+        val asset = Stock("ABC")
 
         class MyFeed : HistoricFeed {
             override val timeline: Timeline

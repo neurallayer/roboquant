@@ -44,7 +44,8 @@ class StockBuilder(private val currency: Currency = Currency.USD) : AssetBuilder
      * @see AssetBuilder.build
      */
     override fun build(name: String): Asset {
-        val symbol = name.uppercase().replace(notCapital, ".")
+        var symbol = name.removeSuffix(".csv").removeSuffix(".txt")
+        symbol = symbol.uppercase().replace(notCapital, ".")
         return Stock(symbol, currency)
     }
 

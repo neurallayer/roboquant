@@ -18,7 +18,7 @@ package org.roboquant.feeds.util
 
 import kotlinx.coroutines.delay
 import org.roboquant.common.Asset
-import org.roboquant.common.USStock
+import org.roboquant.common.Stock
 import org.roboquant.feeds.*
 import java.time.Instant
 import kotlin.random.Random
@@ -34,7 +34,7 @@ import kotlin.random.Random
  */
 class LiveTestFeed(
     private vararg val prices: Iterable<Number> = arrayOf(90..100, 100 downTo 90),
-    private val asset: Asset = USStock("TEST"),
+    private val asset: Asset = Stock("TEST"),
     private val delayInMillis: Int = 1000,
     private val priceBar: Boolean = false,
     private val volume: Double = 1000.0
@@ -60,7 +60,7 @@ class LiveTestFeed(
                 prev = next
                 next
             }
-            return LiveTestFeed(randomPrices, asset = USStock(symbol), delayInMillis = delayInMillis)
+            return LiveTestFeed(randomPrices, asset = Stock(symbol), delayInMillis = delayInMillis)
         }
 
     }

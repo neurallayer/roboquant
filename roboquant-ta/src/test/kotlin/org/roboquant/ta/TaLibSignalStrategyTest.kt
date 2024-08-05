@@ -19,7 +19,7 @@ package org.roboquant.ta
 import com.tictactec.ta.lib.Compatibility
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.roboquant.common.USStock
+import org.roboquant.common.Stock
 import org.roboquant.common.plus
 import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
@@ -115,7 +115,7 @@ internal class TaLibSignalStrategyTest {
 
 
     private fun getPriceBarBuffer(size: Int): PriceBarSeries {
-        val asset = USStock("XYZ")
+        val asset = Stock("XYZ")
         val result = PriceBarSeries(size)
         repeat(size) {
             val pb = PriceBar(asset, 10.0, 12.0, 8.0, 11.0, 100 + it)

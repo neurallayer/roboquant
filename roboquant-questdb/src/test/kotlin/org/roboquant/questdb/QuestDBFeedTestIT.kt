@@ -87,7 +87,7 @@ internal class QuestDBFeedTestIT {
 
         class QuoteFeed : Feed {
             override suspend fun play(channel: EventChannel) {
-                val asset = USStock("TEST")
+                val asset = Stock("TEST")
                 val now = Instant.now()
                 repeat(100) {
                     val action = PriceQuote(asset, 100.0, 10000.0, 100.0, 10000.0)
@@ -117,7 +117,7 @@ internal class QuestDBFeedTestIT {
 
         class TradeFeed : Feed {
             override suspend fun play(channel: EventChannel) {
-                val asset = USStock("TEST")
+                val asset = Stock("TEST")
                 val now = Instant.now()
                 repeat(100) {
                     val action = TradePrice(asset, 100.0, 10000.0)

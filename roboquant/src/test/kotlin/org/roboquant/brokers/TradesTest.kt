@@ -46,11 +46,11 @@ internal class TradesTest {
 
     @Test
     fun basic() {
-        val trade = Trade(Instant.now(), USStock("TEST"), Size(10), 100.0, 5.0, 100.0, 1.toString())
+        val trade = Trade(Instant.now(), Stock("TEST"), Size(10), 100.0, 5.0, 100.0, 1.toString())
         assertEquals(1005.0, trade.totalCost.value)
         assertEquals(100.0 / 1005.0, trade.pnlPercentage)
 
-        val trade2 = Trade(Instant.now(), USStock("TEST"), -Size(10), 100.0, 5.0, 100.0, 1.toString())
+        val trade2 = Trade(Instant.now(), Stock("TEST"), -Size(10), 100.0, 5.0, 100.0, 1.toString())
         assertEquals(-995.0, trade2.totalCost.value)
         assertEquals(100.0 / 995.0, trade2.pnlPercentage)
     }

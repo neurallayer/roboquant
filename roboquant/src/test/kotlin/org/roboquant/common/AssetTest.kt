@@ -27,8 +27,8 @@ internal class AssetTest {
 
     @Test
     fun basic() {
-        val a = USStock("ABC")
-        val c = USStock("ABC")
+        val a = Stock("ABC")
+        val c = Stock("ABC")
 
         assertEquals("ABC", a.symbol)
         assertEquals(a, c)
@@ -39,7 +39,7 @@ internal class AssetTest {
 
     @Test
     fun contractValue() {
-        val a = USStock("ABC")
+        val a = Stock("ABC")
         assertEquals(250.0.USD, a.value(Size(10), 25.0))
 
         assertEquals((-250.0).USD, a.value(Size(-10), 25.0))

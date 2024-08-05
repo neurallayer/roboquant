@@ -179,7 +179,7 @@ open class TrailOrder(
  *
  * Example: We want to sell 25 stocks of XYZ when it reaches 5% below its high with a limit price of -1 below that high.
  *```
- * val order = TrailLimitOrder(USStock("XYZ"), -25, 0.05, -1.0)
+ * val order = TrailLimitOrder(Stock("XYZ"), -25, 0.05, -1.0)
  *```
  * @property asset
  * @property size

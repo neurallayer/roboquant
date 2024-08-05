@@ -16,7 +16,7 @@
 
 package org.roboquant.feeds
 
-import org.roboquant.common.USStock
+import org.roboquant.common.Stock
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,7 +29,7 @@ internal class EventTest {
         val now = Instant.now()
         val event = Event(now, emptyList())
         assertTrue(event.prices.isEmpty())
-        val asset = USStock("Dummy")
+        val asset = Stock("Dummy")
         assertTrue(event.getPrice(asset) == null)
         assertTrue(event.items.isEmpty())
     }
@@ -54,11 +54,11 @@ internal class EventTest {
         val t = Instant.now()
         val event = Event(
             t,
-            listOf(TradePrice(USStock("ABC"), 100.0), TradePrice(USStock("CDE"), 50.0))
+            listOf(TradePrice(Stock("ABC"), 100.0), TradePrice(Stock("CDE"), 50.0))
         )
         assertTrue(event.items.isNotEmpty())
         assertEquals(2, event.prices.size)
-        assertEquals(100.0, event.getPrice(USStock("ABC")))
+        assertEquals(100.0, event.getPrice(Stock("ABC")))
     }
 
 

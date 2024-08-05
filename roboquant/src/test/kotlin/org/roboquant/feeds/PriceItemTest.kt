@@ -17,7 +17,7 @@
 package org.roboquant.feeds
 
 import org.roboquant.TestData
-import org.roboquant.common.USStock
+import org.roboquant.common.Stock
 import org.roboquant.common.USD
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -28,7 +28,7 @@ internal class PriceItemTest {
 
     @Test
     fun testPriceQuote() {
-        val asset = USStock("DUMMY")
+        val asset = Stock("DUMMY")
         val p = PriceQuote(asset, 10.0, 1.0, 9.0, 3.0)
         assertEquals(10.0, p.askPrice)
         assertEquals(1.0, p.askSize)
@@ -113,7 +113,7 @@ internal class PriceItemTest {
 
     @Test
     fun testTradePrice() {
-        val asset = USStock("DUMMY")
+        val asset = Stock("DUMMY")
         val p = TradePrice(asset, 10.0, 100.0)
         assertEquals(10.0, p.getPrice("DEFAULT"))
         assertEquals(100.0, p.volume)
@@ -122,7 +122,7 @@ internal class PriceItemTest {
 
     @Test
     fun testOrderBook() {
-        val asset = USStock("DUMMY")
+        val asset = Stock("DUMMY")
         val p = OrderBook(
             asset,
             listOf(OrderBook.OrderBookEntry(10.0, 11.0), OrderBook.OrderBookEntry(10.0, 11.1)),

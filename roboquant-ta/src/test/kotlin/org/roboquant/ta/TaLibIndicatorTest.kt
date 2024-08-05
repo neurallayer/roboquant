@@ -17,7 +17,7 @@
 package org.roboquant.ta
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.common.USStock
+import org.roboquant.common.Stock
 import org.roboquant.feeds.HistoricFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.metrics.apply
@@ -28,7 +28,7 @@ import kotlin.test.assertEquals
 internal class TaLibIndicatorTest {
 
     private fun feed(): HistoricFeed {
-        return HistoricTestFeed(90..110, 110 downTo 80, 80..125, priceBar = true, asset = USStock("TEST"))
+        return HistoricTestFeed(90..110, 110 downTo 80, 80..125, priceBar = true, asset = Stock("TEST"))
     }
 
     @Test

@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
 import org.roboquant.common.Asset
-import org.roboquant.common.USStock
+import org.roboquant.common.Stock
 import org.roboquant.common.Timeframe
 import java.util.*
 import kotlin.test.Test
@@ -39,7 +39,7 @@ internal class FeedTest {
 
     class MyFeed2 : AssetFeed {
         override val assets: SortedSet<Asset>
-            get() = sortedSetOf(USStock("AAA"), USStock("AAB"))
+            get() = sortedSetOf(Stock("AAA"), Stock("AAB"))
 
         override suspend fun play(channel: EventChannel) {
             // Intentional empty

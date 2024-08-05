@@ -35,11 +35,11 @@ import kotlin.test.assertTrue
  */
 internal object TestData {
 
-    fun usStock() = USStock("XYZ")
+    fun usStock() = Stock("XYZ")
 
     fun internalAccount(): InternalAccount {
-        val asset1 = USStock("AAA")
-        val asset2 = USStock("AAB")
+        val asset1 = Stock("AAA")
+        val asset2 = Stock("AAB")
         val account = InternalAccount(Currency.USD)
         account.cash.deposit(100_000.USD)
         account.setPosition(Position(asset1, Size(100), 10.0))
@@ -53,8 +53,8 @@ internal object TestData {
     }
 
     fun usAccount(): Account {
-        val asset1 = USStock("AAA")
-        val asset2 = USStock("AAB")
+        val asset1 = Stock("AAA")
+        val asset2 = Stock("AAB")
         val account = InternalAccount(Currency.USD)
         account.cash.deposit(100_000.USD)
         account.setPosition(Position(asset1, Size(100), 10.0))

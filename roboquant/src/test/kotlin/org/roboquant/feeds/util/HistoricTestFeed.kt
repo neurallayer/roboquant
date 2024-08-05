@@ -42,7 +42,7 @@ class HistoricTestFeed(
     vararg prices: Iterable<Number> = arrayOf(90..100, 100 downTo 90),
     start: Instant = Instant.parse("1970-01-01T12:00:00Z"),
     private val timeSpan: TimeSpan = 1.days,
-    asset: Asset = USStock("TEST"),
+    asset: Asset = Stock("TEST"),
     private val priceBar: Boolean = false,
     private val volume: Double = 1000.0
 ) : HistoricPriceFeed() {
