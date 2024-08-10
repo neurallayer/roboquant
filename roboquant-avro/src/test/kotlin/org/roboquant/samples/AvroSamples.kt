@@ -24,7 +24,10 @@ import org.roboquant.common.Timeframe
 import org.roboquant.common.years
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
+import org.roboquant.journals.MemoryJournal
+import org.roboquant.metrics.AccountMetric
 import org.roboquant.runAsync
+import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
 import kotlin.io.path.Path
 import kotlin.io.path.div
@@ -33,6 +36,17 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class AvroSamples {
+
+    @Test
+    @Ignore
+    internal fun basic() {
+        val s = EMACrossover()
+        val f = AvroFeed.sp25()
+        val j = MemoryJournal(AccountMetric())
+        val a = run(f, s, journal=j)
+        println(a)
+    }
+
 
     @Test
     @Ignore

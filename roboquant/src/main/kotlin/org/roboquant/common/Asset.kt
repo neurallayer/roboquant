@@ -61,6 +61,12 @@ interface Asset : Comparable<Asset> {
             }
         }
 
+        init {
+            registry["Crypto"] = Crypto::deserialize
+            registry["Stock"] = Stock::deserialize
+
+        }
+
 
     }
 
@@ -90,11 +96,8 @@ data class Crypto(override val symbol: String, override val currency: Currency) 
 
     companion object {
 
-        init {
-            Asset.registry["Crypto"] = Crypto::deserialize
-        }
 
-        private fun deserialize(value: String): Asset {
+        fun deserialize(value: String): Asset {
             val (symbol, currencyCode) = value.split(SEP)
             return Crypto(symbol, Currency.getInstance(currencyCode))
         }
@@ -115,11 +118,7 @@ data class Stock(override val symbol: String, override val currency: Currency = 
 
     companion object {
 
-        init {
-            Asset.registry["Stock"] = Stock::deserialize
-        }
-
-        private fun deserialize(value: String): Asset {
+        fun deserialize(value: String): Asset {
             val (symbol, currencyCode) = value.split(SEP)
             return Stock(symbol, Currency.getInstance(currencyCode))
         }
@@ -153,6 +152,7 @@ fun Collection<Asset>.getBySymbol(symbol: String): Asset = first { it.symbol == 
  */
 val Collection<Asset>.symbols: Array<String>
     get() = map { it.symbol }.distinct().toTypedArray()
+
 
 
 fun main() {

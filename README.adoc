@@ -42,12 +42,12 @@ To demonstrate how easy it is to get started, the following code snippet shows a
 val strategy = EMACrossover() // <1>
 val feed = CSVFeed("data/US") // <2>
 val account = run(feed, strategy) // <3>
-println(account.equity) // <4>
+println(account) // <4>
 ----
 <1> Create the strategy that you want to validate
 <2> What data should be used, in this case, CSV files
 <3> Run the back test
-<4> Print the equity at the end of the run
+<4> Print the account at the end of the run
 
 You can find out more at the online https://roboquant.org/tutorial/index.html[tutorial^].
 
@@ -78,7 +78,7 @@ Or if you want to create your own new algo-trading project from scratch, you can
 mvn archetype:generate                          \
 -DarchetypeGroupId=org.roboquant                \
 -DarchetypeArtifactId=roboquant-quickstart      \
--DarchetypeVersion=2.0.0               \
+-DarchetypeVersion=2.0.0                        \
 -DgroupId=org.mydomain                          \
 -DartifactId=myapp                              \
 -Dversion=1.0-SNAPSHOT

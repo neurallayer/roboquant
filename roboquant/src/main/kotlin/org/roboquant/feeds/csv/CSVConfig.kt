@@ -76,7 +76,7 @@ data class CSVConfig(
                 timeParser = AutoDetectTimeParser(2),
                 assetBuilder = { name: String ->
                     Stock(
-                        name.removeSuffix(".us.txt").replace('-', '.').uppercase(),
+                        name.removeSuffix(".us.txt").removeSuffix(".us").replace('-', '.').uppercase(),
                         Currency.USD
                     )
                 }

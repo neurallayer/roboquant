@@ -272,9 +272,13 @@ open class FlexTrader(
             for (signal in signals) {
                 val asset = signal.asset
                 val position = account.positions.getOrDefault(asset, Position.empty(asset))
-                
+
                 // Don't create an order if we don't know the current price
                 val priceItem = event.prices[asset]
+                logger.debug {
+                    "signal=${signal} position=$position buyingPower=$buyingPower amount=$amountPerOrder item=$priceItem"
+                }
+
                 if (priceItem == null) {
                     log(signal, null, position, "no price")
                     continue
@@ -286,8 +290,6 @@ open class FlexTrader(
                 }
 
                 val price = priceItem.getPrice(config.priceType)
-                logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amountPerOrder action=$priceItem" }
-
 
                 if (reducedPositionSignal(position, signal)) {
                     val order = createOrder(signal, -position.size, priceItem) // close position
