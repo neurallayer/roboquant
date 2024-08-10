@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package org.roboquant.strategies
+package org.roboquant.charts
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.roboquant.TestData
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.strategies.EMACrossover
 import kotlin.test.Test
 
-internal class ParallelSignalStrategyTest {
+internal class SignalChartTest {
 
     @Test
     fun test() {
-        val s1 = EMACrossover.PERIODS_12_26
-        val s2 =EMACrossover.PERIODS_5_15
-        val s3 = ParallelStrategy(s1, s2)
-
-        for (event in TestData.events(100)) {
-            val r1 = s1.createSignals(event)
-            val r2 = s2.createSignals(event)
-            val r3 = s3.createSignals(event)
-            assertEquals(setOf(r1 + r2), setOf(r3))
+        val feed = RandomWalk.lastYears(1)
+        val strat = EMACrossover()
+        val chart = SignalChart(feed, strat)
+        assertDoesNotThrow {
+            chart.getOption()
         }
+
     }
+
 
 }

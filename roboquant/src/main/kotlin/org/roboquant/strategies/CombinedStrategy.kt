@@ -34,11 +34,11 @@ open class CombinedStrategy(val strategies: Collection<Strategy>, private val si
         signalResolver
     )
 
-    override fun create(event: Event): List<Signal> {
+    override fun createSignals(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
 
         for (strategy in strategies) {
-            val s = strategy.create(event)
+            val s = strategy.createSignals(event)
             signals.addAll(s)
         }
         return signalResolver?.let { signals } ?: signals

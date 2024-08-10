@@ -35,7 +35,7 @@ internal class SignalResolutionTest {
         val assets = listOf(Stock("A"), Stock("B"), Stock("C"), Stock("D"))
         val signals = assets.map { Signal(it, 1.0) }
         val items = assets.map { TradePrice(it, 100.0, 10.0) }
-        val orders = policy.create(signals, account, Event(Instant.now(), items))
+        val orders = policy.createOrders(signals, account, Event(Instant.now(), items))
         assertEquals(signals.size, orders.size)
     }
 

@@ -52,7 +52,7 @@ internal class IBKRSamples {
         // Place a new market sell order
         val position = account.positions.values.first()
         val order = MarketOrder(position.asset, -position.size)
-        broker.place(listOf(order))
+        broker.placeOrders(listOf(order))
         Thread.sleep(10_000)
         println(account)
         broker.disconnect()
@@ -89,7 +89,7 @@ internal class IBKRSamples {
             185.50
         )
 
-        broker.place(listOf(order))
+        broker.placeOrders(listOf(order))
         Thread.sleep(5_000)
         val account2 = broker.sync()
         println(account2)

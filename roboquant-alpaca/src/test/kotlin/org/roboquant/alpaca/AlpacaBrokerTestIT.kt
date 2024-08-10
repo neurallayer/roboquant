@@ -34,7 +34,7 @@ internal class AlpacaBrokerTestIT {
         println(account)
 
         assertDoesNotThrow {
-            broker.place(emptyList())
+            broker.placeOrders(emptyList())
         }
 
         assertDoesNotThrow {

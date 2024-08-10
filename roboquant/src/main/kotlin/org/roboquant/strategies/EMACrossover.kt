@@ -96,7 +96,7 @@ class EMACrossover(
         fun getDirection() = if (emaFast > emaSlow) 1.0 else -1.0
     }
 
-    override fun create(event: Event): List<Signal> {
+    override fun createSignals(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
         for ((asset, priceItem) in event.prices) {
             val price = priceItem.getPrice(priceType)

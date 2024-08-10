@@ -31,7 +31,7 @@ interface Strategy  {
     /**
      * Generate zero or more [signals][Signal] based on received [event].
      */
-    fun create(event: Event): List<Signal>
+    fun createSignals(event: Event): List<Signal>
 
 }
 

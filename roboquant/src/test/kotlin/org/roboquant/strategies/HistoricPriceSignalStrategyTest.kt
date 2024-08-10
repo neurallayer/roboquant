@@ -51,32 +51,32 @@ internal class HistoricPriceSignalStrategyTest {
     fun test() {
         val c = MySubClass1()
         val event = TestData.event()
-        val signals = c.create(event)
+        val signals = c.createSignals(event)
         assertTrue(signals.isEmpty())
         assertFalse(c.called)
 
-        repeat(10) { c.create(event) }
+        repeat(10) { c.createSignals(event) }
         assertTrue(c.called)
 
         c.reset()
         c.called = false
-        c.create(event)
+        c.createSignals(event)
         assertFalse(c.called)
     }
 
     @Test
     fun test2() {
         val c = MySubClass2()
-        val signals = c.create(TestData.event2())
+        val signals = c.createSignals(TestData.event2())
         assertTrue(signals.isEmpty())
         assertFalse(c.called)
 
-        repeat(10) { c.create(TestData.event2()) }
+        repeat(10) { c.createSignals(TestData.event2()) }
         assertTrue(c.called)
 
         c.reset()
         c.called = false
-        c.create(TestData.event2())
+        c.createSignals(TestData.event2())
         assertFalse(c.called)
     }
 
@@ -84,9 +84,9 @@ internal class HistoricPriceSignalStrategyTest {
     fun test3() {
         val c = MySubclass3()
         assertThrows<RoboquantException> {
-            c.create(TestData.event())
-            c.create(TestData.event())
-            c.create(TestData.event())
+            c.createSignals(TestData.event())
+            c.createSignals(TestData.event())
+            c.createSignals(TestData.event())
         }
 
     }

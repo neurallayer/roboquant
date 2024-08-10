@@ -255,10 +255,10 @@ open class FlexTrader(
     }
 
     /**
-     * @see Trader.create
+     * @see Trader.createOrders
      */
     @Suppress("ComplexMethod")
-    override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+    override fun createOrders(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
         val instructions = mutableListOf<Instruction>()
 
         if (signals.isNotEmpty()) {

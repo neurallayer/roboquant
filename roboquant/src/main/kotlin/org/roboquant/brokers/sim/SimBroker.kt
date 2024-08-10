@@ -161,7 +161,7 @@ open class SimBroker(
      * Place the [instructions] at the broker.
      */
     @Synchronized
-    override fun place(instructions: List<Instruction>) {
+    override fun placeOrders(instructions: List<Instruction>) {
         logger.trace { "Received instructions=${instructions.size}" }
         for (order in instructions) {
             when (order) {

@@ -40,7 +40,7 @@ private class FastStrategy(private val skip: Int) : Strategy {
     var steps = 0
     var buy = true
 
-    override fun create(event: Event): List<Signal> {
+    override fun createSignals(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
         for (action in event.items.filterIsInstance<PriceItem>()) {
             steps++

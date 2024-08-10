@@ -96,9 +96,9 @@ suspend fun runAsync(
             val account = broker.sync(event)
 
             // Generate signals and place orders
-            val signals = strategy.create(event)
-            val instructions = trader.create(signals, account, event)
-            broker.place(instructions)
+            val signals = strategy.createSignals(event)
+            val instructions = trader.createOrders(signals, account, event)
+            broker.placeOrders(instructions)
 
             journal?.track(event, account, instructions)
             if (thread.isInterrupted) throw InterruptedException()

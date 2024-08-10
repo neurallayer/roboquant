@@ -146,7 +146,7 @@ class IBKRBroker(
      *
      * @param instructions
      */
-    override fun place(instructions: List<Instruction>) {
+    override fun placeOrders(instructions: List<Instruction>) {
         // Sanity-check that you don't use this broker during back testing.
 
 

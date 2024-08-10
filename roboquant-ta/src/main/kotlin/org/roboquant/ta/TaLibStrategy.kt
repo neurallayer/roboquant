@@ -190,9 +190,9 @@ class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
      * Based on a [event], return zero or more signals. Typically, they are for the assets in the event,
      * but this is not a strict requirement.
      *
-     * @see Strategy.create
+     * @see Strategy.createSignals
      */
-    override fun create(event: Event): List<Signal> {
+    override fun createSignals(event: Event): List<Signal> {
         val results = mutableListOf<Signal>()
         val time = event.time
         for (priceBar in event.items.filterIsInstance<PriceBar>()) {

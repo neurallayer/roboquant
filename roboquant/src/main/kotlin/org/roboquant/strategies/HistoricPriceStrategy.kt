@@ -39,7 +39,7 @@ abstract class HistoricPriceStrategy(
      */
     private val history = mutableMapOf<Asset, PriceSeries>()
 
-    override fun create(event: Event): List<Signal> {
+    override fun createSignals(event: Event): List<Signal> {
         val assets = history.addAll(event, period, priceType)
         val result = mutableListOf<Signal>()
         for (asset in assets) {

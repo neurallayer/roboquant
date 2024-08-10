@@ -32,8 +32,8 @@ import kotlin.random.Random
  */
 private class SignalShuffleTrader(private val trader: Trader, private val random: Random) : Trader by trader {
 
-    override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
-        return trader.create(signals.shuffled(random), account, event)
+    override fun createOrders(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+        return trader.createOrders(signals.shuffled(random), account, event)
     }
 
 }

@@ -25,7 +25,7 @@ import org.roboquant.feeds.Event
  * as the order of strategies that is provided in the constructor.
  *
  * This will typically improve performance for strategies that are CPU or IO intensive and take some time to complete.
- * For fast strategies, this might not speed up the overall performance. Only the [create] method is run in
+ * For fast strategies, this might not speed up the overall performance. Only the [createSignals] method is run in
  * parallel, other method invocations like reset and getMetrics are run sequential.
  *
  * There is no logic included to resolve conflicting signals, for example, one strategy generates a BUY signal,
@@ -48,15 +48,15 @@ class ParallelStrategy(val strategies: Collection<Strategy>, private val signalR
     )
 
     /**
-     * @see Strategy.create
+     * @see Strategy.createSignals
      */
-    override fun create(event: Event): List<Signal> {
+    override fun createSignals(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
         runBlocking {
             val deferredList = mutableListOf<Deferred<List<Signal>>>()
             for (strategy in strategies) {
                 val deferred = scope.async {
-                    strategy.create(event)
+                    strategy.createSignals(event)
                 }
                 deferredList.add(deferred)
             }

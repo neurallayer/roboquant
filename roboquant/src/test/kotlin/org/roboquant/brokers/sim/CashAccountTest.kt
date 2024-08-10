@@ -42,7 +42,7 @@ internal class CashAccountTest {
             val orders = if (orderSize == 0) emptyList() else listOf(MarketOrder(asset, orderSize))
             val action = TradePrice(asset, price.toDouble())
             val event = Event(Instant.now(), listOf(action))
-            broker.place(orders)
+            broker.placeOrders(orders)
             return broker.sync(event)
         }
 

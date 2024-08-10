@@ -40,6 +40,6 @@ interface Broker {
     /**
      * Place new [instructions] at this broker.
      */
-    fun place(instructions: List<Instruction>)
+    fun placeOrders(instructions: List<Instruction>)
 
 }

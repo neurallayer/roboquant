@@ -26,7 +26,7 @@ internal class CombinedSignalStrategyTest {
 
     class MyStrategy : Strategy {
 
-        override fun create(event: Event): List<Signal> {
+        override fun createSignals(event: Event): List<Signal> {
             return emptyList()
         }
 
@@ -41,7 +41,7 @@ internal class CombinedSignalStrategyTest {
         assertEquals(2, s.strategies.size)
 
         val signals = mutableListOf<Signal>()
-        for (event in TestData.events(10)) signals += s.create(event)
+        for (event in TestData.events(10)) signals += s.createSignals(event)
         assertTrue(signals.isEmpty())
     }
 
@@ -53,7 +53,7 @@ internal class CombinedSignalStrategyTest {
         assertEquals(2, s.strategies.size)
 
         val signals = mutableListOf<Signal>()
-        for (event in TestData.events(10)) signals += s.create(event)
+        for (event in TestData.events(10)) signals += s.createSignals(event)
         assertTrue(signals.isEmpty())
     }
 

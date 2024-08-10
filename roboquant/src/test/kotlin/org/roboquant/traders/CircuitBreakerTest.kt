@@ -30,7 +30,7 @@ import kotlin.test.assertEquals
 internal class CircuitBreakerTest {
 
     private class MyTrader : Trader {
-        override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+        override fun createOrders(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
             return listOf(
                 MarketOrder(Stock("A"), 10),
                 MarketOrder(Stock("B"), 10),
@@ -45,19 +45,19 @@ internal class CircuitBreakerTest {
         val account = TestData.usAccount()
         val time = Instant.now()
         val policy = CircuitBreaker(MyTrader(), 8, 1.hours)
-        var orders = policy.create(emptyList(), account, Event.empty(time))
+        var orders = policy.createOrders(emptyList(), account, Event.empty(time))
         assertEquals(3, orders.size)
 
-        orders = policy.create(emptyList(), account, Event.empty(time + 30.minutes))
+        orders = policy.createOrders(emptyList(), account, Event.empty(time + 30.minutes))
         assertEquals(3, orders.size)
 
-        orders = policy.create(emptyList(), account, Event.empty(time + 50.minutes))
+        orders = policy.createOrders(emptyList(), account, Event.empty(time + 50.minutes))
         assertEquals(0, orders.size)
 
-        orders = policy.create(emptyList(), account, Event.empty(time + 51.minutes))
+        orders = policy.createOrders(emptyList(), account, Event.empty(time + 51.minutes))
         assertEquals(0, orders.size)
 
-        orders = policy.create(emptyList(), account, Event.empty(time + 120.minutes))
+        orders = policy.createOrders(emptyList(), account, Event.empty(time + 120.minutes))
         assertEquals(3, orders.size)
 
     }

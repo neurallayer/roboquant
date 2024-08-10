@@ -241,7 +241,7 @@ class AlpacaBroker(
      *
      * @return the updated account that reflects the latest state
      */
-    override fun place(instructions: List<Instruction>) {
+    override fun placeOrders(instructions: List<Instruction>) {
 
         for (order in instructions) {
             when (order) {

@@ -51,8 +51,8 @@ internal class CircuitBreaker(val trader: Trader, private val maxOrders: Int, pr
         return false
     }
 
-    override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
-        val orders = trader.create(signals, account, event)
+    override fun createOrders(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+        val orders = trader.createOrders(signals, account, event)
         if (orders.isEmpty()) return emptyList()
 
         return if (exceeds(orders.size, event.time)) {

@@ -44,7 +44,7 @@ interface Trader  {
      * @param event the market data
      * @return a list of orders
      */
-    fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction>
+    fun createOrders(signals: List<Signal>, account: Account, event: Event): List<Instruction>
 
 
 }
