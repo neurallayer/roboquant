@@ -25,7 +25,7 @@ import kotlin.test.assertNotEquals
 internal class EMACrossoverTest {
 
     @Test
-    fun simpleTest() = runBlocking {
+    fun simpleTest() {
         val strategy = EMACrossover()
         run(TestData.feed, strategy)
     }

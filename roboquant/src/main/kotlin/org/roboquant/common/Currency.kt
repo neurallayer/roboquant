@@ -48,6 +48,7 @@ class Currency private constructor(val currencyCode: String) {
             2
         }
 
+
     /**
      * @suppress
      */
@@ -63,6 +64,8 @@ class Currency private constructor(val currencyCode: String) {
             result.defaultFractionDigits = defaultFractionDigits
             return result
         }
+
+
 
         /**
          * Returns a Currency instance for the provided [currencyCode].

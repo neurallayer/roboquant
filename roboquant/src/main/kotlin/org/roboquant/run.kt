@@ -40,8 +40,8 @@ import kotlin.math.roundToInt
 fun run(
     feed: Feed,
     strategy: Strategy,
-    trader: Trader = FlexTrader(),
     journal: Journal? = null,
+    trader: Trader = FlexTrader(),
     timeframe: Timeframe = Timeframe.INFINITE,
     broker: Broker = SimBroker(),
     channel: EventChannel = EventChannel(timeframe, 10),
@@ -51,8 +51,8 @@ fun run(
     return@runBlocking runAsync(
         feed,
         strategy,
-        trader,
         journal,
+        trader,
         timeframe,
         broker,
         channel,
@@ -71,8 +71,8 @@ fun run(
 suspend fun runAsync(
     feed: Feed,
     strategy: Strategy,
-    trader: Trader = FlexTrader(),
     journal: Journal? = null,
+    trader: Trader = FlexTrader(),
     timeframe: Timeframe = Timeframe.INFINITE,
     broker: Broker = SimBroker(),
     channel: EventChannel = EventChannel(timeframe, 10),

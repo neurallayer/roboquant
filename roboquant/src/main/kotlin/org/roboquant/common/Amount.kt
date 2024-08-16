@@ -107,7 +107,7 @@ class Amount(val currency: Currency, val value: Double)  {
      * Convert this amount [to] a different currency. Optional you can provide a [time] at which the conversion
      * should be calculated. If no time is provided, the current time is used.
      */
-    fun convert(to: Currency, time: Instant = Instant.now()): Amount {
+    fun convert(to: Currency, time: Instant): Amount {
         if (currency == to) return this
         if (value == 0.0) return Amount(to, 0.0)
         return Config.exchangeRates.convert(this, to, time)
