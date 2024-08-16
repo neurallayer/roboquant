@@ -16,7 +16,6 @@
 
 package org.roboquant.strategies
 
-import kotlinx.coroutines.runBlocking
 import org.roboquant.TestData
 import org.roboquant.run
 import kotlin.test.Test
