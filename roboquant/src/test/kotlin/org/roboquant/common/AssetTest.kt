@@ -18,6 +18,7 @@ package org.roboquant.common
 
 
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 internal class AssetTest {
@@ -30,6 +31,7 @@ internal class AssetTest {
         assertEquals("ABC", a.symbol)
         assertEquals(a, c)
         assertEquals(a, a)
+        assertContains(Asset.registry, "Stock")
     }
 
 

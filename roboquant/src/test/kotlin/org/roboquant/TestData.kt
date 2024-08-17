@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("RunBlocking")
+
 package org.roboquant
 
 import kotlinx.coroutines.runBlocking
@@ -115,8 +117,6 @@ internal object TestData {
     val feed = RandomWalk.lastYears(1, 2)
 
 }
-
-
 
 
 fun feedTest(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE) = runBlocking {

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("RunBlocking")
+
 package org.roboquant.feeds
 
 import kotlinx.coroutines.*
