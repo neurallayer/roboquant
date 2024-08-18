@@ -36,10 +36,10 @@ fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Or
 }
 ----
 - Hearth-beat generation for live feeds now done at consumer level via a time-out. This avoids a lot of possible errors and complications when nesting live feeds.
-- Better naming convention for many classes/attributes. Two main ones are:
+- Better naming convention for many classes/attributes. The main ones are:
     * Event `actions` are now called `items`.
     * `Instruction` is now the interface for `Order`, `Cancellation` and `Modification`
-    * `Policy` is renamed to Trader.
+    * `Policy` is renamed to `Trader`.
 - For the time being removed the machine learning module. Rethinking what frameworks to use for future ML algo trading.
 - Different asset types (f.e FOREX, STOCKS, FUTURES), are now their own class.
 - Removed the `roboquant-binance` module. It was using an old unsupported Binance API. And since Binance no longer operates in my country, it is difficult to move to the newer API without be able to test it.
