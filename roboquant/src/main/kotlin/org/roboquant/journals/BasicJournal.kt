@@ -7,7 +7,8 @@ import java.time.Instant
 import kotlin.math.max
 
 /**
- * Tracks basic progress metrics and optionally print them to the console
+ * Tracks basic progress metrics and optionally print them to the console. This journal has very low overhead and provides
+ * basic insights into what is happening.
  */
 class BasicJournal(private val printToConsole: Boolean = false) : Journal {
 

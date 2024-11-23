@@ -8,7 +8,7 @@ import java.time.Instant
  * Base class for all types of create orders. This ranges from a simple [MarketOrder], all the way to advanced order
  * types like a [BracketOrder].
  *
- * The only hting they all have in common is they refer to a single [asset] and can optionally have a tag associated with them.
+ * The only thing they all have in common is they refer to a single [asset] and can optionally have a tag associated with them.
  */
 abstract class Order(val asset: Asset, val tag: String="") : Instruction() {
 

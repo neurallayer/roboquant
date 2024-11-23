@@ -8,6 +8,9 @@ import org.roboquant.orders.Instruction
 import java.time.Instant
 import java.util.*
 
+/**
+ * Base interface for journals that can be configured using metrics.
+ */
 interface MetricsJournal: Journal {
 
     /**

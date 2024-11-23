@@ -23,7 +23,7 @@ import kotlin.math.sign
 
 /**
  * Represents the size of orders, positions and trades. This implementation is precise up to 8 decimals, ensuring that
- * order and position sizes are accurate enough when dealing with fractional orders.
+ * order and position sizes are accurate enough when dealing with most fractional orders.
  *
  * Since this implementation is a value class, there is no overhead compared to a Double or Long.
  */

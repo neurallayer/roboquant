@@ -20,7 +20,7 @@ import kotlinx.coroutines.*
 import org.roboquant.feeds.Event
 
 /**
- * SignalStrategy that runs a number of other strategies in parallel and combines the result. The strategies will each run
+ * This Strategy that runs a number of other strategies in parallel and combines the result. The strategies will each run
  * in their own coroutine, and the results are aggregated after they are finished. The order of aggregation is the same
  * as the order of strategies that is provided in the constructor.
  *

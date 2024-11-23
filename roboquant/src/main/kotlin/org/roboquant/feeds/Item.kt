@@ -23,18 +23,17 @@ import org.roboquant.feeds.OrderBook.OrderBookEntry
 import kotlin.math.absoluteValue
 
 /**
- * An action is the lowest level of information contained in an [Event] and can be anything from a price action for an
+ * An item is the lowest level of information contained in an [Event] and can be anything from a market price for an
  * asset to an annual report or a Twitter tweet.
- * An action doesn't have to be linked to a particular asset, although [PriceItem]s are.
+ * An item doesn't have to be linked to a particular asset, although [PriceItem]s are.
  *
- * The content of the action is determined by the class implementing this interface. Strategies are expected to filter
- * on those types of actions they are interested in.
+ * The content of the item is determined by the class implementing this interface. Strategies are expected to filter
+ * on those types of items they are interested in.
  *
  * # Example
  * ```
  * event.actions.filterIsInstance<PriceBar>(). ...
  * ```
- *
  */
 interface Item
 

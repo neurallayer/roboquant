@@ -103,7 +103,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         /**
          * The empty timeframe doesn't contain any time.
          */
-        val EMPTY = Timeframe(MIN, MIN)
+        val EMPTY = Timeframe(MIN, MIN, false)
 
         // Different formatters used when displaying a timeframe
         private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")

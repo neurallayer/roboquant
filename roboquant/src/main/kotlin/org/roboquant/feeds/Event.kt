@@ -21,7 +21,8 @@ import org.roboquant.common.Timeframe
 import java.time.Instant
 
 /**
- * An event contains a list of [items] that all happened at the same moment in [time].
+ * An event contains a list of [items] that all happened at the same moment in [time]. An [Item] can be anything, but a
+ * common use case is price items like candlesticks.
  *
  * @property items the list of actions that are part of this event
  * @property time the time that the actions in this event became available

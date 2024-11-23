@@ -35,7 +35,10 @@ import kotlin.math.roundToInt
 
 
 /**
- * Blocking version of runAsync
+ * Start a run, this can be used with historical data as well as live data. At least a [Feed] and [Strategy] should be
+ * provider, other parameters have defaults.
+ *
+ * This is the blocking version of runAsync. If you want to have many runs in parallel, use the async version.
  */
 fun run(
     feed: Feed,

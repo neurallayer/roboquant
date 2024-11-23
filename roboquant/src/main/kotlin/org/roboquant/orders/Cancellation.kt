@@ -17,9 +17,9 @@
 package org.roboquant.orders
 
 /**
- * Cancel an open create-order.
+ * Cancel an existing order.
  *
- * @param orderId the id of the order to cancel
+ * @param orderId the id of the order to cancel, this is required.
  * @param tag an optional tag
  */
 class Cancellation(

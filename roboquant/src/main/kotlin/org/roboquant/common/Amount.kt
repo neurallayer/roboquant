@@ -27,7 +27,7 @@ import kotlin.math.absoluteValue
  * An amount holds the monetary [value] for a single [currency].
  *
  * For storing monetary amounts internally it uses [Double], since it is accurate enough for trading while providing
- * large performance benefits over BigDecimal.
+ * performance benefits over types like BigDecimal.
  *
  * @property currency the currency of the amount
  * @property value the value of the amount

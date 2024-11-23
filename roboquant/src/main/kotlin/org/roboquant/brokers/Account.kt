@@ -31,8 +31,8 @@ import java.time.Instant
  * - The [orders]
  *
  * Some convenience methods convert a multi-currency Wallet to a single-currency Amount.
- * For this to work, you'll
- * need to have the appropriate exchange rates defined at [Config.exchangeRates].
+ * For this to work, you'll need to have the appropriate exchange rates defined
+ * at [Config.exchangeRates].
  *
  * @property baseCurrency the base currency of the account
  * @property lastUpdate time that the account was last updated
@@ -64,13 +64,13 @@ interface Account {
     fun equityAmount(): Amount = convert(equity())
 
     /**
-     * Total equity hold in the account.
+     * Calculate the total equity hold in the account and return the result as a [Wallet]
      * Equity is defined as the sum of [cash] balances and the market value of the open [positions].
      */
     fun equity(): Wallet = cash + marketValue()
 
     /**
-     * Unique set of assets hold in the open [positions]
+     * The unique set of assets hold in the open [positions]
      */
     val assets: Set<Asset>
         get() = positions.keys
@@ -83,12 +83,14 @@ interface Account {
     }
 
     /**
-     * Return the position size for the provided asset
+     * Return the position size for the provided asset within this account. If there is no open position,
+     * a size of ZERO is returned.
      */
     fun positionSize(asset: Asset) : Size = positions[asset]?.size ?: Size.ZERO
 
     /**
-     * Return the unrealized PNL of the open positions, optionally filter by one or more asset.
+     * Return the unrealized PNL of the open positions, optionally filter by one or more asset. If there is
+     * not match, an empty [Wallet] will be returned.
      */
     fun unrealizedPNL(vararg assets: Asset): Wallet {
         return positions.filterValues { assets.isEmpty() || it.asset in assets }.values.unrealizedPNL

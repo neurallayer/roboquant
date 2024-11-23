@@ -39,6 +39,9 @@ interface Broker {
 
     /**
      * Place new [instructions] at this broker.
+     *
+     * Typically, this method will invoke the underlying broker API to place the orders and set the corresponding order-id.
+     * Place orders can also be used to update or cancel orders.
      */
     fun placeOrders(instructions: List<Instruction>)
 

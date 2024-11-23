@@ -23,7 +23,8 @@ import org.roboquant.strategies.SignalType.*
  * This enum class represents the type of signal: [ENTRY], [EXIT] or [BOTH] and can be used by more advanced
  * strategies that provide different signals for entering and exiting a position.
  *
- * Please note it is up to the signalConverter to use this additional information and simple implementations might ignore it.
+ * Please note it is up to the [org.roboquant.traders.Trader] to use this additional information and
+ * simple implementations might ignore it.
  */
 enum class SignalType {
 

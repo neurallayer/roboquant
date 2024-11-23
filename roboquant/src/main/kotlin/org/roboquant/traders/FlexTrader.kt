@@ -53,8 +53,11 @@ open class FlexPolicyConfig(
 )
 
 /**
- * This is the default trader that will be used if no other trader is specified.
- * There are several properties that can be specified during construction that change the underlying behavior:
+ * This is the default trader that will be used if no other trader is specified. It includes some common behavior that
+ * is typically required when bringing a solution live.
+ *
+ * There are several properties that can be specified during construction that change the underlying behavior by defining
+ * a [FlexPolicyConfig].
  *
  * ```
  * val trader = FlexTrader {
