@@ -34,7 +34,7 @@ operator fun StringBuffer.plusAssign(str: Any) {
  * @property root
  * @constructor Create empty Base wrapper
  */
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "KotlinConstantConditions", "UnusedReceiverParameter")
 class TaLibGenerator(private val root: JsonObject) {
 
      fun JsonObject.getAttr(key: String): String = get(key).asString

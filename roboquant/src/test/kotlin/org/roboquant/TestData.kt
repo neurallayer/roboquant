@@ -118,7 +118,7 @@ internal object TestData {
 
 }
 
-
+@Suppress("RunBlocking")
 fun feedTest(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE) = runBlocking {
     var prev = Instant.MIN
     for (event in play(feed, timeframe)) {

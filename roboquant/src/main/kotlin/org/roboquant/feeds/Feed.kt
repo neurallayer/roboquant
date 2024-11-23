@@ -173,6 +173,7 @@ inline fun Feed.applyEvents(
 /**
  * Convert a feed to a list of events, optionally limited to the provided [timeframe].
  */
+@Suppress("RunBlocking")
 fun Feed.toList(
     timeframe: Timeframe = Timeframe.INFINITE,
 ): List<Event> = runBlocking {
