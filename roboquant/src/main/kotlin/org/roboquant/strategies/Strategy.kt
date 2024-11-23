@@ -16,7 +16,6 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 
 /**
