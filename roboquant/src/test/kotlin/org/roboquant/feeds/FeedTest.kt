@@ -59,24 +59,26 @@ internal class FeedTest {
     }
 
     @Test
-    fun background() = runBlocking {
+    fun background()  {
         val feed = TestData.feed()
         val size = feed.toList().size
+        
+        runBlocking {
+            val channel = EventChannel(capacity = 100)
+            assertFalse(channel.closed)
+            val job = feed.playBackground(channel)
+            job.join()
+            assertTrue(channel.closed)
+            assertTrue(job.isCompleted)
 
-        val channel = EventChannel(capacity = 100)
-        assertFalse(channel.closed)
-        val job = feed.playBackground(channel)
-        job.join()
-        assertTrue(channel.closed)
-        assertTrue(job.isCompleted)
-
-        var e = 0
-        for (x in channel) {
-            assertTrue(x.items.isNotEmpty())
-            e++
+            var e = 0
+            for (x in channel) {
+                assertTrue(x.items.isNotEmpty())
+                e++
+            }
+            assertEquals(size, e)
+            assertTrue(channel.closed)
         }
-        assertEquals(size, e)
-        assertTrue(channel.closed)
     }
 
 

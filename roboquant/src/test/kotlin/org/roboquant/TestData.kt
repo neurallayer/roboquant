@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-@file:Suppress("RunBlocking")
 
 package org.roboquant
 
-import kotlinx.coroutines.runBlocking
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.assets
@@ -118,8 +116,7 @@ internal object TestData {
 
 }
 
-@Suppress("RunBlocking")
-fun feedTest(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE) = runBlocking {
+suspend fun feedTest(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE) {
     var prev = Instant.MIN
     for (event in play(feed, timeframe)) {
         assertTrue(event.time >= prev)
