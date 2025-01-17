@@ -7,9 +7,9 @@ Also removed some modules that didn't get the attention they deserved in the las
 
 A non-extensive list of the major changes:
 
-- Signals themselves are simplified and now use a double value for the rating rather than an enum. This is better suited for more advanced ML type of algos.
+- Signals themselves simplified and now use a double value for the rating rather than an enum. This is better suited for more advanced (ML) type of algos.
 - Removed the `Lifecycle` interface including `reset` for the components (`Strategy`, `Trader`, `Broker`).
-- Order handling is simplified. For example, order-ids are handout by the broker (during the place order method). So they are no longer assigned when creating the order. This is more inline how most brokers work.
+- Order handling is simplified for integration with real brokers. For example, order-ids are handout by the broker (during the place order method). So they are no longer assigned when creating the order. This is more inline how most brokers work.
 - Removed the `Roboquant` class. You can now directly use the standalone functions `run` and `runAsync`.
 +
 [source,kotlin]

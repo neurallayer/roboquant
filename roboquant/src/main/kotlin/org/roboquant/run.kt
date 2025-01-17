@@ -36,7 +36,7 @@ import kotlin.math.roundToInt
 
 /**
  * Start a run, this can be used with historical data as well as live data. At least a [Feed] and [Strategy] should be
- * provider, other parameters have defaults.
+ * provide, all other parameters have defaults and are optional.
  *
  * This is the blocking version of runAsync. If you want to have many runs in parallel, use the async version.
  */
@@ -69,7 +69,11 @@ fun run(
  * @param feed the feed to use
  * @param strategy The strategy to use
  * @param journal the journal to use, default is null
+ * @param trader the trader to default, default is FlexTrader
+ * @param timeframe the timeframe to limit this run to, default is `INFINITE` meaning all events in the feed will be used.
  * @param broker the broker to use, default is [SimBroker]
+ * @param channel an event channel to use, default is an event channel with capacity of 10.
+ * @param showProgressBar, should a progress-bar be shown, default is false.
  */
 suspend fun runAsync(
     feed: Feed,
