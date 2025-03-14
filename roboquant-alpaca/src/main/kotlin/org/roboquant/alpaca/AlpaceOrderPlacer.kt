@@ -23,7 +23,6 @@ import net.jacobpeterson.alpaca.openapi.trader.model.PostOrderRequest
 
 import org.roboquant.common.UnsupportedException
 import org.roboquant.orders.*
-import net.jacobpeterson.alpaca.openapi.trader.model.TimeInForce as OrderTimeInForce
 
 /**
  * Utility class that translates roboquant orders to alpaca orders
@@ -53,7 +52,7 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
     }
 
     /**
-     * Place an order of type [SingleOrder] at Alpaca.
+     * Place an order at Alpaca.
      *
      * @param order
      */

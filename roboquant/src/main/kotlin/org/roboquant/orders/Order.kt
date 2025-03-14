@@ -5,8 +5,7 @@ import org.roboquant.common.Size
 import java.time.Instant
 
 /**
- * Base class for all types of create orders. This ranges from a simple [MarketOrder], all the way to advanced order
- * types like a [BracketOrder].
+ * Base class for all types of create orders.
  *
  * The only thing they all have in common is they refer to a single [asset] and can optionally have a tag associated with them.
  */
@@ -49,7 +48,7 @@ data class Order(
     }
 
     fun isExecutable(price: Double): Boolean {
-        return (buy && price <= limit) || (sell && price >= limit)
+        return (buy and (price <= limit)) || (sell and (price >= limit))
     }
 
     fun isModify(): Boolean {

@@ -36,7 +36,6 @@ import org.roboquant.orders.*
 import java.time.Instant
 import com.ib.client.Order as IBOrder
 import com.ib.client.OrderState as IBOrderSate
-import com.ib.client.OrderStatus as IBOrderStatus
 
 
 /**
@@ -117,7 +116,7 @@ class IBKRBroker(
     }
 
     /**
-     * Place an order of type [SingleOrder]
+     * Place an order
      */
     private fun placeSingleOrder(order: Order) {
         val contract = order.asset.toContract()

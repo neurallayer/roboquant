@@ -20,8 +20,6 @@ import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.openapi.trader.model.AssetClass
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderSide
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderType
-import net.jacobpeterson.alpaca.openapi.trader.model.OrderClass
-import net.jacobpeterson.alpaca.openapi.trader.model.OrderStatus
 import org.roboquant.brokers.*
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
@@ -29,10 +27,8 @@ import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
-import java.time.ZonedDateTime
 import java.util.*
 import net.jacobpeterson.alpaca.openapi.trader.model.Order as AlpacaOrder
-import net.jacobpeterson.alpaca.openapi.trader.model.OrderStatus as AlpacaOrderStatus
 import net.jacobpeterson.alpaca.openapi.trader.model.Position as AlpacaPosition
 
 

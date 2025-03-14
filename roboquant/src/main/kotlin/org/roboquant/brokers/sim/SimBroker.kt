@@ -129,9 +129,9 @@ open class SimBroker(
             }
             val price = event.getPrice(order.asset)
             if (price != null) {
-                if (order.buy and price <= order.limit) {
+                if (order.buy and (price <= order.limit)) {
                     // todo
-                } else if (order.buy and price <= order.limit) {
+                } else if (order.buy and (price <= order.limit)) {
                     // todo
                 }
 

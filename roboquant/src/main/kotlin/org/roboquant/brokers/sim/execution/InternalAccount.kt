@@ -89,7 +89,7 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
 
     /**
      * Add [orders] as initial orders. This is the first step a broker should take before further processing
-     * the orders. Future updates using the [updateOrder] method will fail if there is no known order already present.
+     * the orders.
      */
     @Synchronized
     fun initializeOrders(orders: Collection<Order>) {

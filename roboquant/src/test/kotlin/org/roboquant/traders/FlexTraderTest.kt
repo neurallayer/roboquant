@@ -20,7 +20,6 @@ import org.roboquant.TestData
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
 import org.roboquant.strategies.Signal

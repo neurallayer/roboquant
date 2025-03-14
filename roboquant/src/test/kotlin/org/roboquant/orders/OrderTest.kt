@@ -20,7 +20,6 @@ import org.roboquant.TestData
 import org.roboquant.common.Size
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 internal class OrderTest {
 
