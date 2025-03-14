@@ -88,6 +88,26 @@ interface Asset : Comparable<Asset> {
 }
 
 
+data class Option(override val symbol: String, override val currency: Currency) :Asset {
+
+    companion object {
+
+        fun deserialize(value: String): Asset {
+            val (symbol, currencyCode) = value.split(SEP)
+            return Crypto(symbol, Currency.getInstance(currencyCode))
+        }
+
+        fun fromSymbol(symbol: String): Option {
+            return Option(symbol, Currency.USD) // TODO
+        }
+    }
+
+    override fun serialize(): String {
+        TODO("Not yet implemented")
+    }
+}
+
+
 data class Crypto(override val symbol: String, override val currency: Currency) :Asset {
 
     override fun serialize(): String {

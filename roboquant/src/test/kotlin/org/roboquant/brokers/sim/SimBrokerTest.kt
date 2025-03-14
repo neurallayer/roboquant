@@ -24,10 +24,8 @@ import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
-import org.roboquant.orders.LimitOrder
-import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.OrderStatus
-import org.roboquant.orders.Modification
+import org.roboquant.orders.Order
+
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -73,7 +71,7 @@ internal class SimBrokerTest {
     private fun getFilledSimbroker(): SimBroker {
         val broker = SimBroker()
         val asset = Stock("TEST")
-        val order = MarketOrder(asset, 10)
+        val order = Order(asset, Size(10), 100.0)
         val price = TradePrice(asset, 100.0)
         val now = Instant.now()
         val event = Event(now, listOf(price))
@@ -98,7 +96,7 @@ internal class SimBrokerTest {
         val broker = SimBroker()
 
         val asset = Stock("TEST")
-        val order = MarketOrder(asset, 10)
+        val order = Order(asset, Size(10), 100.0)
         val price = TradePrice(asset, 100.0)
         val now = Instant.now()
         val event = Event(now, listOf(price))
@@ -109,7 +107,6 @@ internal class SimBrokerTest {
         assertEquals(0, account.orders.size)
         val orderState = broker.closedOrders.first()
 
-        assertEquals(OrderStatus.COMPLETED, orderState.status)
         assertEquals(asset, orderState.asset)
 
         assertEquals(1, broker.trades.size)
@@ -148,7 +145,7 @@ internal class SimBrokerTest {
     fun updateOrder() {
         val broker = SimBroker()
         val asset = Stock("TEST")
-        val order = LimitOrder(asset,Size.ONE, 99.0)
+        val order = Order(asset,Size.ONE, 99.0)
         val price = TradePrice(asset, 100.0)
         val now = Instant.now()
         val event = Event(now, listOf(price))
@@ -156,10 +153,8 @@ internal class SimBrokerTest {
         broker.placeOrders(listOf(order))
         val account = broker.sync(event)
         assertEquals(1, account.orders.size)
-        val state = account.orders.first()
 
-        val order2 = LimitOrder(asset,Size.ONE, 101.0)
-        val updateOrder = Modification(state.id, order2)
+        val updateOrder = order.modify(limit = 101.0)
         val event2 = Event(now + 1.millis, listOf(price))
         broker.placeOrders(listOf(updateOrder))
         broker.sync(event2)

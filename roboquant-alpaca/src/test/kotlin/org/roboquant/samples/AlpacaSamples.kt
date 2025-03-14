@@ -23,7 +23,7 @@ import org.roboquant.alpaca.PriceActionType
 import org.roboquant.common.*
 import org.roboquant.feeds.applyEvents
 import org.roboquant.feeds.toList
-import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.Order
 import java.time.Instant
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -132,7 +132,7 @@ internal class AlpacaSamples {
     internal fun singleOrder() {
         val broker = AlpacaBroker { extendedHours = false }
         repeat(5) {
-            val order = MarketOrder(Stock("IBM"), Size.ONE)
+            val order = Order(Stock("IBM"), Size.ONE, 100.0)
             broker.placeOrders(listOf(order))
             Thread.sleep(5_000)
             val account = broker.sync()

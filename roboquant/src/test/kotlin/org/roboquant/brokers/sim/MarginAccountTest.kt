@@ -24,7 +24,7 @@ import org.roboquant.common.Currency.Companion.JPY
 import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
-import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.Order
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -51,8 +51,9 @@ internal class MarginAccountTest {
     }
 
     private fun update(broker: Broker, asset: Asset, price: Number, orderSize: Int = 0): Account {
-        val orders = if (orderSize == 0) emptyList() else listOf(MarketOrder(asset, orderSize))
-        val action = TradePrice(asset, price.toDouble())
+        val p = price.toDouble()
+        val orders = if (orderSize == 0) emptyList() else listOf(Order(asset, Size(orderSize), p))
+        val action = TradePrice(asset, p)
         val event = Event(Instant.now(), listOf(action))
         broker.placeOrders(orders)
         return broker.sync(event)

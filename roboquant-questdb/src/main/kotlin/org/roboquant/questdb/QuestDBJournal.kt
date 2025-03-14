@@ -30,7 +30,7 @@ import org.roboquant.common.TimeSeries
 import org.roboquant.feeds.Event
 import org.roboquant.journals.MetricsJournal
 import org.roboquant.metrics.Metric
-import org.roboquant.orders.Instruction
+import org.roboquant.orders.Order
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.collections.component1
@@ -164,7 +164,7 @@ class QuestDBJournal(
     }
 
 
-    override fun track(event: Event, account: Account, instructions: List<Instruction>) {
+    override fun track(event: Event, account: Account, instructions: List<Order>) {
 
         val result = mutableMapOf<String, Double>()
         for (metric in metrics) {

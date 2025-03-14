@@ -19,7 +19,7 @@ package org.roboquant.traders
 import org.roboquant.brokers.Account
 import org.roboquant.common.Config
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Instruction
+import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 import kotlin.random.Random
 
@@ -32,7 +32,7 @@ import kotlin.random.Random
  */
 private class SignalShuffleTrader(private val trader: Trader, private val random: Random) : Trader by trader {
 
-    override fun createOrders(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+    override fun createOrders(signals: List<Signal>, account: Account, event: Event): List<Order> {
         return trader.createOrders(signals.shuffled(random), account, event)
     }
 

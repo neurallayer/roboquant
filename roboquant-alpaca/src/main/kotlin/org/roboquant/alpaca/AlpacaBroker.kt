@@ -21,6 +21,7 @@ import net.jacobpeterson.alpaca.openapi.trader.model.AssetClass
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderSide
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderType
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderClass
+import net.jacobpeterson.alpaca.openapi.trader.model.OrderStatus
 import org.roboquant.brokers.*
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
@@ -110,29 +111,11 @@ class AlpacaBroker(
     }
 
 
-    private fun updateIAccountOrder(rqOrder: Order, order: AlpacaOrder) {
-        val status = toState(order)
-        val time = if (status.open) {
-            order.submittedAt ?: order.createdAt ?: ZonedDateTime.now().toOffsetDateTime()
-        } else {
-            order.filledAt ?: order.canceledAt ?: order.expiredAt ?: ZonedDateTime.now().toOffsetDateTime()
-        }
-        _account.updateOrder(rqOrder, time.toInstant(), status)
-    }
-
     /**
      * Update the status of the open orders in the account with the latest order status from Alpaca
      */
     private fun syncOrders() {
-        _account.orders.forEach {
-            if (it.open) {
-                // println("orderid=${it.order.id}")
-                val orderId = UUID.fromString(it.id)
-                val alpacaOrder = alpacaAPI.trader().orders().getOrderByOrderID(orderId, false)
-                logger.debug { "open order id=$orderId alpaca-order=$alpacaOrder" }
-                updateIAccountOrder(it, alpacaOrder)
-            }
-        }
+       loadExistingOrders()
     }
 
     /**
@@ -140,7 +123,8 @@ class AlpacaBroker(
      * Closed orders will be ignored all together.
      */
     private fun loadExistingOrders() {
-        val openOrders = alpacaAPI.trader().orders().getAllOrders(null, 500, null, null, null, false, "", "")
+        _account.orders.clear()
+        val openOrders = alpacaAPI.trader().orders().getAllOrders("new", 500, null, null, null, false, "", "")
         for (order in openOrders) {
             logger.debug { "received open $order" }
             val rqOrder = toOrder(order)
@@ -148,44 +132,7 @@ class AlpacaBroker(
         }
     }
 
-    /**
-     * Map Alpaca order states to roboquant order status
-     */
-    private fun toState(order: AlpacaOrder): OrderStatus {
-        return when (order.status) {
-            AlpacaOrderStatus.NEW -> OrderStatus.CREATED
-            AlpacaOrderStatus.CANCELED -> OrderStatus.CANCELLED
-            AlpacaOrderStatus.EXPIRED -> OrderStatus.EXPIRED
-            AlpacaOrderStatus.FILLED -> OrderStatus.COMPLETED
-            AlpacaOrderStatus.REJECTED -> OrderStatus.REJECTED
-            AlpacaOrderStatus.ACCEPTED -> OrderStatus.ACCEPTED
-            else -> {
-                logger.warn { "received unsupported order status ${order.status}" }
-                OrderStatus.ACCEPTED
-            }
-        }
-    }
 
-    /**
-     * Supports both regular Market Orders and Bracket Market Instruction
-     */
-    private fun toMarketOrder(order: AlpacaOrder): Order {
-        val asset = getAsset(order.symbol, order.assetClass)
-        val qty = if (order.side == OrderSide.BUY) order.qty!!.toBigDecimal() else -order.qty!!.toBigDecimal()
-        val size = Size(qty)
-
-        return when {
-            order.type == OrderType.MARKET -> MarketOrder(asset, size)
-            order.type == OrderType.LIMIT -> LimitOrder(asset, size, order.limitPrice!!.toDouble())
-            order.orderClass == OrderClass.BRACKET -> BracketOrder(
-                MarketOrder(asset, size),
-                LimitOrder(asset, -size, order.limitPrice!!.toDouble()),
-                StopOrder(asset, -size, order.stopPrice!!.toDouble())
-            )
-
-            else -> throw UnsupportedException("unsupported order type for order $order")
-        }
-    }
 
     /**
      * Convert an alpaca order to a roboquant order.
@@ -195,17 +142,7 @@ class AlpacaBroker(
         val asset = getAsset(order.symbol, order.assetClass)
         val qty = if (order.side == OrderSide.BUY) order.qty!!.toBigDecimal() else -order.qty!!.toBigDecimal()
         val rqOrder = when (order.type) {
-            OrderType.MARKET -> toMarketOrder(order)
-            OrderType.LIMIT -> LimitOrder(asset, Size(qty), order.limitPrice!!.toDouble())
-            OrderType.STOP -> StopOrder(asset, Size(qty), order.stopPrice!!.toDouble())
-            OrderType.STOP_LIMIT -> StopLimitOrder(
-                asset,
-                Size(qty),
-                order.stopPrice!!.toDouble(),
-                order.limitPrice!!.toDouble()
-            )
-
-            OrderType.TRAILING_STOP -> TrailOrder(asset, Size(qty), order.trailPercent!!.toDouble())
+            OrderType.LIMIT -> Order(asset, Size(qty), order.limitPrice!!.toDouble())
             else -> throw UnsupportedException("unsupported order type for order $order")
         }
         rqOrder.id = order.id ?: throw UnsupportedException("Unsupported order $order because no known id")
@@ -237,24 +174,22 @@ class AlpacaBroker(
     }
 
     /**
-     * Place new [instructions] at this broker. After any processing, this method returns an instance of Account.
+     * Place new [orders] at this broker. After any processing, this method returns an instance of Account.
      *
      * @return the updated account that reflects the latest state
      */
-    override fun placeOrders(instructions: List<Instruction>) {
+    override fun placeOrders(orders: List<Order>) {
 
-        for (order in instructions) {
-            when (order) {
-                is SingleOrder -> {
-                    orderPlacer.placeSingleOrder(order)
-                    _account.initializeOrders(listOf(order))
-                }
-                is Cancellation -> {
-                    val orderId = UUID.fromString(order.orderId)
+        for (order in orders) {
+            when  {
+                order.isCancellation() -> {
+                    val orderId = UUID.fromString(order.id)
                     alpacaAPI.trader().orders().deleteOrderByOrderID(orderId)
                 }
+
                 else -> {
-                    logger.warn { "ignoring unsupported order type order=$order" }
+                    orderPlacer.placeSingleOrder(order)
+                    _account.initializeOrders(listOf(order))
                 }
             }
         }

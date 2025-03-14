@@ -16,7 +16,6 @@
 
 package org.roboquant.brokers.sim
 
-import org.roboquant.TestData
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.FixedExchangeRates
@@ -25,8 +24,7 @@ import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
-import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.OrderStatus
+import org.roboquant.orders.Order
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -39,8 +37,9 @@ internal class CashAccountTest {
     internal companion object {
 
         internal fun update(broker: Broker, asset: Asset, price: Number, orderSize: Int = 0): Account {
-            val orders = if (orderSize == 0) emptyList() else listOf(MarketOrder(asset, orderSize))
-            val action = TradePrice(asset, price.toDouble())
+            val p = price.toDouble()
+            val orders = if (orderSize == 0) emptyList() else listOf(Order(asset, Size(orderSize), p))
+            val action = TradePrice(asset, p)
             val event = Event(Instant.now(), listOf(action))
             broker.placeOrders(orders)
             return broker.sync(event)
@@ -54,25 +53,6 @@ internal class CashAccountTest {
                 feeModel = NoFeeModel()
             )
         }
-    }
-
-    @Test
-    fun test() {
-        val account = TestData.internalAccount()
-        val uc = CashAccount()
-        uc.updateAccount(account)
-        assertEquals(account.cash, account.buyingPower.toWallet())
-
-        val order = MarketOrder(TestData.usStock(), 100)
-        account.initializeOrders(listOf(order))
-        uc.updateAccount(account)
-
-        // Right now open orders are not taken into account
-        assertEquals(account.cash, account.buyingPower.toWallet())
-
-        account.updateOrder(order, Instant.now(), OrderStatus.ACCEPTED)
-        uc.updateAccount(account)
-        assertEquals(account.cash, account.buyingPower.toWallet())
     }
 
     @Test

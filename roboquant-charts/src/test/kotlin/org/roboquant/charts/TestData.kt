@@ -24,7 +24,7 @@ import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.metrics.AccountMetric
-import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.Order
 import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
 
@@ -54,7 +54,7 @@ object TestData {
         account.buyingPower = amount
         account.setPosition(Position(asset1, Size(100), 10.0))
         account.setPosition(Position(asset2, Size(100), 10.0))
-        account.initializeOrders(listOf(MarketOrder(asset1, 100)))
+        account.initializeOrders(listOf(Order(asset1, Size(100), 10.0)))
         return account.toAccount()
     }
 

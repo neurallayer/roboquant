@@ -53,20 +53,6 @@ internal class RunTest {
     }
 
 
-    @Test
-    fun run2()  {
-        assertDoesNotThrow {
-            val strategy = EMACrossover()
-            val journal = BasicJournal()
-            run(TestData.feed, strategy, journal = journal)
-            assertTrue(journal.nEvents > 0)
-            assertTrue(journal.nItems > 0)
-            assertTrue(journal.nOrders > 0)
-            assertTrue(journal.lastTime != null)
-            assertTrue(journal.maxPositions > 0)
-        }
-    }
-
 
     @Test
     fun walkforward()  {

@@ -2,7 +2,7 @@ package org.roboquant.journals
 
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Instruction
+import org.roboquant.orders.Order
 import java.time.Instant
 import kotlin.math.max
 
@@ -18,7 +18,7 @@ class BasicJournal(private val printToConsole: Boolean = false) : Journal {
     var maxPositions = 0
     var lastTime: Instant? = null
 
-    override fun track(event: Event, account: Account, instructions: List<Instruction>) {
+    override fun track(event: Event, account: Account, instructions: List<Order>) {
         nItems += event.items.size
         nOrders += instructions.size
         nEvents += 1

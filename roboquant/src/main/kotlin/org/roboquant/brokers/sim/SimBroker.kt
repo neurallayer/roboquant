@@ -19,8 +19,6 @@ package org.roboquant.brokers.sim
 import org.roboquant.brokers.*
 import org.roboquant.brokers.sim.execution.Execution
 import org.roboquant.brokers.sim.execution.InternalAccount
-import org.roboquant.brokers.sim.execution.OrderExecutor
-import org.roboquant.brokers.sim.execution.OrderExecutorFactory
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
@@ -62,8 +60,6 @@ open class SimBroker(
     private val logger = Logging.getLogger(SimBroker::class)
 
     private var nextOrderId = 0
-
-    private var orderExecutors = mutableMapOf<String, OrderExecutor>()
 
 
     init {
@@ -127,17 +123,20 @@ open class SimBroker(
     private fun simulateMarket(event: Event) {
         // Add new orders to the execution engine and run it with the latest events
         val time = event.time
-        for (orderExecutor in orderExecutors.values) {
-            if (orderExecutor.status.closed) continue
-            val item = event.prices[orderExecutor.order.asset]
-            if (item != null) {
-                val executions = orderExecutor.execute(item, time)
-                for (execution in executions) updateAccount(execution, event.time)
+        for (order in account.orders.toList()) {
+            if (! order.isValid(time)) {
+                // todo
             }
+            val price = event.getPrice(order.asset)
+            if (price != null) {
+                if (order.buy and price <= order.limit) {
+                    // todo
+                } else if (order.buy and price <= order.limit) {
+                    // todo
+                }
 
+            }
         }
-
-        orderExecutors = orderExecutors.filterNot { it.value.status.closed }.toMutableMap()
     }
 
     /**
@@ -151,33 +150,29 @@ open class SimBroker(
             account.lastUpdate = event.time
             accountModel.updateAccount(account)
         }
-        val newlyClosed = account.orders.filter { it.closed }.toSet()
-        closedOrders.addAll(newlyClosed)
-        account.orders.removeAll(newlyClosed)
+        // account.orders.removeAll(newlyClosed)
         return account.toAccount()
     }
 
     /**
-     * Place the [instructions] at the broker.
+     * Place the [orders] at the broker.
      */
     @Synchronized
-    override fun placeOrders(instructions: List<Instruction>) {
-        logger.trace { "Received instructions=${instructions.size}" }
-        for (order in instructions) {
-            when (order) {
-                is Order -> {
+    override fun placeOrders(orders: List<Order>) {
+        logger.trace { "Received instructions=${orders.size}" }
+        for (order in orders) {
+            when {
+                order.isCancellation() -> {
+                   val removed = account.orders.removeAll { it.id == order.id }
+                    if (removed) closedOrders.add(order)
+                }
+                order.isModify() -> {
+                    val removed  = account.orders.removeIf { it.id == order.id }
+                    if (removed) account.orders.add(order)
+                }
+                else -> {
                     order.id = nextOrderId++.toString()
-                    orderExecutors[order.id] = OrderExecutorFactory.getExecutor(order)
                     account.orders.add(order)
-                }
-                is Cancellation -> {
-                    val success = orderExecutors[order.orderId]?.cancel(Instant.now()) ?: false
-                    logger.info { "cancel order success=$success" }
-                }
-                is Modification -> {
-                    // Modify instructions are applied immediatly and not stored
-                    val success = orderExecutors[order.orderId]?.modify(order, Instant.now()) ?: false
-                    logger.info { "modify order success=$success" }
                 }
             }
         }

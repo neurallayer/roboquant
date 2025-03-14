@@ -32,47 +32,22 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
 
 
 
-    private fun TimeInForce.toOrderTimeInForce(): OrderTimeInForce {
 
-        return when (this) {
-            is GTC -> OrderTimeInForce.GTC
-            is DAY -> OrderTimeInForce.DAY
-            is IOC -> OrderTimeInForce.IOC
-            is FOK -> OrderTimeInForce.FOK
-            else -> throw UnsupportedException("unsupported tif=${this}")
-        }
-    }
-
-
-    private fun getOrderRequest(order: SingleOrder): PostOrderRequest? {
-
-        val tif = order.tif.toOrderTimeInForce()
+    private fun getOrderRequest(order: Order): PostOrderRequest? {
 
         val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
-        require(!order.size.isFractional || order is LimitOrder) {
-            "fractional orders only supported for limit orders"
-        }
 
         val qty = order.size.toBigDecimal().abs()
         val result = PostOrderRequest()
             .symbol(order.asset.symbol)
             .side(side)
             .qty(qty.toString())
-            .timeInForce(tif)
             .extendedHours(extendedHours)
 
-        when (order) {
 
-            is LimitOrder -> {
-                result.type(OrderType.LIMIT)
-                result.limitPrice(order.limit.toString())
-            }
+        result.type(OrderType.LIMIT)
+        result.limitPrice(order.limit.toString())
 
-            is MarketOrder -> result.type(OrderType.MARKET)
-
-            else -> throw UnsupportedException("unsupported ordertype $order")
-
-        }
 
         return result
     }
@@ -82,7 +57,7 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
      *
      * @param order
      */
-    fun placeSingleOrder(order: SingleOrder) {
+    fun placeSingleOrder(order: Order) {
 
         val orderRequest = getOrderRequest(order)
         if (orderRequest != null) {

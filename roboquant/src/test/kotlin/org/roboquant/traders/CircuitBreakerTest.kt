@@ -20,8 +20,7 @@ import org.roboquant.TestData
 import org.roboquant.brokers.Account
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.Instruction
+import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.test.Test
@@ -30,11 +29,11 @@ import kotlin.test.assertEquals
 internal class CircuitBreakerTest {
 
     private class MyTrader : Trader {
-        override fun createOrders(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+        override fun createOrders(signals: List<Signal>, account: Account, event: Event): List<Order> {
             return listOf(
-                MarketOrder(Stock("A"), 10),
-                MarketOrder(Stock("B"), 10),
-                MarketOrder(Stock("C"), 10)
+                Order(Stock("A"), Size(10), 100.0),
+                Order(Stock("B"), Size(10), 100.0),
+                Order(Stock("C"), Size(10), 100.0)
             )
         }
 

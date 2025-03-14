@@ -1,7 +1,7 @@
 package org.roboquant.orders
 
 import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
+import org.roboquant.common.Size
 import java.time.Instant
 
 /**
@@ -10,7 +10,19 @@ import java.time.Instant
  *
  * The only thing they all have in common is they refer to a single [asset] and can optionally have a tag associated with them.
  */
-abstract class Order(val asset: Asset, val tag: String="") : Instruction() {
+data class Order(
+    val asset: Asset,
+    val size: Size,
+    val limit: Double,
+    val gtd: Instant? = null,
+    val tag: String = ""
+)  {
+
+    val buy: Boolean
+        get() = size > 0
+
+    val sell: Boolean
+        get() = size < 0
 
     /**
      * The order id is set by broker once placed, before that it contains an empty string.
@@ -18,51 +30,41 @@ abstract class Order(val asset: Asset, val tag: String="") : Instruction() {
     var id = ""
 
     /**
-     * Status of the order, set to CREATED when just created
+     * How much is filled
      */
-    var status = OrderStatus.CREATED
+    var fill = Size.ZERO
 
-    /**
-     * Returns true the order status is open, false otherwise
-     */
-    val open: Boolean
-        get() = status.open
-
-    /**
-     * Returns true the order status is closed, false otherwise
-     */
-    val closed: Boolean
-        get() = status.closed
-
-    var openedAt: Instant = Timeframe.MIN
-
-    fun cancel(): Cancellation {
-        return Cancellation(id)
+    fun cancel(): Order {
+        require(id != "")
+        return copy(size = Size.ZERO)
     }
 
-    fun modify(updateOrder: Order) : Modification {
-        return Modification(id, updateOrder)
+    fun modify(size: Size = this.size, limit: Double = this.limit) : Order {
+        require(id != "")
+        return copy(size = size, limit = limit)
     }
 
-    /**
-     * What is the type of instruction, default is the class name without any order suffix
-     */
-    open val type: String
-        get() = this::class.simpleName?.uppercase()?.removeSuffix("ORDER") ?: "UNKNOWN"
+    fun isCancellation(): Boolean {
+        return size == Size.ZERO && id != ""
+    }
 
-    /**
-     * Provide extra info as a map, used in displaying order information. Default is an empty map and subclasses are
-     * expected to return a map with their additional properties like limit or trailing percentages.
-     */
-    open fun info(): Map<String, Any> = emptyMap()
+    fun isExecutable(price: Double): Boolean {
+        return (buy && price <= limit) || (sell && price >= limit)
+    }
 
+    fun isModify(): Boolean {
+        return size != Size.ZERO && id != ""
+    }
+
+    fun isValid(time: Instant): Boolean {
+        return gtd == null || time <= gtd
+    }
 
     /**
      * Returns a unified string representation for the different order types
      */
     override fun toString(): String {
-        val infoStr = info().toString().removePrefix("{").removeSuffix("}")
-        return "type=$type id=$id tag=$tag $infoStr"
+        return "asset=$asset id=$id tag=$tag"
     }
 
 }

@@ -24,8 +24,7 @@ import org.roboquant.ibkr.IBKR
 import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
-import org.roboquant.orders.BracketOrder
-import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.Order
 import org.roboquant.strategies.EMACrossover
 import kotlin.test.Test
 
@@ -51,7 +50,7 @@ internal class IBKRSamples {
 
         // Place a new market sell order
         val position = account.positions.values.first()
-        val order = MarketOrder(position.asset, -position.size)
+        val order = Order(position.asset, -position.size, position.mktPrice)
         broker.placeOrders(listOf(order))
         Thread.sleep(10_000)
         println(account)
@@ -75,28 +74,7 @@ internal class IBKRSamples {
         broker.disconnect()
     }
 
-    @Test
-    internal fun placeOrder() {
-        val broker = IBKRBroker()
-        Config.exchangeRates = broker.exchangeRates
-        val account = broker.sync()
-        println(account)
 
-        val asset = Stock("TSLA")
-        val order = BracketOrder.limitTrailStop(
-            asset,
-            Size.ONE,
-            185.50
-        )
-
-        broker.placeOrders(listOf(order))
-        Thread.sleep(5_000)
-        val account2 = broker.sync()
-        println(account2)
-        println(account2.orders)
-        broker.disconnect()
-        println("done")
-    }
 
     @Test
     internal fun simplePaperTrade() {

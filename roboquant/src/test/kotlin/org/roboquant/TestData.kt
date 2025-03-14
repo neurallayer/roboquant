@@ -25,7 +25,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.*
-import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.Order
 import java.io.File
 import java.time.Instant
 import kotlin.test.assertTrue
@@ -45,7 +45,7 @@ internal object TestData {
         account.setPosition(Position(asset1, Size(100), 10.0))
         account.setPosition(Position(asset2, Size(100), 10.0))
 
-        val order = MarketOrder(asset1, 100)
+        val order = Order(asset1, Size(100), 100.0)
         // val state = MutableOrderState(order, OrderStatus.COMPLETED, Instant.now(), Instant.now())
         account.initializeOrders(listOf(order))
         // account.updateOrder(order, Instant.now(), OrderStatus.COMPLETED)
@@ -61,7 +61,7 @@ internal object TestData {
         account.setPosition(Position(asset2, Size(100), 10.0))
         account.buyingPower = 100_000.USD
 
-        val order = MarketOrder(asset1, 100)
+        val order = Order(asset1, Size(100), 100.0)
         account.initializeOrders(listOf(order))
         return account.toAccount()
     }
@@ -80,9 +80,9 @@ internal object TestData {
         throw ConfigurationException("cannot find data directory for testing")
     }
 
-    fun euMarketOrder() = MarketOrder(euStock(), 10)
+    fun euMarketOrder() = Order(euStock(), Size(10), 100.0)
 
-    fun usMarketOrder() = MarketOrder(usStock(), 10)
+    fun usMarketOrder() = Order(usStock(), Size(10), 100.0)
 
     private fun priceItem(asset: Asset = usStock()) = TradePrice(asset, 10.0)
 

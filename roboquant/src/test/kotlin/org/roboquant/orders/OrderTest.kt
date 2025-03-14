@@ -16,13 +16,23 @@
 
 package org.roboquant.orders
 
-/**
- * Cancel an existing order.
- *
- * @param orderId the id of the order to cancel, this is required.
- * @param tag an optional tag
- */
-class Cancellation(
-    val orderId: String,
-    val tag: String = ""
-) : Instruction()
+import org.roboquant.TestData
+import org.roboquant.common.Size
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+internal class OrderTest {
+
+
+
+    @Test
+    fun testMarketOrder() {
+        val asset = TestData.usStock()
+        val order = Order(asset, Size(100), 100.0)
+        assertEquals(order.limit, 100.0)
+    }
+
+
+
+}

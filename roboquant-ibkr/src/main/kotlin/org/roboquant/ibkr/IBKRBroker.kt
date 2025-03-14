@@ -33,7 +33,6 @@ import org.roboquant.feeds.Event
 import org.roboquant.ibkr.IBKR.toAsset
 import org.roboquant.ibkr.IBKR.toContract
 import org.roboquant.orders.*
-import org.roboquant.orders.OrderStatus
 import java.time.Instant
 import com.ib.client.Order as IBOrder
 import com.ib.client.OrderState as IBOrderSate
@@ -110,8 +109,8 @@ class IBKRBroker(
     /**
      * Cancel an order
      */
-    private fun cancelOrder(cancellation: Cancellation) {
-        val id = cancellation.orderId
+    private fun cancelOrder(cancellation: Order) {
+        val id = cancellation.id
         logger.info("cancelling order with id $id")
         client.cancelOrder(id.toInt(), cancellation.tag)
 
@@ -120,7 +119,7 @@ class IBKRBroker(
     /**
      * Place an order of type [SingleOrder]
      */
-    private fun placeSingleOrder(order: SingleOrder) {
+    private fun placeSingleOrder(order: Order) {
         val contract = order.asset.toContract()
         val ibOrder = createIBOrder(order)
         ibOrder.log(contract)
@@ -142,23 +141,21 @@ class IBKRBroker(
     }
 
     /**
-     * Place zero or more [instructions]
+     * Place zero or more [orders]
      *
-     * @param instructions
+     * @param orders
      */
-    override fun placeOrders(instructions: List<Instruction>) {
+    override fun placeOrders(orders: List<Order>) {
         // Sanity-check that you don't use this broker during back testing.
 
 
-        for (order in instructions) {
-            if (order is Order && order.id.isBlank()) order.id = nextOrderId++.toString()
+        for (order in orders) {
             logger.info("received order=$order")
-            when (order) {
-                is Cancellation -> cancelOrder(order)
-                is SingleOrder -> placeSingleOrder(order)
-                is BracketOrder -> placeBracketOrder(order)
+            when  {
+                order.isCancellation() -> cancelOrder(order)
                 else -> {
-                    throw UnsupportedException("unsupported order type order=$order")
+                    order.id = nextOrderId++.toString()
+                    placeSingleOrder(order)
                 }
             }
 
@@ -168,29 +165,11 @@ class IBKRBroker(
     /**
      * convert a roboquant [order] to an IBKR order.
      */
-    private fun createIBOrder(order: SingleOrder): IBOrder {
+    private fun createIBOrder(order: Order): IBOrder {
         val result = IBOrder()
+
         with(result) {
-            when (order) {
-                is MarketOrder -> orderType(OrderType.MKT)
-                is LimitOrder -> {
-                    orderType(OrderType.LMT); lmtPrice(order.limit)
-                }
-
-                is StopOrder -> {
-                    orderType(OrderType.STP); auxPrice(order.stop)
-                }
-
-                is StopLimitOrder -> {
-                    orderType(OrderType.STP_LMT); lmtPrice(order.limit); auxPrice(order.stop)
-                }
-
-                is TrailOrder -> {
-                    orderType(OrderType.TRAIL); trailingPercent(order.trailPercentage * 100.0)
-                }
-
-                else -> throw UnsupportedException("unsupported order type $order")
-            }
+            orderType(OrderType.LMT); lmtPrice(order.limit)
         }
 
         val action = if (order.buy) Action.BUY else Action.SELL
@@ -209,22 +188,6 @@ class IBKRBroker(
     }
 
 
-    private fun placeBracketOrder(order: BracketOrder) {
-        val entry = createIBOrder(order.entry)
-        val profit = createIBOrder(order.takeProfit)
-        profit.parentId(entry.orderId())
-        val loss = createIBOrder(order.stopLoss)
-        loss.parentId(entry.orderId())
-        loss.transmit(true)
-        val orders = listOf(entry, profit, loss)
-        val contract = order.entry.asset.toContract()
-
-        for (o in orders) {
-            o.log(contract)
-            client.placeOrder(o.orderId(), contract, o)
-        }
-    }
-
     /**
      * Overwrite the default wrapper
      */
@@ -238,27 +201,12 @@ class IBKRBroker(
             val asset = contract.toAsset()
             val qty = if (order.action() == Action.BUY) order.totalQuantity() else order.totalQuantity().negate()
             val size = Size(qty.value())
-            val result = when (order.orderType()) {
-                OrderType.MKT -> MarketOrder(asset, size)
-                OrderType.LMT -> LimitOrder(asset, size, order.lmtPrice())
-                OrderType.STP -> StopOrder(asset, size, order.auxPrice())
-                OrderType.TRAIL -> TrailOrder(asset, size, order.trailingPercent() / 100.0)
-                OrderType.STP_LMT -> StopLimitOrder(asset, size, order.auxPrice(), order.lmtPrice())
-                else -> throw UnsupportedException("$order")
-            }
+            val result = Order(asset, size, order.lmtPrice())
             result.id = order.orderId().toString()
             return result
         }
 
-        private fun toStatus(status: String): OrderStatus {
-            return when (IBOrderStatus.valueOf(status)) {
-                IBOrderStatus.Submitted -> OrderStatus.ACCEPTED
-                IBOrderStatus.Cancelled -> OrderStatus.CANCELLED
-                IBOrderStatus.Filled -> OrderStatus.COMPLETED
-                IBOrderStatus.PreSubmitted -> OrderStatus.CREATED
-                else -> OrderStatus.CREATED
-            }
-        }
+
 
         /**
          * What is the next valid IBKR orderID we can use
@@ -272,41 +220,12 @@ class IBKRBroker(
         override fun openOrder(orderId: Int, contract: Contract, order: IBOrder, orderState: IBOrderSate) {
             logger.debug { "orderId=$orderId asset=${contract.symbol()} qty=${order.totalQuantity()} status=${orderState.status}" }
             logger.trace { "$orderId $contract $order $orderState" }
-            val openOrder = account.getOrder(orderId.toString())
-            if (openOrder != null) {
-                logger.info {"update order orderId=$orderId status=${orderState.status}" }
-                if (orderState.completedStatus() == "true") {
-                    val o = account.getOrder(openOrder.id)
-                    if (o != null) {
-                        account.updateOrder(o, Instant.parse(orderState.completedTime()), OrderStatus.COMPLETED)
-                    }
-                }
-            } else if (orderId !in orderIds){
-                logger.info { "existing order orderId=$orderId parentId=${order.parentId()} status=${orderState.status}" }
-                // if (order.parentId() > 0) return // right now no support for open bracket orders
-                val newOrder = toOrder(order, contract)
-                account.orders.add(newOrder)
-                val newStatus = toStatus(orderState.status)
-                account.updateOrder(newOrder, Instant.now(), newStatus)
-            }
+            logger.info { "existing order orderId=$orderId parentId=${order.parentId()} status=${orderState.status}" }
+            // if (order.parentId() > 0) return // right now no support for open bracket orders
+            val newOrder = toOrder(order, contract)
+            account.orders.add(newOrder)
         }
 
-
-        override fun orderStatus(
-            orderId: Int, status: String, filled: Decimal?,
-            remaining: Decimal?, avgFillPrice: Double, permId: Int, parentId: Int,
-            lastFillPrice: Double, clientId: Int, whyHeld: String?, mktCapPrice: Double
-        ) {
-            logger.info { "orderstatus oderId=$orderId status=$status filled=$filled" }
-            val order = account.getOrder(orderId.toString())
-            if (order != null) {
-                val newStatus = toStatus(status)
-                account.updateOrder(order, Instant.now(), newStatus)
-                account.lastUpdate = Instant.now()
-            } else {
-                logger.warn { "Received orderStatus for unknown order with orderId=$orderId" }
-            }
-        }
 
 
         override fun openOrderEnd() {

@@ -68,8 +68,6 @@ open class FlexPolicyConfig(
  * See also [FlexPolicyConfig] for more details.
  *
  * Also, some methods can be overwritten in a subclass to provide even more flexibility.
- * For example, this trader will create [MarketOrder]s by default, but this can be changed by overwriting
- * the [createOrder] method in a subclass.
  *
  *
  * @constructor Create a new instance of a FlexTrader
@@ -115,61 +113,9 @@ open class FlexTrader(
             return SingleTrader()
         }
 
-        /**
-         * Return a FlexTrader that generates bracket orders, with the following characteristics:
-         * - a market order for entry
-         * - trail-order for take profit with provided [trailPercentage], default is 5%
-         * - stop-loss order for limiting loss with provided [stopPercentage], default is 1%
-         *
-         * @see FlexTrader
-         * @see BracketOrder.marketTrailStop
-         */
-        fun bracketOrders(
-            trailPercentage: Double = 5.percent,
-            stopPercentage: Double = 1.percent,
-            configure: FlexPolicyConfig.() -> Unit = {}
-        ): FlexTrader {
-            class MyTrader : FlexTrader(configure = configure) {
 
-                override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction {
-                    val price = priceItem.getPrice(config.priceType)
-                    return BracketOrder.marketTrailStop(signal.asset, size, price, trailPercentage, stopPercentage)
-                }
-            }
 
-            return MyTrader()
-        }
 
-        /**
-         * FlexTrader that generates limit orders for entry orders.
-         *
-         * If [limitPercentage] is a positive value, the following logic applies,
-         *
-         * ```
-         * BUY orders have a below market price limit, and SELL order above market price.
-         * ```
-         *
-         * @param limitPercentage the limit as percentage of the price
-         *
-         */
-        fun limitOrders(
-            limitPercentage: Double = 1.percent,
-            configure: FlexPolicyConfig.() -> Unit = {}
-        ): FlexTrader {
-            class MyTrader : FlexTrader(configure = configure) {
-
-                override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction {
-                    val price = priceItem.getPrice(config.priceType)
-
-                    // BUY orders have a below market price limit, and SELL order above
-                    val limitOffset = limitPercentage * size.sign
-                    val limitPrice = price * (1.0 - limitOffset)
-                    return LimitOrder(signal.asset, size, limitPrice)
-                }
-            }
-
-            return MyTrader()
-        }
 
     }
 
@@ -215,10 +161,10 @@ open class FlexTrader(
      * Create a new order based on the [signal], [size] and current [priceItem].
      * This method should return null to indicate no order should be created at all.
      *
-     * Overwrite this method if you want to create orders other than the default [MarketOrder].
+     * Overwrite this method if you want to create orders other than the default [Order].
      */
-    open fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction? {
-        return MarketOrder(signal.asset, size)
+    open fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Order? {
+        return Order(signal.asset, size, priceItem.getPrice())
     }
 
     /**
@@ -261,8 +207,8 @@ open class FlexTrader(
      * @see Trader.createOrders
      */
     @Suppress("ComplexMethod")
-    override fun createOrders(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
-        val instructions = mutableListOf<Instruction>()
+    override fun createOrders(signals: List<Signal>, account: Account, event: Event): List<Order> {
+        val instructions = mutableListOf<Order>()
 
         if (signals.isNotEmpty()) {
             val equityAmount = account.equityAmount()

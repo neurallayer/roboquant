@@ -2,7 +2,7 @@ package org.roboquant.journals
 
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Instruction
+import org.roboquant.orders.Order
 
 /**
  * Interface for tracking progress during a run
@@ -14,7 +14,7 @@ interface Journal {
      *
      * The passed instructions are only those instructions that were generated during this step.
      */
-    fun track(event: Event, account: Account, instructions: List<Instruction>)
+    fun track(event: Event, account: Account, instructions: List<Order>)
 
 }
 

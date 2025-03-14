@@ -22,7 +22,6 @@ import org.roboquant.brokers.marketValue
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
-import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
@@ -132,14 +131,6 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
             return positions.values.marketValue
         }
 
-
-    fun updateOrder(order: Order, now: Instant?, status: OrderStatus) {
-        order.status = status
-        if (now != null) {
-            if (order.openedAt == Timeframe.MIN) order.openedAt = now
-        }
-
-    }
 
 
     override fun toString(): String {
