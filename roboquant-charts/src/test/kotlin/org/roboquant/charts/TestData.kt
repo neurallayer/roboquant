@@ -39,11 +39,6 @@ internal fun String.removeEOL() = this.replace("\n", "").replace("\r", "")
  */
 object TestData {
 
-    val fullAccount by lazy {
-        val feed = RandomWalk.lastYears()
-        val account = run(feed, EMACrossover())
-        account
-    }
 
     fun usAccount(): Account {
         val amount: Amount = 100_000.USD

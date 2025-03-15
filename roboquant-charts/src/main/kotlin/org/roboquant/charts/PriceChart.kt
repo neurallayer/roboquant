@@ -54,8 +54,7 @@ internal fun Array<out Indicator>.toLineSeries(feed: Feed, asset: Asset, timefra
 }
 
 /**
- * Plot the prices of an [asset] found in the [feed] and optionally the [trades] made for that same asset. When
- * supplying trades, the corresponding [Trade.size] will we plotted as markers.
+ * Plot the prices of an [asset] found in the [feed].
  *
  * This chart supports any type of PriceItem.
  *
@@ -70,8 +69,7 @@ class PriceChart(
 ) : Chart() {
 
     /**
-     * Plot the prices of a [symbol] found in a [feed] and optionally the [trades] made for that same
-     * asset.
+     * Plot the prices of a [symbol] found in a [feed]
      *
      * @see PriceChart
      */
