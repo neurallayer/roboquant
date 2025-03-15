@@ -72,6 +72,19 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
         cash.clear()
     }
 
+    fun deleteOrder(order: Order) {
+        orders.removeIf { it.id == order.id }
+    }
+
+    fun updatePosition(asset: Asset, size: Size, price: Double) {
+        val position = positions[asset]
+        if (position == null) {
+            positions[asset] = Position(size, price, price)
+        } else {
+            // TODO proper impl
+            positions[asset] = Position(position.size + size, price, price)
+        }
+    }
 
     /**
      * Set the [position]. If the position is closed, it is removed all together from the [positions].

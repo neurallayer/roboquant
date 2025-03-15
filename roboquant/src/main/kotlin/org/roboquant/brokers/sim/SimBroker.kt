@@ -112,6 +112,12 @@ open class SimBroker(
         account.cash.withdraw(newTrade.totalCost)
     }
 
+
+    private fun deleteOrder(order: Order) {
+        account.deleteOrder(order)
+        closedOrders.add(order)
+    }
+
     /**
      * Return the realized PNL of the trades, optionally filter by one or more asset.
      */
@@ -124,16 +130,17 @@ open class SimBroker(
         val time = event.time
         for (order in account.orders.toList()) {
             if (! order.isValid(time)) {
-                // todo
+                deleteOrder(order)
+                continue
             }
             val price = event.getPrice(order.asset)
             if (price != null) {
-                if (order.buy and (price <= order.limit)) {
-                    // todo
-                } else if (order.buy and (price <= order.limit)) {
-                    // todo
+                if (order.isExecutable(price)) {
+                    account.updatePosition(order.asset, order.size, price)
+                    val value = order.asset.value(order.size, price)
+                    account.cash.withdraw(value)
+                    deleteOrder(order)
                 }
-
             }
         }
     }

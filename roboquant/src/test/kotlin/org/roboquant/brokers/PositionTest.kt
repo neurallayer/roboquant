@@ -17,7 +17,6 @@
 package org.roboquant.brokers
 
 import org.roboquant.TestData
-import org.roboquant.common.Stock
 import org.roboquant.common.Size
 import java.math.BigDecimal
 import kotlin.random.Random
@@ -35,7 +34,6 @@ internal class PositionTest {
 
     @Test
     fun update1() {
-        val contract = TestData.usStock()
         val p1 = Position(Size(10), 10.0, 12.0)
         val p2 = Position(Size(10), 12.0, 12.0)
         val newPos = p1 + p2

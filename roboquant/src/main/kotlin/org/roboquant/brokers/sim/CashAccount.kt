@@ -18,7 +18,6 @@ package org.roboquant.brokers.sim
 import org.roboquant.brokers.exposure
 import org.roboquant.brokers.short
 import org.roboquant.brokers.sim.execution.InternalAccount
-import org.roboquant.common.sumOf
 
 /**
  * AccountModel that models a plain cash account. No additional leverage or margin is available for trading.

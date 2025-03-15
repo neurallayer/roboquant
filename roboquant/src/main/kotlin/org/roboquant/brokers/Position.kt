@@ -26,7 +26,6 @@ import java.time.Instant
  * Position instances are immutable, so updating a position requires creating a new instance. The actual [size] of the
  * position is precise (doesn't lose precision like is the case with double) using the [Size] class.
  *
- * @property asset the asset of the position
  * @property size size of the position, not including any contract multiplier defined at asset contract level
  * @property avgPrice average price paid, in the currency denoted by the asset
  * @property mktPrice last known market price for this asset
