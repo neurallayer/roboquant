@@ -71,13 +71,12 @@ open class SimBroker(
      * Update the portfolio with the provided [position] and return the realized PNL as a consequence of this position
      * change.
      */
-    private fun updatePosition(position: Position): Amount {
-        val asset = position.asset
+    private fun updatePosition(asset: Asset, position: Position): Amount {
         val p = account.positions
-        val currentPos = p.getOrDefault(asset, Position.empty(asset))
+        val currentPos = p.getOrDefault(asset, Position.empty())
         val newPosition = currentPos + position
         if (newPosition.closed) p.remove(asset) else p[asset] = newPosition
-        return currentPos.realizedPNL(position)
+        return asset.value(currentPos.size, currentPos.mktPrice - currentPos.avgPrice)
     }
 
     /**
@@ -92,13 +91,13 @@ open class SimBroker(
         time: Instant
     ) {
         val asset = execution.order.asset
-        val position = Position(asset, execution.size, execution.price)
+        val position = Position(execution.size, execution.price)
 
         // Calculate the fees that apply to this execution
         val fee = feeModel.calculate(execution, time, trades)
 
         // PNL includes the fee
-        val pnl = updatePosition(position) - fee
+        val pnl = updatePosition(asset, position) - fee
         val newTrade = Trade(
             time,
             asset,

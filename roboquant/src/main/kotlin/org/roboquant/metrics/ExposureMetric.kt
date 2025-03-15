@@ -48,11 +48,12 @@ class ExposureMetric : Metric {
         val shortExposure = Wallet()
         val now = event.time
 
-        for (position in account.positions.values) {
+        for ((asset, position) in account.positions) {
+            val v = asset.value(position.size, position.mktPrice)
             if (position.long)
-                longExposure.deposit(position.marketValue)
+                longExposure.deposit(v)
             else
-                shortExposure.deposit(position.marketValue)
+                shortExposure.deposit(v)
         }
 
         val currency = account.baseCurrency

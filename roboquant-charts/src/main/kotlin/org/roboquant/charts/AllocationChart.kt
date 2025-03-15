@@ -24,6 +24,7 @@ import org.roboquant.brokers.Account
 import org.roboquant.common.Currency
 
 import java.math.BigDecimal
+import kotlin.math.absoluteValue
 
 /**
  * Plot the allocation of assets in the provided account.
@@ -42,13 +43,13 @@ class AllocationChart(
     }
 
     private fun toSeriesData(): List<Entry> {
-        val positions = account.positions.values
+        val positions = account.positions
         if (positions.isEmpty()) return emptyList()
         val result = mutableListOf<Entry>()
 
-        for (position in positions.sortedBy { it.asset.symbol }) {
-            val asset = position.asset
-            val localAmount = position.exposure.convert(currency, position.lastUpdate).toBigDecimal()
+        for ((asset, position) in positions) {
+            val exposure = asset.value(position.size, position.mktPrice.absoluteValue)
+            val localAmount = exposure.convert(currency, position.lastUpdate).toBigDecimal()
             result.add(Entry(asset.symbol, localAmount))
         }
         return result

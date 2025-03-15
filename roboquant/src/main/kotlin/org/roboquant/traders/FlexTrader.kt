@@ -220,7 +220,7 @@ open class FlexTrader(
             @Suppress("LoopWithTooManyJumpStatements")
             for (signal in signals) {
                 val asset = signal.asset
-                val position = account.positions.getOrDefault(asset, Position.empty(asset))
+                val position = account.positions.getOrDefault(asset, Position.empty())
 
                 // Don't create an order if we don't know the current price
                 val priceItem = event.prices[asset]

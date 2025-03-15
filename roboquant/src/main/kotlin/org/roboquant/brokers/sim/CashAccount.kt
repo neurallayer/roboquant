@@ -15,6 +15,8 @@
  */
 package org.roboquant.brokers.sim
 
+import org.roboquant.brokers.exposure
+import org.roboquant.brokers.short
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.sumOf
 
@@ -42,15 +44,9 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
      * @see [AccountModel.updateAccount]
      */
     override fun updateAccount(account: InternalAccount) {
-        var cash = account.cash
+        val remaining = account.cash - account.positions.short.exposure()
 
-        // We should not short with a cash account. But if done, this improves behavior.
-        if (account.positions.isNotEmpty()) {
-            val shortExposure = account.positions.values.filter { it.short }.sumOf { it.exposure }
-            cash -= shortExposure
-        }
-
-        val buyingPower = cash.convert(account.baseCurrency, account.lastUpdate) - minimum
+        val buyingPower = remaining.convert(account.baseCurrency, account.lastUpdate) - minimum
         account.buyingPower = buyingPower
     }
 

@@ -79,7 +79,13 @@ interface Account {
      * Return the market value of the open positions, optionally filter by one or more asset.
      */
     fun marketValue(vararg assets: Asset): Wallet {
-        return positions.filterValues { assets.isEmpty() || it.asset in assets }.values.marketValue
+        val v = positions.filterKeys { assets.isEmpty() || it in assets }
+        val result = Wallet()
+        for ((asset, position) in v) {
+            val positionValue = asset.value(position.size, position.mktPrice)
+            result.deposit(positionValue)
+        }
+        return result
     }
 
     /**
@@ -93,7 +99,13 @@ interface Account {
      * not match, an empty [Wallet] will be returned.
      */
     fun unrealizedPNL(vararg assets: Asset): Wallet {
-        return positions.filterValues { assets.isEmpty() || it.asset in assets }.values.unrealizedPNL
+        val v = positions.filterKeys { assets.isEmpty() || it in assets }
+        val result = Wallet()
+        for ((asset, position) in v) {
+            val positionValue = asset.value(position.size, position.mktPrice - position.avgPrice)
+            result.deposit(positionValue)
+        }
+        return result
     }
 
     /**

@@ -18,7 +18,6 @@ package org.roboquant.brokers.sim.execution
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
-import org.roboquant.brokers.marketValue
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
@@ -78,11 +77,11 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
      * Set the [position]. If the position is closed, it is removed all together from the [positions].
      */
     @Synchronized
-    fun setPosition(position: Position) {
+    fun setPosition(asset: Asset, position: Position) {
         if (position.closed) {
-            positions.remove(position.asset)
+            positions.remove(asset)
         } else {
-            positions[position.asset] = position
+            positions[asset] = position
         }
     }
 
@@ -122,14 +121,6 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
     fun toAccount(): Account {
         return this
     }
-
-    /**
-     * Return the total market value for this portfolio
-     */
-    val marketValue: Wallet
-        get() {
-            return positions.values.marketValue
-        }
 
 
 

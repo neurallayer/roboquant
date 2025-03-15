@@ -49,8 +49,9 @@ internal class IBKRSamples {
         println(account)
 
         // Place a new market sell order
-        val position = account.positions.values.first()
-        val order = Order(position.asset, -position.size, position.mktPrice)
+        val asset = account.positions.keys.first()
+        val position = account.positions.getValue(asset)
+        val order = Order(asset, -position.size, position.mktPrice)
         broker.placeOrders(listOf(order))
         Thread.sleep(10_000)
         println(account)

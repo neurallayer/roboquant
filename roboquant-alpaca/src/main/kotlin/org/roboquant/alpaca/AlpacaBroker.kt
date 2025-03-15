@@ -101,8 +101,8 @@ class AlpacaBroker(
         val positions = alpacaAPI.trader().positions().allOpenPositions
         for (openPosition in positions) {
             logger.debug { "received $openPosition" }
-            val p = convertPos(openPosition)
-            _account.setPosition(p)
+            val (asset, p) = convertPos(openPosition)
+            _account.setPosition(asset, p)
         }
     }
 
@@ -148,10 +148,10 @@ class AlpacaBroker(
     /**
      * Convert an Alpaca position to a roboquant position
      */
-    private fun convertPos(pos: AlpacaPosition): Position {
+    private fun convertPos(pos: AlpacaPosition): Pair<Asset, Position> {
         val asset = getAsset(pos.symbol, pos.assetClass)
         val size = Size(pos.qty)
-        return Position(asset, size, pos.avgEntryPrice.toDouble(), pos.currentPrice.toDouble())
+        return Pair(asset, Position(size, pos.avgEntryPrice.toDouble(), pos.currentPrice.toDouble()))
     }
 
 

@@ -52,7 +52,7 @@ internal class AccountTest {
     @Test
     fun extensions() {
         val account = TestData.usAccount()
-        assertEquals(account.positions.size, account.positions.values.long.size + account.positions.values.short.size)
+        assertEquals(account.positions.size, account.positions.long.size + account.positions.short.size)
     }
 
     @Test

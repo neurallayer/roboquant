@@ -279,8 +279,8 @@ class IBKRBroker(
             logger.trace { "updatePortfolio $contract $position $marketPrice $averageCost" }
             val asset = contract.toAsset()
             val size = Size(position.value())
-            val p = Position(asset, size, averageCost, marketPrice, Instant.now())
-            account.setPosition(p)
+            val p = Position(size, averageCost, marketPrice, Instant.now())
+            account.setPosition(asset, p)
             account.lastUpdate = Instant.now()
         }
 

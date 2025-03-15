@@ -34,7 +34,6 @@ import java.time.Instant
  * @constructor Create a new Position
  */
 data class Position(
-    val asset: Asset,
     val size: Size,
     val avgPrice: Double = 0.0,
     val mktPrice: Double = avgPrice,
@@ -47,9 +46,9 @@ data class Position(
     companion object {
 
         /**
-         * Create an empty position for the provided [asset] and return this.
+         * Create an empty position
          */
-        fun empty(asset: Asset): Position = Position(asset, Size.ZERO, 0.0, 0.0)
+        fun empty(): Position = Position(Size.ZERO, 0.0, 0.0)
     }
 
     /**
@@ -72,18 +71,7 @@ data class Position(
 
     }
 
-    /**
-     * How much PNL would be realized when an [update] to a position would happen.
-     * This method doesn't modify the position itself, it just calculates the potential realized PNL.
-     */
-    fun realizedPNL(update: Position): Amount {
-        val newSize = size + update.size
-        return when {
-            size.sign != newSize.sign -> asset.value(size, update.avgPrice - avgPrice)
-            newSize.absoluteValue > size.absoluteValue -> Amount(asset.currency, 0.0)
-            else -> asset.value(update.size, avgPrice - update.avgPrice)
-        }
-    }
+
 
     /**
      * Returns true if this is a closed position, false otherwise
@@ -109,36 +97,6 @@ data class Position(
     val open: Boolean
         get() = !size.iszero
 
-    /**
-     * Returns the unrealized profit & loss for this position based on the [avgPrice] and last known market [mktPrice],
-     * in the currency denoted by the asset
-     */
-    val unrealizedPNL: Amount
-        get() = asset.value(size, mktPrice - avgPrice)
-
-    /**
-     * The total market value for this position based on last known market price, in the currency denoted by the asset.
-     * Short positions will typically return a negative value.
-     */
-    val marketValue: Amount
-        get() = asset.value(size, mktPrice)
-
-    /**
-     * The gross exposure for this position based on last known market price, in the currency denoted by the asset.
-     * The difference with the [marketValue] property is that short positions also result in a positive exposure.
-     *
-     * Please note that this is the position exposure and doesn't take into account (stop-) orders that might limit
-     * the exposure.
-     */
-    val exposure: Amount
-        get() = marketValue.absoluteValue
-
-    /**
-     * The total cost of this position, in the currency denoted by the asset. Short positions will typically return
-     * a negative value.
-     */
-    val totalCost: Amount
-        get() = asset.value(size, avgPrice)
 
     /**
      * Would the overall position size be reduced given the provided [additional] size
@@ -148,68 +106,44 @@ data class Position(
 }
 
 /**
- * Return the total market value for a collection of positions.
- */
-val Collection<Position>.marketValue: Wallet
-    get() {
-        return sumOf { it.marketValue }
-    }
-
-/**
- * Return the total exposure for a collection of positions.
- */
-val Collection<Position>.exposure: Wallet
-    get() {
-        return sumOf { it.exposure }
-    }
-
-/**
- * Return the difference between these positions and a target set of positions.
- */
-fun Collection<Position>.diff(target: Collection<Position>): Map<Asset, Size> {
-    val result = mutableMapOf<Asset, Size>()
-
-    for (position in target) {
-        val targetSize = position.size
-        val sourceSize = getPosition(position.asset).size
-        val value = targetSize - sourceSize
-        if (!value.iszero) result[position.asset] = value
-    }
-
-    for (position in this) {
-        if (position.asset !in result) result[position.asset] = -position.size
-    }
-
-    return result
-}
-
-/**
- * Get the set of distinct assets for a collection of positions
- */
-val Collection<Position>.assets: Set<Asset>
-    get() = map { it.asset }.distinct().toSet()
-
-/**
  * Get all the long positions for a collection of positions
  */
-val Collection<Position>.long: List<Position>
-    get() = filter { it.long }
+val Map<Asset, Position>.long: Map<Asset, Position>
+    get() = filterValues { it.long }
 
 /**
  * Get all the short positions for a collection of positions
  */
-val Collection<Position>.short: List<Position>
-    get() = filter { it.short }
+val Map<Asset, Position>.short: Map<Asset, Position>
+    get() = filterValues { it.short }
 
-/**
- * Return the first position found for an [asset]. If no position is found, an empty position will be returned.
- */
-fun Collection<Position>.getPosition(asset: Asset): Position {
-    return firstOrNull { it.asset == asset } ?: Position.empty(asset)
+
+
+fun Map<Asset, Position>.marketValue(): Wallet {
+    val result = Wallet()
+    for ((asset, position) in this) {
+        val positionValue = asset.value(position.size, position.mktPrice)
+        result.deposit(positionValue)
+    }
+    return result
 }
 
-/**
- * Return the total unrealized PNL for a collection of positions
- */
-val Collection<Position>.unrealizedPNL: Wallet
-    get() = sumOf { it.unrealizedPNL }
+
+fun Map<Asset, Position>.pnl(): Wallet {
+    val result = Wallet()
+    for ((asset, position) in this) {
+        val positionValue = asset.value(position.size, position.mktPrice - position.avgPrice)
+        result.deposit(positionValue)
+    }
+    return result
+}
+
+
+fun Map<Asset, Position>.exposure(): Wallet {
+    val result = Wallet()
+    for ((asset, position) in this) {
+        val positionValue = asset.value(position.size.absoluteValue, position.mktPrice)
+        result.deposit(positionValue)
+    }
+    return result
+}

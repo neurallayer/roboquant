@@ -69,15 +69,15 @@ class MarginAccount(
     override fun updateAccount(account: InternalAccount) {
         val time = account.lastUpdate
         val currency = account.baseCurrency
-        val positions = account.positions.values
+        val positions = account.positions
 
-        val excessMargin = account.cash + positions.marketValue
+        val excessMargin = account.cash + positions.marketValue()
         excessMargin.withdraw(Amount(currency, minimumEquity))
 
-        val longExposure = positions.long.exposure.convert(currency, time) * maintenanceMarginLong
+        val longExposure = positions.long.exposure().convert(currency, time) * maintenanceMarginLong
         excessMargin.withdraw(longExposure)
 
-        val shortExposure = positions.short.exposure.convert(currency, time) * maintenanceMarginShort
+        val shortExposure = positions.short.exposure().convert(currency, time) * maintenanceMarginShort
         excessMargin.withdraw(shortExposure)
 
         val buyingPower = excessMargin.convert(currency, time) * (1.0 / initialMargin)
