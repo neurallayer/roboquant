@@ -16,13 +16,13 @@
 
 package org.roboquant.brokers.sim
 
-import org.roboquant.brokers.*
-import org.roboquant.brokers.sim.execution.Execution
+import org.roboquant.brokers.Account
+import org.roboquant.brokers.Broker
+import org.roboquant.brokers.Position
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.orders.*
-import java.time.Instant
+import org.roboquant.orders.Order
 
 /**
  * Simulated Broker that is used as the broker during back testing and live testing. It simulates both broker and
@@ -31,14 +31,12 @@ import java.time.Instant
  * @property initialDeposit initial deposit, default is 1 million USD
  * @param baseCurrency the base currency to use for reporting amounts, default is the (first) currency found in the
  * initial deposit
- * @property feeModel the fee/commission model to use, default is [NoFeeModel]
  * @property accountModel the account model (like cash or margin) to use, default is [CashAccount]
  * @constructor Create a new instance of SimBroker
  */
 open class SimBroker(
     val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
-    private val feeModel: FeeModel = NoFeeModel(),
     private val accountModel: AccountModel = CashAccount()
 ) : Broker {
 
@@ -48,8 +46,6 @@ open class SimBroker(
     constructor(deposit: Number, currencyCode: String = "USD") : this(
         Amount(Currency.getInstance(currencyCode), deposit).toWallet()
     )
-
-    val trades = mutableListOf<Trade>()
 
     val closedOrders = mutableListOf<Order>()
 
@@ -79,51 +75,12 @@ open class SimBroker(
         return asset.value(currentPos.size, currentPos.mktPrice - currentPos.avgPrice)
     }
 
-    /**
-     * Update the account based on an execution. This will perform the following steps:
-     *
-     * 1. Update cash positions
-     * 2. Update the portfolio position for the underlying asset
-     * 3. Create and add a trade object to the account
-     */
-    private fun updateAccount(
-        execution: Execution,
-        time: Instant
-    ) {
-        val asset = execution.order.asset
-        val position = Position(execution.size, execution.price)
-
-        // Calculate the fees that apply to this execution
-        val fee = feeModel.calculate(execution, time, trades)
-
-        // PNL includes the fee
-        val pnl = updatePosition(asset, position) - fee
-        val newTrade = Trade(
-            time,
-            asset,
-            execution.size,
-            execution.price,
-            fee,
-            pnl.value,
-            execution.order.id
-        )
-
-        trades.add(newTrade)
-        account.cash.withdraw(newTrade.totalCost)
-    }
-
 
     private fun deleteOrder(order: Order) {
         account.deleteOrder(order)
         closedOrders.add(order)
     }
 
-    /**
-     * Return the realized PNL of the trades, optionally filter by one or more asset.
-     */
-    fun realizedPNL(vararg assets: Asset): Wallet {
-        return trades.filter { assets.isEmpty() || it.asset in assets }.realizedPNL
-    }
 
     private fun simulateMarket(event: Event) {
         // Add new orders to the execution engine and run it with the latest events
@@ -193,7 +150,6 @@ open class SimBroker(
         account.clear()
         account.cash.deposit(initialDeposit)
         accountModel.updateAccount(account)
-        trades.clear()
         closedOrders.clear()
     }
 

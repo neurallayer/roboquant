@@ -30,19 +30,16 @@ import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.dataset.Dataset
 import org.icepear.echarts.components.grid.Grid
-import org.icepear.echarts.components.marker.MarkPoint
 import org.icepear.echarts.components.series.Encode
-import org.icepear.echarts.components.series.ItemStyle
 import org.icepear.echarts.components.title.Title
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.icepear.echarts.components.visualMap.PiecewiseVisualMap
 import org.icepear.echarts.components.visualMap.VisualPiece
 import org.icepear.echarts.origin.coord.cartesian.AxisOption
 import org.icepear.echarts.origin.util.SeriesOption
-import org.roboquant.brokers.sim.Trade
 import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
 import org.roboquant.common.Stock
+import org.roboquant.common.Timeframe
 import org.roboquant.common.getBySymbol
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed
@@ -67,7 +64,6 @@ import org.roboquant.metrics.Indicator
 class PriceBarChart(
     private val feed: Feed,
     private val asset: Asset,
-    private val trades: Collection<Trade> = emptyList(),
     private val timeframe: Timeframe = Timeframe.INFINITE,
     private val useTime: Boolean = true,
     private vararg val indicators: Indicator
@@ -82,10 +78,9 @@ class PriceBarChart(
     constructor(
         feed: AssetFeed,
         symbol: String,
-        trades: Collection<Trade> = emptyList(),
         timeframe: Timeframe = Timeframe.INFINITE,
         useTime: Boolean = true
-    ) : this(feed, feed.assets.getBySymbol(symbol), trades, timeframe, useTime)
+    ) : this(feed, feed.assets.getBySymbol(symbol), timeframe, useTime)
 
 
     /**
@@ -97,10 +92,9 @@ class PriceBarChart(
     constructor(
         feed: Feed,
         symbol: String,
-        trades: Collection<Trade> = emptyList(),
         timeframe: Timeframe = Timeframe.INFINITE,
         useTime: Boolean = true
-    ) : this(feed, Stock(symbol), trades, timeframe, useTime)
+    ) : this(feed, Stock(symbol), timeframe, useTime)
 
 
     init {
@@ -123,31 +117,13 @@ class PriceBarChart(
         return data
     }
 
-    /**
-     * Generate the mark points that will plot when a trade happened.
-     */
-    private fun markPoints(): List<Map<String, Any>> {
-        // Filter only the relevant trades
-        val t = trades.filter { it.asset == asset && timeframe.contains(it.time) }
-        val d = mutableListOf<Map<String, Any>>()
-        for (trade in t) {
-            val time = if (useTime) trade.time else trade.time.toString()
-            // val price = Amount(asset.currency, trade.price).toBigDecimal()
-            val entry = mapOf(
-                "value" to trade.size.toBigDecimal(), "xAxis" to time, "yAxis" to trade.price
-            )
-            d.add(entry)
-        }
-        return d
-    }
+
 
     /**
      * Get the series for prices (ohlc) and volume
      */
     private fun getSeries(): List<SeriesOption> {
-        val markPoint = MarkPoint()
-            .setData(markPoints().toTypedArray())
-            .setItemStyle(ItemStyle().setColor(neutralColor))
+
 
         val encode1 = Encode().setX(0).setY(arrayOf(1, 4, 3, 2))
 
@@ -159,7 +135,6 @@ class PriceBarChart(
 
         val series1 = CandlestickSeries()
             .setName(asset.symbol)
-            .setMarkPoint(markPoint)
             .setEncode(encode1)
             .setItemStyle(itemStyle1)
 

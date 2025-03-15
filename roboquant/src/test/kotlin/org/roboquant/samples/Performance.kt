@@ -16,17 +16,19 @@
 
 package org.roboquant.samples
 
-import org.roboquant.run
-import org.roboquant.runAsync
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.strategies.*
+import org.roboquant.run
+import org.roboquant.runAsync
+import org.roboquant.strategies.CombinedStrategy
+import org.roboquant.strategies.EMACrossover
+import org.roboquant.strategies.Signal
+import org.roboquant.strategies.Strategy
 import org.roboquant.traders.FlexTrader
 import java.time.Instant
-import kotlin.math.roundToInt
 import kotlin.system.exitProcess
 import kotlin.system.measureTimeMillis
 
@@ -114,19 +116,16 @@ private object Performance {
     /**
      * Basic test with minimal overhead
      */
-    private fun seqRun(feed: FastFeed, backTests: Int): Pair<Long, Int> {
-        var trades = 0
+    private fun seqRun(feed: FastFeed, backTests: Int): Long {
         val t = measure {
             // sequential runs
-            trades = 0
             repeat(backTests) {
                 val broker = SimBroker()
                 run(feed, getStrategy(SKIP), broker = broker)
-                trades += broker.trades.size
             }
 
         }
-        return Pair(t, trades)
+        return t
     }
 
     /**
@@ -197,7 +196,7 @@ private object Performance {
         val header = String.format(
             "\n%8S %6S %6S %4S %7S %7S %10S %7S %6S %9S",
             "candles", "assets", "events", "runs", "feed", "full",
-            "sequential", "parallel", "trades", "candles/s"
+            "sequential", "parallel", "candles/s"
         )
 
         println(header)
@@ -209,16 +208,15 @@ private object Performance {
             val t2 = extendedRun(feed) // Test a more complete back test
 
             // multi-run to test engine scalability
-            val (t3, trades) = seqRun(feed, backTests)
+            val t3 = seqRun(feed, backTests)
             val t4 = parRun(feed, backTests)
 
             // Calculate the total number of candles processed in millions
             val candles = assets * events * backTests / 1_000_000
             val line = String.format(
-                "%6dM %7d %6d %4d %5dms %5dms %7dms %7dms %5dK %8dM",
+                "%6dM %7d %6d %4d %5dms %5dms %7dms %7dms %8dM",
                 candles, assets, events, backTests,
-                t1, t2, t3, t4,
-                (trades / 1_000.0).roundToInt(), feed.size * backTests / (t4 * 1000)
+                t1, t2, t3, t4, feed.size * backTests / (t4 * 1000)
             )
             println(line)
         }

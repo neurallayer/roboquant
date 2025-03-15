@@ -49,8 +49,7 @@ internal class CashAccountTest {
             val wallet = deposit.toWallet()
             return SimBroker(
                 wallet,
-                accountModel = accountModel,
-                feeModel = NoFeeModel()
+                accountModel = accountModel
             )
         }
     }

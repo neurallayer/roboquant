@@ -24,10 +24,7 @@ import org.icepear.echarts.components.coord.cartesian.TimeAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.legend.Legend
-import org.icepear.echarts.components.marker.MarkPoint
-import org.icepear.echarts.components.series.ItemStyle
 import org.icepear.echarts.components.series.LineStyle
-import org.roboquant.brokers.sim.Trade
 import org.roboquant.common.*
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed
@@ -67,7 +64,6 @@ internal fun Array<out Indicator>.toLineSeries(feed: Feed, asset: Asset, timefra
 class PriceChart(
     private val feed: Feed,
     private val asset: Asset,
-    private val trades: Collection<Trade> = emptyList(),
     private val timeframe: Timeframe = Timeframe.INFINITE,
     private val priceType: String = "DEFAULT",
     private vararg val indicators: Indicator
@@ -82,10 +78,9 @@ class PriceChart(
     constructor(
         feed: AssetFeed,
         symbol: String,
-        trades: Collection<Trade> = emptyList(),
         timeframe: Timeframe = Timeframe.INFINITE,
         priceType: String = "DEFAULT"
-    ) : this(feed, feed.assets.getBySymbol(symbol), trades, timeframe, priceType)
+    ) : this(feed, feed.assets.getBySymbol(symbol), timeframe, priceType)
 
     /**
      * Play the feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
@@ -107,32 +102,11 @@ class PriceChart(
             .setAreaStyle(LineAreaStyle().setOpacity(0.1))
     }
 
-    /**
-     * Generate mark points that will highlight when a trade happened.
-     */
-    private fun markPointsData(): Array<Map<String, Any>> {
-        val t = trades.filter { it.asset == asset && timeframe.contains(it.time) }
-        val result = mutableListOf<Map<String, Any>>()
-        for (trade in t) {
-            val entry = mapOf(
-                "value" to trade.size.toBigDecimal(),
-                "xAxis" to trade.time,
-                "yAxis" to trade.price
-            )
-            result.add(entry)
-        }
-        return result.toTypedArray()
-    }
 
     /** @suppress */
     override fun getOption(): Option {
 
         val priceLineSeries = priceSeries()
-
-        val mpData = markPointsData()
-        if (mpData.isNotEmpty()) priceLineSeries.markPoint = MarkPoint()
-            .setData(mpData)
-            .setItemStyle(ItemStyle().setColor(neutralColor))
 
         val xAxis = TimeAxis()
         val yAxis = ValueAxis().setScale(true)
