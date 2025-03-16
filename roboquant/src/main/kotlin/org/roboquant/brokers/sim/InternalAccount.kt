@@ -119,14 +119,16 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
 
 
     override fun toString(): String {
+        val pString = positions.map { it.value.size.toString() + "@" + it.key.symbol }.joinToString(separator = ", ")
+        val oString = orders.joinToString(separator = ", ") { it.size.toString() + "@" + it.asset.symbol }
 
         return """
             last update  : $lastUpdate
             cash         : $cash
             buying Power : $buyingPower
             equity       : ${equity()}
-            positions    : ${positions.size}
-            open orders  : ${orders.size}
+            positions    : $pString
+            open orders  : $oString
         """.trimIndent()
 
     }

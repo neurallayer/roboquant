@@ -20,6 +20,7 @@ import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderSide
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderType
 import net.jacobpeterson.alpaca.openapi.trader.model.PostOrderRequest
+import net.jacobpeterson.alpaca.openapi.trader.model.TimeInForce
 
 import org.roboquant.common.UnsupportedException
 import org.roboquant.orders.*
@@ -40,6 +41,7 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
         val result = PostOrderRequest()
             .symbol(order.asset.symbol)
             .side(side)
+            .timeInForce(TimeInForce.GTC)
             .qty(qty.toString())
             .extendedHours(extendedHours)
 

@@ -120,7 +120,7 @@ class AlpacaBroker(
      */
     private fun loadExistingOrders() {
         _account.orders.clear()
-        val openOrders = alpacaAPI.trader().orders().getAllOrders("new", 500, null, null, null, false, "", "")
+        val openOrders = alpacaAPI.trader().orders().getAllOrders("open", 500, null, null, null, false, "", "")
         for (order in openOrders) {
             logger.debug { "received open $order" }
             val rqOrder = toOrder(order)
