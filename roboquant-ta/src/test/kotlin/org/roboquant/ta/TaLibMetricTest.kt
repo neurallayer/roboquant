@@ -17,7 +17,7 @@
 package org.roboquant.ta
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.brokers.sim.execution.InternalAccount
+import org.roboquant.brokers.sim.InternalAccount
 import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar

@@ -18,7 +18,7 @@ package org.roboquant.charts
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
-import org.roboquant.brokers.sim.execution.InternalAccount
+import org.roboquant.brokers.sim.InternalAccount
 import org.roboquant.common.Amount
 import org.roboquant.common.Size
 import org.roboquant.common.Stock
@@ -51,7 +51,7 @@ object TestData {
         account.buyingPower = amount
         account.setPosition(asset1, Position(Size(100), 10.0))
         account.setPosition(asset2, Position(Size(100), 10.0))
-        account.initializeOrders(listOf(Order(asset1, Size(100), 10.0)))
+        account.orders.add(Order(asset1, Size(100), 10.0))
         return account.toAccount()
     }
 

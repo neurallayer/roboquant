@@ -17,7 +17,6 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.sim.execution.InternalAccount
 
 /**
  * Interface for modelling different types of Accounts used in the [SimBroker], like a [CashAccount] or [MarginAccount]

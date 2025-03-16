@@ -19,7 +19,6 @@ package org.roboquant.brokers.sim
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.Position
-import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
@@ -48,6 +47,8 @@ open class SimBroker(
     )
 
     val closedOrders = mutableListOf<Order>()
+
+    val pendingOrders = mutableListOf<Order>()
 
     // Internally used account to store the state
     private val account = InternalAccount(baseCurrency)
@@ -113,6 +114,27 @@ open class SimBroker(
      */
     @Synchronized
     override fun sync(event: Event?): Account {
+
+        for (order in pendingOrders) {
+            when {
+                order.isCancellation() -> {
+                    val removed = account.orders.removeAll { it.id == order.id }
+                    if (removed) closedOrders.add(order)
+                }
+
+                order.isModify() -> {
+                    val removed = account.orders.removeIf { it.id == order.id }
+                    if (removed) account.orders.add(order)
+                }
+
+                else -> {
+                    assert(order.id.isBlank())
+                    order.id = nextOrderId++.toString()
+                    account.orders.add(order)
+                }
+            }
+        }
+        pendingOrders.clear()
         if (event != null) {
             simulateMarket(event)
             account.updateMarketPrices(event)
@@ -128,24 +150,8 @@ open class SimBroker(
      */
     @Synchronized
     override fun placeOrders(orders: List<Order>) {
-        logger.trace { "Received instructions=${orders.size}" }
-        for (order in orders) {
-            when {
-                order.isCancellation() -> {
-                   val removed = account.orders.removeAll { it.id == order.id }
-                    if (removed) closedOrders.add(order)
-                }
-                order.isModify() -> {
-                    val removed  = account.orders.removeIf { it.id == order.id }
-                    if (removed) account.orders.add(order)
-                }
-                else -> {
-                    order.id = nextOrderId++.toString()
-                    account.orders.add(order)
-                }
-            }
-        }
-
+        logger.trace { "Received orders=${orders.size}" }
+        pendingOrders.addAll(orders)
     }
 
 

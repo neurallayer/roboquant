@@ -19,7 +19,7 @@ package org.roboquant
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
-import org.roboquant.brokers.sim.execution.InternalAccount
+import org.roboquant.brokers.sim.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalk
@@ -46,7 +46,7 @@ internal object TestData {
 
         val order = Order(asset1, Size(100), 100.0)
         // val state = MutableOrderState(order, OrderStatus.COMPLETED, Instant.now(), Instant.now())
-        account.initializeOrders(listOf(order))
+        account.orders.add(order)
         // account.updateOrder(order, Instant.now(), OrderStatus.COMPLETED)
         return account
     }
@@ -61,7 +61,7 @@ internal object TestData {
         account.buyingPower = 100_000.USD
 
         val order = Order(asset1, Size(100), 100.0)
-        account.initializeOrders(listOf(order))
+        account.orders.add(order)
         return account.toAccount()
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.brokers.sim.execution
+package org.roboquant.brokers.sim
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
@@ -89,17 +89,6 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
             positions[asset] = position
         }
     }
-
-
-    /**
-     * Add [orders] as initial orders. This is the first step a broker should take before further processing
-     * the orders.
-     */
-    @Synchronized
-    fun initializeOrders(orders: Collection<Order>) {
-        this.orders.addAll(orders)
-    }
-
 
     /**
      * Update the open positions in the portfolio with the current market prices as found in the [event]

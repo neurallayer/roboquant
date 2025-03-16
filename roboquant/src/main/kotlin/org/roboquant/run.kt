@@ -104,10 +104,10 @@ suspend fun runAsync(
 
             // Generate signals and place orders
             val signals = strategy.createSignals(event)
-            val instructions = trader.createOrders(signals, account, event)
-            broker.placeOrders(instructions)
+            val orders = trader.createOrders(signals, account, event)
+            broker.placeOrders(orders)
 
-            journal?.track(event, account, instructions)
+            journal?.track(event, account, orders)
             if (thread.isInterrupted) throw InterruptedException()
         }
     } catch (_: ClosedReceiveChannelException) {

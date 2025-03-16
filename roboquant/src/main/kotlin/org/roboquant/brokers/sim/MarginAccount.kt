@@ -19,7 +19,6 @@ import org.roboquant.brokers.exposure
 import org.roboquant.brokers.long
 import org.roboquant.brokers.marketValue
 import org.roboquant.brokers.short
-import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.Amount
 import org.roboquant.common.percent
 

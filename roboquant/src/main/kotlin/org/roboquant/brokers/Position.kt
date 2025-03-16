@@ -74,12 +74,6 @@ data class Position(
     val open: Boolean
         get() = !size.iszero
 
-
-    /**
-     * Would the overall position size be reduced given the provided [additional] size
-     */
-    fun isReduced(additional: Size): Boolean = (size + additional).absoluteValue < size.absoluteValue
-
 }
 
 /**

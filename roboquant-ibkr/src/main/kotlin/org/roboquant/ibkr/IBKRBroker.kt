@@ -27,7 +27,7 @@ import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.Position
-import org.roboquant.brokers.sim.execution.InternalAccount
+import org.roboquant.brokers.sim.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.ibkr.IBKR.toAsset

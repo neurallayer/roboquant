@@ -18,7 +18,7 @@ package org.roboquant.brokers
 
 
 import org.roboquant.TestData
-import org.roboquant.brokers.sim.execution.InternalAccount
+import org.roboquant.brokers.sim.InternalAccount
 import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import org.roboquant.common.Size
