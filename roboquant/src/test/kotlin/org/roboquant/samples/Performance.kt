@@ -194,7 +194,7 @@ private object Performance {
         )
 
         val header = String.format(
-            "\n%8S %6S %6S %4S %7S %7S %10S %7S %6S %9S",
+            "\n%8S %6S %6S %4S %7S %7S %10S %7S %9S",
             "candles", "assets", "events", "runs", "feed", "full",
             "sequential", "parallel", "candles/s"
         )

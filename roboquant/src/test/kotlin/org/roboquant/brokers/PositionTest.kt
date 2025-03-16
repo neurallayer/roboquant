@@ -26,51 +26,6 @@ import kotlin.test.assertTrue
 
 internal class PositionTest {
 
-    private fun getRandomSize(): BigDecimal {
-        val l = Random.nextLong(9_999_999)
-        return BigDecimal("10.$l")
-    }
-
-    @Test
-    fun update1() {
-        val p1 = Position(Size(10), 10.0, 12.0)
-        val p2 = Position(Size(10), 12.0, 12.0)
-        val newPos = p1 + p2
-        assertEquals(11.0, newPos.avgPrice)
-        assertEquals(20.0, newPos.size.toDouble())
-    }
-
-
-    @Test
-    fun accuracy() {
-        repeat(10) {
-            val size1 = getRandomSize()
-            val size2 = getRandomSize()
-            val totalSize = Size(size1 + size2)
-
-            val p1 = Position(Size(size1), 10.0, 12.0)
-            val p2 = Position(Size(size2), 12.0, 12.0)
-            val newPos = p1 + p2
-            // assertTrue(totalSize == newPos.size)
-            assertEquals(totalSize, newPos.size)
-        }
-    }
-
-    @Test
-    fun positionUpdateRounding() {
-        val p1 = Position( Size(2), 1.25003111, 1.203001)
-        val p2 = Position(Size("3.1"), 1.24111, 1.2130044)
-        val updatedPosition12 = p1.plus(p2)
-        val minusP2 = Position( Size("-3.1"), 1.3111, 1.3130044)
-        val minusP1 = Position(Size(-2), 1.25003111, 1.203001)
-        val shouldBeZero = updatedPosition12.plus(minusP2).plus(minusP1)
-        assertTrue(shouldBeZero.size.iszero)
-    }
-
-
-
-
-
     @Test
     fun direction() {
         val p1 = Position(Size(10), 10.0, 12.0)

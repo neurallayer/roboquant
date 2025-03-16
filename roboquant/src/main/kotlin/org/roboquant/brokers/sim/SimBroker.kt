@@ -62,25 +62,31 @@ open class SimBroker(
         this.reset()
     }
 
-
-    /**
-     * Update the portfolio with the provided [position] and return the realized PNL as a consequence of this position
-     * change.
-     */
-    private fun updatePosition(asset: Asset, position: Position): Amount {
-        val p = account.positions
-        val currentPos = p.getOrDefault(asset, Position.empty())
-        val newPosition = currentPos + position
-        if (newPosition.closed) p.remove(asset) else p[asset] = newPosition
-        return asset.value(currentPos.size, currentPos.mktPrice - currentPos.avgPrice)
-    }
-
-
     private fun deleteOrder(order: Order) {
         account.deleteOrder(order)
         closedOrders.add(order)
     }
 
+    fun updatePosition(asset: Asset, size: Size, price: Double) {
+        val position = account.positions[asset]
+        if (position == null) {
+            account.positions[asset] = Position(size, price, price)
+        } else {
+
+            val newSize = position.size + size
+
+            val avgPrice = when {
+                size.sign != newSize.sign -> price
+
+                newSize.absoluteValue > size.absoluteValue ->
+                    (size.toDouble() * position.avgPrice + size.toDouble() * price) / newSize.toDouble()
+
+                else -> position.avgPrice
+            }
+
+            account.positions[asset] = Position(newSize, avgPrice, price)
+        }
+    }
 
     private fun simulateMarket(event: Event) {
         // Add new orders to the execution engine and run it with the latest events
@@ -93,7 +99,7 @@ open class SimBroker(
             val price = event.getPrice(order.asset)
             if (price != null) {
                 if (order.isExecutable(price)) {
-                    account.updatePosition(order.asset, order.size, price)
+                    updatePosition(order.asset, order.size, price)
                     val value = order.asset.value(order.size, price)
                     account.cash.withdraw(value)
                     deleteOrder(order)

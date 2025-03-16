@@ -65,8 +65,7 @@ class PriceBarChart(
 ) : Chart() {
 
     /**
-     * Plot the price-bars of a [symbol] found in a [feed] and optionally the [trades] made for that same
-     * asset.
+     * Plot the price-bars of a [symbol] found in a [feed]
      *
      * @see PriceBarChart
      */
@@ -79,8 +78,7 @@ class PriceBarChart(
 
 
     /**
-     * Plot the price-bars of a [symbol] found in a [feed] and optionally the [trades] made for that same
-     * asset.
+     * Plot the price-bars of a [symbol] found in a [feed]
      *
      * @see PriceBarChart
      */

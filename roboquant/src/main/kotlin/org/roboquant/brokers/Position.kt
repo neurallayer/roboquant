@@ -51,28 +51,6 @@ data class Position(
     }
 
     /**
-     * Add another position [p] to this position and return the result.
-     */
-    operator fun plus(p: Position): Position {
-
-        val newSize = size + p.size
-
-        return when {
-            size.sign != newSize.sign -> p.copy(size = newSize)
-
-            newSize.absoluteValue > size.absoluteValue -> {
-                val newAvgPrice = (size.toDouble() * avgPrice + p.size.toDouble() * p.avgPrice) / newSize.toDouble()
-                p.copy(size = newSize, avgPrice = newAvgPrice)
-            }
-
-            else -> p.copy(size = newSize, avgPrice = avgPrice)
-        }
-
-    }
-
-
-
-    /**
      * Returns true if this is a closed position, false otherwise
      */
     val closed: Boolean
