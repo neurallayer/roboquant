@@ -17,6 +17,10 @@
 package org.roboquant.brokers
 
 import org.roboquant.common.Size
+import org.roboquant.common.Stock
+import org.roboquant.common.Asset
+import org.roboquant.common.Currency.Companion.USD
+
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -38,6 +42,15 @@ internal class PositionTest {
     fun size() {
         val p1 = Position( Size(10), 10.0, 12.0)
         assertEquals(Size(10), p1.size)
+    }
+
+    @Test
+    fun maps() {
+        val m: Map<Asset, Position> = mapOf(
+            Stock("AAA") to Position(Size(100), 100.0, 99.0), // -100 profit
+            Stock("BBB") to Position(Size(100), 100.0, 90.0), // -1_000 lost
+        )
+        assertEquals(-1100.0, m.pnl()[USD])
     }
 
 }

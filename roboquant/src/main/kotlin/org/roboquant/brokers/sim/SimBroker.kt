@@ -48,7 +48,7 @@ open class SimBroker(
 
     val closedOrders = mutableListOf<Order>()
 
-    val pendingOrders = mutableListOf<Order>()
+    private val pendingOrders = mutableListOf<Order>()
 
     // Internally used account to store the state
     private val account = InternalAccount(baseCurrency)
