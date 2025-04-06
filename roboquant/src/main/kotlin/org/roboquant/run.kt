@@ -77,7 +77,7 @@ fun run(
  */
 suspend fun runAsync(
     feed: Feed,
-    strategy: Strategy,
+    strategy: Strategy?,
     journal: Journal? = null,
     trader: Trader = FlexTrader(),
     timeframe: Timeframe = Timeframe.INFINITE,
@@ -103,11 +103,11 @@ suspend fun runAsync(
             val account = broker.sync(event)
 
             // Generate signals and place orders
-            val signals = strategy.createSignals(event)
+            val signals = strategy?.createSignals(event) ?: listOf()
             val orders = trader.createOrders(signals, account, event)
             broker.placeOrders(orders)
 
-            journal?.track(event, account, orders)
+            journal?.track(event, account, signals, orders)
             if (thread.isInterrupted) throw InterruptedException()
         }
     } catch (_: ClosedReceiveChannelException) {

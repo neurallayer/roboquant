@@ -5,6 +5,7 @@ import org.roboquant.common.TimeSeries
 import org.roboquant.feeds.Event
 import org.roboquant.metrics.Metric
 import org.roboquant.common.Order
+import org.roboquant.strategies.Signal
 import java.time.Instant
 import java.util.*
 
@@ -37,7 +38,7 @@ class MemoryJournal(private vararg val metrics: Metric) : MetricsJournal {
 
     private val history = TreeMap<Instant, Map<String, Double>>()
 
-    override fun track(event: Event, account: Account, instructions: List<Order>) {
+    override fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) {
         val result = mutableMapOf<String, Double>()
         for (metric in metrics) {
             val values = metric.calculate(account, event)
