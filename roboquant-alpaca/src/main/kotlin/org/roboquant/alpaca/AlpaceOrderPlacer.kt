@@ -21,30 +21,27 @@ import net.jacobpeterson.alpaca.openapi.trader.model.OrderSide
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderType
 import net.jacobpeterson.alpaca.openapi.trader.model.PostOrderRequest
 import net.jacobpeterson.alpaca.openapi.trader.model.TimeInForce
-
 import org.roboquant.common.UnsupportedException
-import org.roboquant.orders.*
+import org.roboquant.orders.Order
+import org.roboquant.orders.TIF
 
 /**
  * Utility class that translates roboquant orders to alpaca orders
  */
 internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val extendedHours: Boolean = false) {
 
-
-
-
     private fun getOrderRequest(order: Order): PostOrderRequest? {
 
         val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
 
         val qty = order.size.toBigDecimal().abs()
+        val tif = if (order.tif == TIF.DAY) TimeInForce.DAY else TimeInForce.GTC
         val result = PostOrderRequest()
             .symbol(order.asset.symbol)
             .side(side)
-            .timeInForce(TimeInForce.GTC)
+            .timeInForce(tif)
             .qty(qty.toString())
             .extendedHours(extendedHours)
-
 
         result.type(OrderType.LIMIT)
         result.limitPrice(order.limit.toString())

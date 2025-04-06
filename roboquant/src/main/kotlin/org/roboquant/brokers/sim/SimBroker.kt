@@ -22,6 +22,10 @@ import org.roboquant.brokers.Position
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
+import org.roboquant.orders.TIF
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 /**
  * Simulated Broker that is used as the broker during back testing and live testing. It simulates both broker and
@@ -36,7 +40,8 @@ import org.roboquant.orders.Order
 open class SimBroker(
     val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
-    private val accountModel: AccountModel = CashAccount()
+    private val accountModel: AccountModel = CashAccount(),
+    private val orderEntry: MutableMap<String, LocalDateTime> = mutableMapOf()
 ) : Broker {
 
     /**
@@ -89,11 +94,23 @@ open class SimBroker(
         }
     }
 
+    private fun isExpired(order: Order, time: Instant): Boolean {
+        if (order.tif == TIF.GTC) return true
+        val orderDate = orderEntry[order.id]
+        if (orderDate != null) {
+            val currentDate = LocalDateTime.ofInstant(time, ZoneId.of("UTC"))
+            return currentDate > orderDate
+        }
+        orderEntry[order.id] = LocalDateTime.ofInstant(time, ZoneId.of("UTC"))
+        return false
+    }
+
+
     private fun simulateMarket(event: Event) {
         // Add new orders to the execution engine and run it with the latest events
         val time = event.time
         for (order in account.orders.toList()) {
-            if (! order.isValid(time)) {
+            if (isExpired(order, time)) {
                 deleteOrder(order)
                 continue
             }

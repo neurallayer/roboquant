@@ -4,6 +4,12 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import java.time.Instant
 
+
+enum class TIF {
+    DAY,
+    GTC
+}
+
 /**
  * Base class for all types of create orders.
  *
@@ -13,7 +19,7 @@ data class Order(
     val asset: Asset,
     val size: Size,
     val limit: Double,
-    val gtd: Instant? = null,
+    val tif: TIF = TIF.DAY,
     val tag: String = ""
 )  {
 
@@ -53,10 +59,6 @@ data class Order(
 
     fun isModify(): Boolean {
         return size != Size.ZERO && id != ""
-    }
-
-    fun isValid(time: Instant): Boolean {
-        return gtd == null || time <= gtd
     }
 
     /**
