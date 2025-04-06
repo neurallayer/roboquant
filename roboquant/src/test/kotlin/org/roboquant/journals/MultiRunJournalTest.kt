@@ -5,15 +5,30 @@ import org.roboquant.run
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.EMACrossover
+import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
 internal class MultiRunJournalTest {
 
     @Test
     fun basic() {
+        val feed = RandomWalk.lastYears(5)
+        val journal = BasicJournal()
+        run(feed, EMACrossover(), journal=journal)
+        assertTrue(journal.nEvents > 0)
+        assertTrue(journal.nOrders > 0)
+        assertTrue(journal.maxPositions > 0)
+        assertTrue(journal.nItems > 0)
+        assertTrue(journal.lastTime!! > Instant.MIN)
+
+    }
+
+    @Test
+    fun multiRun() {
         val feed = RandomWalk.lastYears(5)
         val mrj = MultiRunJournal {
             MemoryJournal(AccountMetric())

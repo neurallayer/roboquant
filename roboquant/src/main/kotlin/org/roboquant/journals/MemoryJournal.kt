@@ -4,7 +4,7 @@ import org.roboquant.brokers.Account
 import org.roboquant.common.TimeSeries
 import org.roboquant.feeds.Event
 import org.roboquant.metrics.Metric
-import org.roboquant.orders.Order
+import org.roboquant.common.Order
 import java.time.Instant
 import java.util.*
 

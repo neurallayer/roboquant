@@ -64,7 +64,7 @@ interface Asset : Comparable<Asset> {
         init {
             registry["Crypto"] = Crypto::deserialize
             registry["Stock"] = Stock::deserialize
-
+            registry["Option"] = Option::deserialize
         }
 
 
@@ -94,7 +94,7 @@ data class Option(override val symbol: String, override val currency: Currency) 
 
         fun deserialize(value: String): Asset {
             val (symbol, currencyCode) = value.split(SEP)
-            return Crypto(symbol, Currency.getInstance(currencyCode))
+            return Option(symbol, Currency.getInstance(currencyCode))
         }
 
         fun fromSymbol(symbol: String): Option {
@@ -103,7 +103,7 @@ data class Option(override val symbol: String, override val currency: Currency) 
     }
 
     override fun serialize(): String {
-        TODO("Not yet implemented")
+        return "Option$SEP$symbol$SEP$currency"
     }
 }
 

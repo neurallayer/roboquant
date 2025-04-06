@@ -35,6 +35,15 @@ internal class AssetTest {
     }
 
 
+    @Test
+    fun option() {
+        val a = Option("ABC", Currency.USD)
+        val s = a.serialize()
+        val t = Asset.deserialize(s)
+        assertEquals(a, t)
+    }
+
+
 
     @Test
     fun contractValue() {

@@ -24,7 +24,6 @@ import org.roboquant.ibkr.IBKR
 import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
-import org.roboquant.orders.Order
 import org.roboquant.strategies.EMACrossover
 import kotlin.test.Test
 

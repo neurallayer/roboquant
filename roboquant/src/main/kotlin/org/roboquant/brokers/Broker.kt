@@ -17,7 +17,7 @@
 package org.roboquant.brokers
 
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Order
+import org.roboquant.common.Order
 
 /**
  * Interface for any broker implementation, used for both simulated and real brokers.

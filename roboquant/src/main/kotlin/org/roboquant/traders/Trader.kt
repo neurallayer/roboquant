@@ -18,7 +18,7 @@ package org.roboquant.traders
 
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Order
+import org.roboquant.common.Order
 import org.roboquant.strategies.Signal
 
 /**

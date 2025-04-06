@@ -21,8 +21,7 @@ import org.roboquant.brokers.Broker
 import org.roboquant.brokers.Position
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Order
-import org.roboquant.orders.TIF
+import org.roboquant.common.TIF
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId

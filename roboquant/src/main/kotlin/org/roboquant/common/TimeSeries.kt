@@ -242,9 +242,8 @@ fun Map<String, TimeSeries>.index(start: Double = 1.0): Map<String, TimeSeries> 
     return mapValues { it.value.index(start) }
 }
 
-/**
+/*
  * Convert a sorted by time collection to a [TimeSeries] object
- */
 inline fun <T> Collection<T>.toTimeSeries(block: (T) -> Pair<Instant, Double>): TimeSeries {
     val values = DoubleArray(size)
     val times = ArrayList<Instant>(size)
@@ -255,3 +254,4 @@ inline fun <T> Collection<T>.toTimeSeries(block: (T) -> Pair<Instant, Double>): 
     }
     return TimeSeries(times, values)
 }
+ */

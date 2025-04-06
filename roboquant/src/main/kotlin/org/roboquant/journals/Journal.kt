@@ -2,7 +2,7 @@ package org.roboquant.journals
 
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Order
+import org.roboquant.common.Order
 
 /**
  * Interface for tracking progress during a run

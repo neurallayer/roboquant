@@ -23,7 +23,6 @@ import org.roboquant.alpaca.PriceActionType
 import org.roboquant.common.*
 import org.roboquant.feeds.applyEvents
 import org.roboquant.feeds.toList
-import org.roboquant.orders.Order
 import java.time.Instant
 import kotlin.test.Ignore
 import kotlin.test.Test

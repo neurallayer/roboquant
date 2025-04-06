@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.roboquant.orders
+package org.roboquant.common
 
 import org.roboquant.TestData
-import org.roboquant.common.Size
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class OrderTest {
 
@@ -29,6 +30,8 @@ internal class OrderTest {
     fun testMarketOrder() {
         val asset = TestData.usStock()
         val order = Order(asset, Size(100), 100.0)
+        assertTrue(order.size.nonzero)
+        assertFalse(order.size.iszero)
         assertEquals(order.limit, 100.0)
     }
 

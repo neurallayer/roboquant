@@ -29,35 +29,39 @@ import kotlin.test.assertTrue
 internal class CombinedFeedTest {
 
     @Test
-    fun testCombinedFeed2() = runBlocking {
+    fun testCombinedFeed2() {
         val f1 = RandomWalk.lastYears(1)
         val f2 = RandomWalk.lastYears(2)
         val cf = CombinedFeed(f1, f2)
         assertTrue { cf.timeframe == f2.timeframe }
         var cnt = 0
         var t = Instant.MIN
-        for (step in play(cf)) {
-            assertTrue(step.items.isNotEmpty())
-            assertTrue(step.time >= t)
-            cnt++
-            t = step.time
+        runBlocking {
+            for (step in play(cf)) {
+                assertTrue(step.items.isNotEmpty())
+                assertTrue(step.time >= t)
+                cnt++
+                t = step.time
+            }
         }
         assertEquals(f1.toList().size + f2.toList().size, cnt)
     }
 
     @Test
-    fun testCombinedFeed4() = runBlocking {
+    fun testCombinedFeed4(){
         val f1 = RandomWalk.lastYears(1)
         val f2 = RandomWalk.lastYears(2)
         val cf = CombinedFeed(f1, f2, channelCapacity = 10)
         assertTrue { cf.timeframe == f2.timeframe }
         var cnt = 0
         var t = Instant.MIN
-        for (step in play(cf)) {
-            assertTrue(step.items.isNotEmpty())
-            assertTrue(step.time >= t)
-            cnt++
-            t = step.time
+        runBlocking {
+            for (step in play(cf)) {
+                assertTrue(step.items.isNotEmpty())
+                assertTrue(step.time >= t)
+                cnt++
+                t = step.time
+            }
         }
         assertEquals(f1.toList().size + f2.toList().size, cnt)
     }

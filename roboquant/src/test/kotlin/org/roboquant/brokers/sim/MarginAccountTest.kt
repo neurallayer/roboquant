@@ -24,7 +24,6 @@ import org.roboquant.common.Currency.Companion.JPY
 import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
-import org.roboquant.orders.Order
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
