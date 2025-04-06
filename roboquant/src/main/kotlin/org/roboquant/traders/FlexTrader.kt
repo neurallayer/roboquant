@@ -88,38 +88,6 @@ open class FlexTrader(
 
 
     /**
-     * Set of predefined FlexPolicies
-     */
-    companion object {
-
-        /**
-         * This trader uses a percentage of the available buying-power to calculate the order amount (in contrast
-         * to the default implementation that uses a percentage of the equity):
-         *
-         * The used formula is:
-         *
-         * ```
-         * orderAmount = buyingPower * orderPercentage
-         * ```
-         */
-        fun singleAsset(configure: FlexPolicyConfig.() -> Unit = {}): FlexTrader {
-            class SingleTrader : FlexTrader(
-                configure
-            ) {
-                override fun amountPerOrder(account: Account): Amount {
-                    return account.buyingPower * config.orderPercentage
-                }
-            }
-            return SingleTrader()
-        }
-
-
-
-
-
-    }
-
-    /**
      * Would the [signal] generate a reduced position size based on the current [position]. Reduced positions signals
      * have some unique properties:
      *

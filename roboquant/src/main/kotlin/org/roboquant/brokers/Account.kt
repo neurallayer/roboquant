@@ -118,10 +118,4 @@ interface Account {
      */
     fun convert(wallet: Wallet): Amount = wallet.convert(baseCurrency, lastUpdate)
 
-
-    /**
-     * Get an order with the provided [orderId], or null if not found
-     */
-    fun getOrder(orderId: String): Order? = orders.find { it.id == orderId }
-
 }
