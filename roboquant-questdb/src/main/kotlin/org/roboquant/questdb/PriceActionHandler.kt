@@ -27,7 +27,6 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.PriceQuote
 import org.roboquant.feeds.TradePrice
-import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
 
 
@@ -94,8 +93,6 @@ private class PriceBarHandler : PriceActionHandler<PriceBar> {
                 |span SYMBOL
                 |) timestamp(time) PARTITION BY $partition""".trimMargin(),
         )
-        print(engine.tables())
-        assert(name in engine.tables())
     }
 
     override fun updateRecord(row: TableWriter.Row, action: PriceItem) {
