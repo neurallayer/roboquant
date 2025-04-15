@@ -133,7 +133,7 @@ class QuestDBJournal(
      */
     fun removeAllRuns() {
         engine.dropAllTables()
-        logger.info { "removed all runs from ${engine.configuration.root}" }
+        logger.info { "removed all runs from ${engine.configuration.confRoot}" }
     }
 
     /**
@@ -142,7 +142,7 @@ class QuestDBJournal(
     fun getRuns(): Set<String> = engine.tables().toSet()
 
     private fun createTable(tableName: String) {
-        engine.update(
+        engine.execute(
             """CREATE TABLE IF NOT EXISTS '$tableName' (
                 |metric SYMBOL,
                 |value DOUBLE,  
