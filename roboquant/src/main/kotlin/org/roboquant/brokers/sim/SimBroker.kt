@@ -20,11 +20,13 @@ import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.Position
 import org.roboquant.common.*
+import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
 import org.roboquant.common.TIF
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.*
 
 /**
  * Simulated Broker that is used as the broker during back testing and live testing. It simulates both broker and
@@ -40,7 +42,8 @@ open class SimBroker(
     val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val accountModel: AccountModel = CashAccount(),
-    private val orderEntry: MutableMap<String, LocalDateTime> = mutableMapOf()
+    private val orderEntry: MutableMap<String, LocalDateTime> = mutableMapOf(),
+    private val exchangeZoneId: ZoneId = ZoneId.of("UTC")
 ) : Broker {
 
     /**
@@ -94,13 +97,13 @@ open class SimBroker(
     }
 
     private fun isExpired(order: Order, time: Instant): Boolean {
-        if (order.tif == TIF.GTC) return true
+        if (order.tif == TIF.GTC) return false
         val orderDate = orderEntry[order.id]
         if (orderDate != null) {
-            val currentDate = LocalDateTime.ofInstant(time, ZoneId.of("UTC"))
+            val currentDate = LocalDateTime.ofInstant(time, exchangeZoneId)
             return currentDate > orderDate
         }
-        orderEntry[order.id] = LocalDateTime.ofInstant(time, ZoneId.of("UTC"))
+        orderEntry[order.id] = LocalDateTime.ofInstant(time, exchangeZoneId)
         return false
     }
 

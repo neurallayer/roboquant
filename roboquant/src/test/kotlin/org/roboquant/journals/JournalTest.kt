@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 
-internal class MultiRunJournalTest {
+internal class JournalTest {
 
     @Test
     fun basic() {
@@ -23,6 +23,7 @@ internal class MultiRunJournalTest {
         assertTrue(journal.nOrders > 0)
         assertTrue(journal.maxPositions > 0)
         assertTrue(journal.nItems > 0)
+        assertTrue(journal.nSignals > 0)
         assertTrue(journal.lastTime!! > Instant.MIN)
 
     }

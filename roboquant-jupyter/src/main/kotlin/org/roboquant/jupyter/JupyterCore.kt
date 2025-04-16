@@ -134,7 +134,6 @@ internal class JupyterCore(
             "org.roboquant.common.*",
             "org.roboquant.metrics.*",
             "org.roboquant.strategies.*",
-            "org.roboquant.orders.*",
             "org.roboquant.feeds.*",
             "org.roboquant.feeds.csv.*",
             "org.roboquant.feeds.random.*",
