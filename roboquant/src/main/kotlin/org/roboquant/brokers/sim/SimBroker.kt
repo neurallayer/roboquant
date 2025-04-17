@@ -26,7 +26,6 @@ import org.roboquant.common.TIF
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.*
 
 /**
  * Simulated Broker that is used as the broker during back testing and live testing. It simulates both broker and
@@ -53,8 +52,6 @@ open class SimBroker(
         Amount(Currency.getInstance(currencyCode), deposit).toWallet()
     )
 
-    val closedOrders = mutableListOf<Order>()
-
     private val pendingOrders = mutableListOf<Order>()
 
     // Internally used account to store the state
@@ -72,7 +69,6 @@ open class SimBroker(
 
     private fun deleteOrder(order: Order) {
         account.deleteOrder(order)
-        closedOrders.add(order)
     }
 
     fun updatePosition(asset: Asset, size: Size, price: Double) {
@@ -138,12 +134,15 @@ open class SimBroker(
             when {
                 order.isCancellation() -> {
                     val removed = account.orders.removeAll { it.id == order.id }
-                    if (removed) closedOrders.add(order)
+                    if (! removed) logger.warn("Skipping cancellation $order")
                 }
 
                 order.isModify() -> {
                     val removed = account.orders.removeIf { it.id == order.id }
-                    if (removed) account.orders.add(order)
+                    if (removed)
+                        account.orders.add(order)
+                    else
+                        logger.warn("Skipping modify $order")
                 }
 
                 else -> {
@@ -181,7 +180,6 @@ open class SimBroker(
         account.clear()
         account.cash.deposit(initialDeposit)
         accountModel.updateAccount(account)
-        closedOrders.clear()
     }
 
 }

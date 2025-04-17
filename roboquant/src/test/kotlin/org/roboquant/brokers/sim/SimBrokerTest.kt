@@ -40,7 +40,6 @@ internal class SimBrokerTest {
         assertEquals(Wallet(1_000_000.USD), account.cash)
         assertTrue(account.positions.isEmpty())
         assertTrue(account.orders.isEmpty())
-        assertTrue(broker.closedOrders.isEmpty())
     }
 
     @Test
@@ -51,7 +50,6 @@ internal class SimBrokerTest {
         broker.placeOrders(emptyList())
         val account = broker.sync(event)
         assertTrue(account.orders.isEmpty())
-        assertTrue(broker.closedOrders.isEmpty())
         assertEquals(USD, account.baseCurrency)
 
         val broker2 = SimBroker(100_000.00.USD.toWallet())
@@ -99,9 +97,6 @@ internal class SimBrokerTest {
         broker.placeOrders(listOf(order))
         val account = broker.sync(event)
         assertEquals(0, account.orders.size)
-        val orderState = broker.closedOrders.first()
-
-        assertEquals(asset, orderState.asset)
 
         assertEquals(1, account.positions.size)
         val pos = account.positions.values.first()
