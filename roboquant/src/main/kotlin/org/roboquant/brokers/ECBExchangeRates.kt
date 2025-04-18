@@ -23,6 +23,7 @@ import org.roboquant.common.Logging
 import java.io.File
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.net.URI
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -117,7 +118,7 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
      * @return
      */
     private fun load(urlString: String, compressed: Boolean, cache: Boolean) {
-        var url = URL(urlString)
+        var url = URI(urlString).toURL()
 
         /**
          * See if we need to cache it. We get it max once per day in that case and don't put a high load on the website

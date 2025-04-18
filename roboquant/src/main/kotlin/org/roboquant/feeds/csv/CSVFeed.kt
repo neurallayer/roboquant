@@ -42,7 +42,7 @@ import kotlin.io.path.isRegularFile
  * @param configure optional modifications of the default configuration
  * @constructor
  */
-class CSVFeed internal constructor(
+class CSVFeed(
     pathStr: String,
     val config: CSVConfig,
     configure: CSVConfig.() -> Unit
@@ -138,7 +138,7 @@ class CSVFeed internal constructor(
 
 }
 
-internal class PriceEntry(val time: Instant, val price: PriceItem) : Comparable<PriceEntry> {
+class PriceEntry(val time: Instant, val price: PriceItem) : Comparable<PriceEntry> {
 
     /**
      * Compares this object with the specified object for order. Returns zero if this object is equal

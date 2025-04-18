@@ -45,7 +45,7 @@ internal class PriceItemTest {
 
         assertEquals(p.askPrice, p.getPrice("ASK"))
         assertEquals(p.bidPrice, p.getPrice("BID"))
-        assertEquals(4.0, p.volume)
+        assertEquals(2.0, p.getVolume())
         assertEquals(0.1, p.spread)
     }
 
@@ -55,7 +55,7 @@ internal class PriceItemTest {
         val action = OrderBook(asset, emptyList(), emptyList())
         assertTrue(action.asks.isEmpty())
         assertTrue(action.bids.isEmpty())
-        assertEquals(0.0, action.volume)
+        assertEquals(0.0, action.getVolume())
     }
 
     @Test
@@ -105,7 +105,7 @@ internal class PriceItemTest {
             listOf(OrderBook.OrderBookEntry(100.0, 10.0), OrderBook.OrderBookEntry(100.0, 10.0)),
             listOf(OrderBook.OrderBookEntry(100.0, 9.0), OrderBook.OrderBookEntry(100.0, 9.0))
         )
-        assertEquals(400.0, action.volume)
+        assertEquals(400.0, action.getVolume())
         assertEquals(2, action.asks.size)
         assertEquals(2, action.bids.size)
         assertEquals(9.5, action.getPrice())

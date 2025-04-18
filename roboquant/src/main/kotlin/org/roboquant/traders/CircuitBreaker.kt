@@ -30,7 +30,7 @@ import java.util.*
  * @property trader the underlying trader
  * @constructor Create new Circuit Breaker
  */
-internal class CircuitBreaker(val trader: Trader, private val maxOrders: Int, private val period: TimeSpan) :
+class CircuitBreaker(val trader: Trader, private val maxOrders: Int, private val period: TimeSpan) :
     Trader by trader {
 
     private val history = LinkedList<Pair<Instant, Int>>()

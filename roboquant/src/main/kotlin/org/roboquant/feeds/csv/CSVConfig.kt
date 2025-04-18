@@ -181,7 +181,7 @@ data class CSVConfig(
          * Read a CSV configuration from a [path]. It will use the standard config as base and merge all the
          * additional settings found in the config file (if any).
          */
-        internal fun fromFile(path: String): CSVConfig {
+        fun fromFile(path: String): CSVConfig {
             val result = CSVConfig()
             val cfg = readConfigFile(Path.of(path))
             result.merge(cfg)
@@ -208,7 +208,7 @@ data class CSVConfig(
     /**
      * Returns true is the provided [file] be included, false otherwise
      */
-    internal fun shouldInclude(file: File): Boolean {
+    fun shouldInclude(file: File): Boolean {
         val name = file.name
         return file.isFile && pattern.matcher(name).matches() && name !in fileSkip
     }
@@ -237,7 +237,7 @@ data class CSVConfig(
      * @param line
      * @return
      */
-    internal fun processLine(line: List<String>, asset: Asset): PriceEntry {
+    fun processLine(line: List<String>, asset: Asset): PriceEntry {
         val now = timeParser.parse(line)
         val action = priceParser.parse(line, asset)
         return PriceEntry(now, action)
@@ -249,7 +249,7 @@ data class CSVConfig(
      * @param header the header fields
      */
     @Synchronized
-    internal fun configure(header: List<String>) {
+    fun configure(header: List<String>) {
         if (isInitialized) return
         timeParser.init(header)
         priceParser.init(header)

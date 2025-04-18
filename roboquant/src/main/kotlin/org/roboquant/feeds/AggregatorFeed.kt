@@ -134,17 +134,20 @@ internal fun getPriceBar(item: Item, timeSpan: TimeSpan?): PriceBar? {
 
         is TradePrice -> {
             val price = item.price
-            PriceBar(item.asset, price, price, price, price, item.volume, timeSpan)
+            val volume = item.getVolume()
+            PriceBar(item.asset, price, price, price, price, volume, timeSpan)
         }
 
         is PriceQuote -> {
             val price = item.getPrice("MIDPOINT")
-            PriceBar(item.asset, price, price, price, price, item.volume, timeSpan)
+            val volume = item.getVolume()
+            PriceBar(item.asset, price, price, price, price, volume, timeSpan)
         }
 
         is OrderBook -> {
             val price = item.getPrice("MIDPOINT")
-            PriceBar(item.asset, price, price, price, price, item.volume, timeSpan)
+            val volume = item.getVolume()
+            PriceBar(item.asset, price, price, price, price, volume, timeSpan)
         }
 
         else -> null

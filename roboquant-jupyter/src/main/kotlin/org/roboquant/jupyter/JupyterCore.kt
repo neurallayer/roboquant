@@ -30,7 +30,7 @@ import java.io.StringWriter
 /**
  * Present exceptions a bit nicer in notebooks
  */
-internal class RoboquantThrowableRenderer : ThrowableRenderer {
+class RoboquantThrowableRenderer : ThrowableRenderer {
 
     override fun accepts(throwable: Throwable): Boolean {
         return true
@@ -91,7 +91,7 @@ object NotebookConfig {
  * 2. Default imports
  * 3. Nicer exception handling
  */
-internal class JupyterCore(
+class JupyterCore(
     private val notebook: Notebook?,
     private val options: MutableMap<String, String?>
 ) : JupyterIntegration() {

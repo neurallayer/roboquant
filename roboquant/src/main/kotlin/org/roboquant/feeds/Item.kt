@@ -19,7 +19,6 @@ package org.roboquant.feeds
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeSpan
-import org.roboquant.feeds.OrderBook.OrderBookEntry
 import kotlin.math.absoluteValue
 
 /**
@@ -62,13 +61,17 @@ interface PriceItem : Item {
     fun getPriceAmount(type: String = "DEFAULT") = Amount(asset.currency, getPrice(type))
 
     /**
-     * Volume for the price action.
-     * If not supported, it returns [Double.NaN].
+     * Retrieves the volume associated with this PriceItem.
+     * The volume may represent trade volume or total order-book volume, depending on the
+     * PriceItem implementation, and may vary based on the specified [type].
+     * If the [type] is not recognized or not applicable, a default volume is returned.
+     * If the volume is not supported, the result is [Double.NaN].
      *
-     * Volume in the context of a PriceItem can mean different things. For example, is can be trade volume but also
-     * the total order-book volume, depending on the type of PriceItem.
+     * @param type The type of volume to retrieve. Commonly used types are uppercase strings,
+     *             such as "TRADE" or "ORDER_BOOK". Defaults to "DEFAULT".
+     * @return The volume as a double, or [Double.NaN] if not supported.
      */
-    val volume: Double
+    fun getVolume(type: String = "DEFAULT"): Double
 
 }
 
@@ -135,11 +138,22 @@ class PriceBar(
         get() = ohlcv[3]
 
     /**
-     * Returns the volume.
-     * This is always greater or equals than zero, or Double.NaN if it is unknown
+     * Returns the volume, if available. Double.NaN is returned if the volume is not available.
+     *
+     * ## Example
+     * ```
+     * val volume = action.volume
+     * ```
+     *
+     * @see [getVolume]
      */
-    override val volume
-        get() = ohlcv[4].absoluteValue
+    val volume
+        get() = ohlcv[4]
+
+
+    override fun getVolume(type: String): Double {
+        return ohlcv[4].absoluteValue
+    }
 
     /**
      * String representation of this price-bar
@@ -193,7 +207,7 @@ class PriceBar(
  * @property volume the volume of the trade, default is Double.NaN
  * @constructor Create a new instance of Trade Price
  */
-data class TradePrice(override val asset: Asset, val price: Double, override val volume: Double = Double.NaN) :
+data class TradePrice(override val asset: Asset, val price: Double, val volume: Double = Double.NaN) :
     PriceItem {
 
     /**
@@ -202,6 +216,10 @@ data class TradePrice(override val asset: Asset, val price: Double, override val
      */
     override fun getPrice(type: String): Double {
         return price
+    }
+
+    override fun getVolume(type: String): Double {
+        return volume
     }
 
 }
@@ -244,11 +262,15 @@ data class PriceQuote(
         return result
     }
 
-    /**
-     * Returns the volume. The volume is defined as total of [askSize] and [bidSize]
-     */
-    override val volume: Double
-        get() = askSize.absoluteValue + bidSize.absoluteValue
+
+    override fun getVolume(type: String): Double {
+        return when(type) {
+            "ASK" -> askSize
+            "BID" -> bidSize
+            else -> (askSize.absoluteValue + bidSize.absoluteValue) / 2
+        }
+    }
+
 
     /**
      * Returns the spread percentage. The used formula is
@@ -334,8 +356,9 @@ data class OrderBook(
     /**
      * Returns the total outstanding volume of the order book (bid + ask volumes combined)
      */
-    override val volume: Double
-        get() = asks.volume() + bids.volume()
+    override fun getVolume(type: String): Double {
+        return asks.volume() + bids.volume()
+    }
 
     private fun List<OrderBookEntry>.volume() = this.sumOf { it.size.absoluteValue }
     private fun List<OrderBookEntry>.max() = this.maxOf { it.limit }

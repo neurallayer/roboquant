@@ -102,8 +102,10 @@ internal object TestData {
     fun events(n: Int = 100, asset: Asset = usStock()): List<Event> {
         val start = time()
         val result = mutableListOf<Event>()
+        var price = 100.0
         repeat(n) {
-            val action = TradePrice(asset, it + 100.0)
+            if (n % 2 == 0) price += 0.01 * n else price -= 0.01 * n
+            val action = TradePrice(asset, price)
             val event = Event(start + it.days, listOf(action))
             result.add(event)
         }

@@ -71,13 +71,13 @@ class PerformanceChart(
         val curr = currency ?: finalEntries.first().second.asset.currency
 
         finalEntries.forEach { (time, priceAction) ->
-            if (priceAction.volume.isFinite()) {
+            if (priceAction.getVolume().isFinite()) {
                 val asset = priceAction.asset
                 val price = priceAction.getPrice(priceType)
                 val record = result.getOrPut(asset) { AssetReturns(price) }
                 record.lastPrice = price
 
-                val tradingSize = if (compensateVolume) Size(priceAction.volume) else Size.ONE
+                val tradingSize = if (compensateVolume) Size(priceAction.getVolume()) else Size.ONE
                 val tradingValue = asset.value(tradingSize, price)
                 record.volume += tradingValue.convert(curr, time = time).value
             }

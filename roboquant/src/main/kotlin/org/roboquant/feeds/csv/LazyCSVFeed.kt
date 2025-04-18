@@ -55,7 +55,7 @@ import kotlin.io.path.isRegularFile
  * @property config the config to use for parsing
  * @param configure any additional configuration for this feed
  */
-class LazyCSVFeed internal constructor(
+class LazyCSVFeed(
     pathStr: String,
     val config: CSVConfig,
     configure: CSVConfig.() -> Unit
