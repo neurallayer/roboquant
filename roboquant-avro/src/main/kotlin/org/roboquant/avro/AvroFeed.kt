@@ -269,7 +269,7 @@ class AvroFeed(private val file: File) : Feed {
          * This is sample data and should NOT be relies on for real back testing.
          */
         fun sp25(): AvroFeed {
-            val path = copyFirstTime("/sp25_v1.0.avro")
+            val path = copyFirstTime("/sp25_v1.1.avro")
             return AvroFeed(path)
         }
 

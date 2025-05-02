@@ -132,7 +132,7 @@ internal class AvroFeedTest {
         assertDoesNotThrow {
             val feed = AvroFeed.sp25()
             assertTrue(feed.exists())
-            assertEquals(Timeframe.parse("2020-01-02T21:00:00Z", "2023-12-29T21:00:00Z", inclusive = true), feed.timeframe)
+            assertEquals(Timeframe.parse("2021-01-04T21:00:00Z", "2024-12-31T21:00:00Z", inclusive = true), feed.timeframe)
         }
     }
 

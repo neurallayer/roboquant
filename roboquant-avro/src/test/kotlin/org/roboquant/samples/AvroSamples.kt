@@ -65,10 +65,10 @@ internal class AvroSamples {
         val symbols = s.split(',').toTypedArray()
         assertEquals(25, symbols.size)
 
-        val timeframe = Timeframe.fromYears(2020, 2024)
+        val timeframe = Timeframe.fromYears(2021, 2025)
         avroFeed.record(
             feed,
-            true,
+            false,
             timeframe,
             assetFilter = AssetFilter.includeSymbols(*symbols)
         )
