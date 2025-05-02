@@ -68,10 +68,13 @@ internal class AvroFeedTest {
     fun feedPlayback() {
         val feed3 = AvroFeed(fileName)
         assertTrue(feed3.timeframe.inclusive)
-
+        val tf = feed3.timeframe
         runBlocking {
             var cnt = 0
-            for (event in play(feed3)) cnt++
+            for (event in play(feed3)) {
+                assertTrue(event.time in tf)
+                cnt++
+            }
         }
     }
 
