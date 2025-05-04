@@ -24,13 +24,12 @@ import kotlinx.coroutines.*
  * ```
  * val jobs = ParallelJobs()
  * jobs.add {
- *      val roboquant = Roboquant(...)
- *      roboquant.runAsync(feed)
+ *      runAsync(feed, SomeStrategy())
  * }
  * jobs.joinAll()
  *```
- *  Note that most feeds and metric-loggers can be shared across runs, but that isn't true for the other components
- *  like strategy, signalConverter, metrics and broker.
+ *  Note that most feeds can be shared across runs, but that isn't true for the other components
+ *  like strategy, trader, metrics and trader. These are stateful and should not be shared.
  */
 class ParallelJobs {
 
