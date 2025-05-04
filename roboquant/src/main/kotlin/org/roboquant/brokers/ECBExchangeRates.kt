@@ -164,7 +164,7 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
                     map[instant] = v
                 } catch (ex: NumberFormatException) {
                     // Will happen due to N/A values and trailing comma in the CSV file
-                    logger.debug { "Encounter number format exception for string $rateStr" }
+                    logger.debug(ex) { "Encounter number format exception for string $rateStr" }
                 }
             }
         }

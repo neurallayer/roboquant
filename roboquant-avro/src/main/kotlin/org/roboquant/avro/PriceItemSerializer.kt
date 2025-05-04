@@ -60,7 +60,6 @@ internal class PriceItemSerializer {
             PriceItemType.TRADE -> TradePrice(asset, values[0], values[1])
             PriceItemType.QUOTE -> PriceQuote(asset, values[0], values[1], values[2], values[3])
             PriceItemType.BOOK -> getOrderBook(asset, values)
-            else -> throw UnsupportedException("cannot deserialize asset=$asset type=$type")
         }
     }
 

@@ -32,7 +32,7 @@ import java.math.RoundingMode
 
 /**
  * Use the assets and prices found in the [feed] to plot the assets, their returns and trading volume as a tree map.
- * This chart works on feeds that contain [price actions][PriceItem] that also have [volume][PriceItem.volume]
+ * This chart works on feeds that contain [price actions][PriceItem] that also have [volume][PriceItem.getVolume]
  * information
  *
  * If you mix different types of price actions in this feed, the result might become less reliable due to the

@@ -70,7 +70,7 @@ class AlphaBetaMetric(
     }
 
     private val timeframe
-        get() = Timeframe(times.first, times.last, true)
+        get() = Timeframe(times.first(), times.last(), true)
 
     /**
      * Calculate total returns over an array of individual returns.

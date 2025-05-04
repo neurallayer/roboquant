@@ -16,10 +16,8 @@
 
 package org.roboquant.strategies
 
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.roboquant.TestData
 import kotlin.test.Test
-import kotlin.test.assertTrue
 
 internal class ParallelSignalStrategyTest {
 

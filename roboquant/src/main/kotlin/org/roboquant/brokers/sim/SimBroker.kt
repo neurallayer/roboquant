@@ -24,7 +24,7 @@ import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
 import org.roboquant.common.TIF
 import java.time.Instant
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.time.ZoneId
 
 /**
@@ -41,7 +41,7 @@ open class SimBroker(
     val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val accountModel: AccountModel = CashAccount(),
-    private val orderEntry: MutableMap<String, LocalDateTime> = mutableMapOf(),
+    private val orderEntry: MutableMap<String, LocalDate> = mutableMapOf(),
     private val exchangeZoneId: ZoneId = ZoneId.of("UTC")
 ) : Broker {
 
@@ -96,10 +96,10 @@ open class SimBroker(
         if (order.tif == TIF.GTC) return false
         val orderDate = orderEntry[order.id]
         if (orderDate != null) {
-            val currentDate = LocalDateTime.ofInstant(time, exchangeZoneId)
+            val currentDate = LocalDate.ofInstant(time, exchangeZoneId)
             return currentDate > orderDate
         }
-        orderEntry[order.id] = LocalDateTime.ofInstant(time, exchangeZoneId)
+        orderEntry[order.id] = LocalDate.ofInstant(time, exchangeZoneId)
         return false
     }
 
