@@ -38,7 +38,6 @@ import org.icepear.echarts.components.visualMap.VisualPiece
 import org.icepear.echarts.origin.coord.cartesian.AxisOption
 import org.icepear.echarts.origin.util.SeriesOption
 import org.roboquant.common.Asset
-import org.roboquant.common.Stock
 import org.roboquant.common.Timeframe
 import org.roboquant.common.getBySymbol
 import org.roboquant.feeds.AssetFeed

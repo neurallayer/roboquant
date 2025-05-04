@@ -26,7 +26,8 @@ data class Order(
         get() = size < 0
 
     /**
-     * The order id is set by broker once placed, before that it contains an empty string.
+     * The broker manages the order-id once placed, before that it contains an empty string.
+     * So don't manually set the id.
      */
     var id = ""
 

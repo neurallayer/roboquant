@@ -95,7 +95,7 @@ open class HistoricPriceFeed : HistoricFeed {
 
     override fun toString(): String {
         return if (events.isEmpty())
-            "events=${events.size} assets=${assets.size}"
+            "events=0 assets=0"
         else
             "events=${events.size} start=${events.firstKey()} end=${events.lastKey()} assets=${assets.size}"
     }
