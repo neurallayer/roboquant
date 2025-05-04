@@ -17,6 +17,8 @@
 
 package org.roboquant.common
 
+import org.slf4j.event.Level
+import org.slf4j.spi.LoggingEventBuilder
 import kotlin.reflect.KClass
 
 /**
@@ -63,6 +65,38 @@ object Logging {
          */
         inline fun error(throwable: Throwable? = null, messageProducer: () -> String) {
             if (isErrorEnabled) error(messageProducer(), throwable)
+        }
+
+        override fun makeLoggingEventBuilder(level: Level?): LoggingEventBuilder? {
+            return slf4jLogger.makeLoggingEventBuilder(level)
+        }
+
+        override fun atLevel(level: Level?): LoggingEventBuilder? {
+            return slf4jLogger.atLevel(level)
+        }
+
+        override fun isEnabledForLevel(level: Level?): Boolean {
+            return slf4jLogger.isEnabledForLevel(level)
+        }
+
+        override fun atTrace(): LoggingEventBuilder? {
+            return slf4jLogger.atTrace()
+        }
+
+        override fun atDebug(): LoggingEventBuilder? {
+            return slf4jLogger.atDebug()
+        }
+
+        override fun atInfo(): LoggingEventBuilder? {
+            return slf4jLogger.atInfo()
+        }
+
+        override fun atWarn(): LoggingEventBuilder? {
+            return slf4jLogger.atWarn()
+        }
+
+        override fun atError(): LoggingEventBuilder? {
+            return slf4jLogger.atError()
         }
 
     }
