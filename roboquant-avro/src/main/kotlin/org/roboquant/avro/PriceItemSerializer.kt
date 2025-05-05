@@ -27,7 +27,8 @@ import org.roboquant.common.TradePrice
 import org.roboquant.common.UnsupportedException
 
 /**
- * Used by AvroFeed to serialize and deserialize [org.roboquant.common.PriceItem] to a DoubleArray, so it can be stored in an Avro file.
+ * Used by AvroFeed to serialize and deserialize [org.roboquant.common.PriceItem] to a DoubleArray, so it
+ * can be stored in an Avro file.
  */
 internal class PriceItemSerializer {
 

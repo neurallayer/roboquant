@@ -34,8 +34,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Aggregate prices in a [feed] to a [org.roboquant.common.PriceBar]. The [aggregationPeriod] is configurable. Right now there is support for
- * aggregating the following types of price actions:
+ * Aggregate prices in a [feed] to a [org.roboquant.common.PriceBar]. The [aggregationPeriod] is configurable.
+ * Right now there is support for aggregating the following types of price actions:
  *
  * 1. PriceBar
  * 2. TradePrice

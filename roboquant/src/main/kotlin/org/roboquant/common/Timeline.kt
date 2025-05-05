@@ -16,7 +16,6 @@
 
 package org.roboquant.common
 
-import org.roboquant.common.Event
 import java.time.Instant
 import kotlin.random.Random
 

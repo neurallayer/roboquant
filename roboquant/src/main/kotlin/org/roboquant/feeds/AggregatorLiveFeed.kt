@@ -32,7 +32,8 @@ import kotlin.math.min
 import kotlin.reflect.KClass
 
 /**
- * Aggregate prices in a live [feed] to a [org.roboquant.common.PriceBar]. The [aggregationPeriod] is configurable. Right now there is
+ * Aggregate prices in a live [feed] to a [org.roboquant.common.PriceBar].
+ * The [aggregationPeriod] is configurable. Right now there is
  * support for aggregating the following types of price actions:
  *
  * 1. PriceBar

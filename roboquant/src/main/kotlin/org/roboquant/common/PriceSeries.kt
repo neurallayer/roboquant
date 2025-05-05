@@ -16,8 +16,6 @@
 
 package org.roboquant.common
 
-import org.roboquant.common.Event
-
 /**
  * Holds a fix amount of historic prices. When adding a new value while the buffer is full, the oldest one will be
  * removed (aka a circular buffer). This is typically used by strategies to track rolling windows or replay buffers.
