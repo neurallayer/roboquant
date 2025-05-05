@@ -30,9 +30,9 @@ import org.roboquant.common.compareTo
 import java.time.Instant
 
 /**
- * Wrapper around a [Channel] for communicating the [events][org.roboquant.common.Event] of a [Feed]. It uses asynchronous communication
- * so the producing and consuming parts are decoupled. An EventChannel has limited capacity to prevent
- * memory problems when using large data feeds.
+ * Wrapper around a [Channel] for communicating the [events][org.roboquant.common.Event] of a [Feed].
+ * It uses asynchronous communication so the producing and consuming parts are decoupled.
+ * An EventChannel has limited capacity to prevent memory problems when using large data feeds.
  *
  * It has built in support to limit the events that are being sent to a certain [timeframe]. It is guaranteed that
  * no events outside that timeframe can be delivered to the channel.
