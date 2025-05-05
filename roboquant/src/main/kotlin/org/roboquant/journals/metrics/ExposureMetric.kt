@@ -19,6 +19,8 @@ package org.roboquant.metrics
 import org.roboquant.common.Account
 import org.roboquant.common.Wallet
 import org.roboquant.common.Event
+import org.roboquant.common.Order
+import org.roboquant.common.Signal
 import kotlin.math.absoluteValue
 
 /**
@@ -43,7 +45,7 @@ class ExposureMetric : Metric {
      * @param account
      * @return
      */
-    override fun calculate(event: Event, account: Account): Map<String, Double> {
+    override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>): Map<String, Double> {
         val longExposure = Wallet()
         val shortExposure = Wallet()
         val now = event.time

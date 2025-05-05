@@ -18,6 +18,8 @@ package org.roboquant.metrics
 
 import org.roboquant.common.Account
 import org.roboquant.common.Event
+import org.roboquant.common.Order
+import org.roboquant.common.Signal
 import java.time.Instant
 
 /**
@@ -35,7 +37,7 @@ class ProgressMetric : Metric {
     private var events = 0L
 
 
-    override fun calculate(event: Event, account: Account): Map<String, Double> {
+    override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>): Map<String, Double> {
         actions += event.items.size
 
         return metricResultsOf(

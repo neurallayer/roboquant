@@ -132,7 +132,7 @@ class JupyterCore(
             "org.roboquant.*",
             "org.roboquant.journals.*",
             "org.roboquant.common.*",
-            "org.roboquant.metrics.*",
+            "org.roboquant.journals.metrics.*",
             "org.roboquant.strategies.*",
             "org.roboquant.feeds.*",
             "org.roboquant.feeds.csv.*",

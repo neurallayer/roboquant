@@ -27,6 +27,8 @@ import org.roboquant.common.PriceSeries
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minus
 import org.roboquant.common.Event
+import org.roboquant.common.Order
+import org.roboquant.common.Signal
 import java.time.Instant
 import kotlin.collections.set
 import kotlin.math.sqrt
@@ -125,7 +127,7 @@ class ReturnsMetric2(
 
     private fun DoubleArray.cumReturns() = fold(1.0) { last, d -> last * (d + 1.0) } - 1.0
 
-    override fun calculate(event: Event, account: Account): Map<String, Double> {
+    override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>): Map<String, Double> {
         times.add(event.time)
         updateBenchmark(event)
         updateAccount(account)

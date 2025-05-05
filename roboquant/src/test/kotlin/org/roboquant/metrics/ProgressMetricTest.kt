@@ -27,7 +27,7 @@ internal class ProgressMetricTest {
     fun calc() {
         val metric = ProgressMetric()
         val (account, event) = TestData.metricInput()
-        val result = metric.calculate(event, account)
+        val result = metric.calculate(event, account, listOf(), listOf())
         assertEquals(3, result.size)
         assertContains(result, "progress.actions")
         assertContains(result, "progress.events")

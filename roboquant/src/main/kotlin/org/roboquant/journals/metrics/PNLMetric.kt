@@ -20,6 +20,8 @@ import org.roboquant.common.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import org.roboquant.common.Event
+import org.roboquant.common.Order
+import org.roboquant.common.Signal
 import java.time.Instant
 
 /**
@@ -84,7 +86,7 @@ class PNLMetric(private val priceType: String = "DEFAULT") : Metric {
     /**
      * @see Metric.calculate
      */
-    override fun calculate(event: Event, account: Account): Map<String, Double> {
+    override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>): Map<String, Double> {
         if (equity.isNaN()) equity = account.equityAmount().value
         val pnl = account.equityAmount().value - equity
 

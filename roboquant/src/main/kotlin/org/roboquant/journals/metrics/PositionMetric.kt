@@ -18,6 +18,8 @@ package org.roboquant.metrics
 
 import org.roboquant.common.Account
 import org.roboquant.common.Event
+import org.roboquant.common.Order
+import org.roboquant.common.Signal
 
 /**
  * Captures metrics for the open positions per asset, so you can see how these progresses over the
@@ -32,7 +34,7 @@ import org.roboquant.common.Event
  */
 class PositionMetric : Metric {
 
-    override fun calculate(event: Event, account: Account): Map<String, Double> {
+    override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>): Map<String, Double> {
         val result = mutableMapOf<String, Double>()
 
         for ((asset,position) in account.positions) {

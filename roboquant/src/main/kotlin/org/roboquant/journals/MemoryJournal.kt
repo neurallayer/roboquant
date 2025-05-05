@@ -41,7 +41,7 @@ class MemoryJournal(private vararg val metrics: Metric) : MetricsJournal {
     override fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) {
         val result = mutableMapOf<String, Double>()
         for (metric in metrics) {
-            val values = metric.calculate(event, account)
+            val values = metric.calculate(event, account, signals, orders)
             result.putAll(values)
         }
         history[event.time] = result

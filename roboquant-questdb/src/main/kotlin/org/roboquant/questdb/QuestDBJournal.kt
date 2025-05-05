@@ -165,7 +165,7 @@ class QuestDBJournal(
 
         val result = mutableMapOf<String, Double>()
         for (metric in metrics) {
-            val values = metric.calculate(event, account)
+            val values = metric.calculate(event, account,signals, orders)
             result.putAll(values)
         }
 

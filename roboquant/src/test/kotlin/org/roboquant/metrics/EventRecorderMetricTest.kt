@@ -31,11 +31,11 @@ internal class EventRecorderMetricTest {
         val (account, event) = TestData.metricInput()
         val metric = EventRecorderMetric()
 
-        assertTrue(metric.calculate(event, account).isEmpty())
+        assertTrue(metric.calculate(event, account, listOf(), listOf()).isEmpty())
         assertEquals(1, metric.timeline.size)
         assertEquals(Timeframe(event.time, event.time, true), metric.timeframe)
 
-        metric.calculate(event, account)
+        metric.calculate(event, account, listOf(), listOf())
         var results = metric.filter<PriceItem>()
         assertEquals(2, results.size)
 

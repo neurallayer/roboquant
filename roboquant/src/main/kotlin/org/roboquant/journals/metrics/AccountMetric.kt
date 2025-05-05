@@ -18,6 +18,8 @@ package org.roboquant.metrics
 
 import org.roboquant.common.Account
 import org.roboquant.common.Event
+import org.roboquant.common.Order
+import org.roboquant.common.Signal
 
 /**
  * Capture the following high-level statistics about the [Account]:
@@ -42,7 +44,7 @@ class AccountMetric : Metric {
     /**
      * @see Metric.calculate
      */
-    override fun calculate(event: Event, account: Account) = buildMap {
+    override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) = buildMap {
 
         val equity = account.convert(account.equity()).value
         if (equity > peak) peak = equity

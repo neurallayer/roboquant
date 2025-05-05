@@ -29,7 +29,7 @@ internal class PositionMetricTest {
     fun calc() {
         val metric = PositionMetric()
         val account = TestData.usAccount()
-        val result = metric.calculate(Event.empty(), account)
+        val result = metric.calculate(Event.empty(), account, listOf(), listOf())
         assertEquals(account.positions.size * 4, result.size)
 
         val symbol = account.positions.keys.first().symbol

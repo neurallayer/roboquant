@@ -20,7 +20,9 @@ import org.roboquant.common.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetFilter
 import org.roboquant.common.Event
+import org.roboquant.common.Order
 import org.roboquant.common.PriceBar
+import org.roboquant.common.Signal
 import org.roboquant.metrics.Metric
 
 /**
@@ -46,7 +48,7 @@ class TaLibMetric(
     /**
      * @see Metric.calculate
      */
-    override fun calculate(event: Event, account: Account): Map<String, Double> {
+    override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>): Map<String, Double> {
         val metrics = mutableMapOf<String, Double>()
         val actions =
             event.items.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset, event.time) }

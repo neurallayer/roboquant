@@ -23,6 +23,8 @@ import org.roboquant.common.Timeframe
 import org.roboquant.common.plus
 import org.roboquant.common.years
 import org.roboquant.common.Event
+import org.roboquant.common.Order
+import org.roboquant.common.Signal
 import java.time.Instant
 
 private const val EPS = 0.0000000001
@@ -64,7 +66,7 @@ class ReturnsMetric(
     /**
      * @see Metric.calculate
      */
-    override fun calculate(event: Event, account: Account): Map<String, Double> {
+    override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>): Map<String, Double> {
         val time = event.time
 
         // Initialize first time

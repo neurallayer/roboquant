@@ -27,7 +27,7 @@ internal class PriceMetricTest {
     fun basic() {
         val metric = PriceMetric("OPEN")
         val (account, event) = TestData.metricInput()
-        val result = metric.calculate(event, account)
+        val result = metric.calculate(event, account, listOf(), listOf())
         assertEquals(1, result.size)
         assertContains(result, "price.open.aaa")
     }
