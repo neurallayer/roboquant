@@ -26,7 +26,7 @@ import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.applyEvents
-import org.roboquant.strategies.Signal
+import org.roboquant.common.Signal
 import org.roboquant.strategies.Strategy
 import java.time.Instant
 

@@ -17,7 +17,7 @@
 package org.roboquant.charts
 
 import org.roboquant.common.Timeframe
-import org.roboquant.feeds.Item
+import org.roboquant.common.Item
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.metrics.Indicator
 import java.time.Instant

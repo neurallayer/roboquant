@@ -21,10 +21,10 @@ import net.jacobpeterson.alpaca.openapi.trader.model.AssetClass
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderSide
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderType
 import org.roboquant.brokers.*
-import org.roboquant.brokers.sim.InternalAccount
+import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.common.Currency
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
 import java.time.Instant
 import java.util.*
 import net.jacobpeterson.alpaca.openapi.trader.model.Order as AlpacaOrder

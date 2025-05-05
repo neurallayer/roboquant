@@ -16,8 +16,8 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.brokers.Account
-import org.roboquant.feeds.Event
+import org.roboquant.common.Account
+import org.roboquant.common.Event
 
 /**
  * Captures metrics for the open positions per asset, so you can see how these progresses over the

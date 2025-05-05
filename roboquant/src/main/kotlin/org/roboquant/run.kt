@@ -18,9 +18,9 @@ package org.roboquant
 
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.runBlocking
-import org.roboquant.brokers.Account
+import org.roboquant.common.Account
 import org.roboquant.brokers.Broker
-import org.roboquant.brokers.sim.SimBroker
+import org.roboquant.brokers.SimBroker
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed

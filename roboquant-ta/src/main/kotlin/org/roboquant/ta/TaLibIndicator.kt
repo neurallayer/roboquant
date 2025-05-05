@@ -16,7 +16,7 @@
 
 package org.roboquant.ta
 
-import org.roboquant.feeds.Item
+import org.roboquant.common.Item
 import org.roboquant.metrics.Indicator
 import java.time.Instant
 

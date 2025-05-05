@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.roboquant.brokers.sim
+package org.roboquant.brokers
 
-import org.roboquant.brokers.exposure
-import org.roboquant.brokers.short
+import org.roboquant.common.exposure
+import org.roboquant.common.short
 
 /**
  * AccountModel that models a plain cash account. No additional leverage or margin is available for trading.

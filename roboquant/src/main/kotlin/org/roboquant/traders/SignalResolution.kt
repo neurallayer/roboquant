@@ -16,11 +16,11 @@
 
 package org.roboquant.traders
 
-import org.roboquant.brokers.Account
+import org.roboquant.common.Account
 import org.roboquant.common.Config
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
 import org.roboquant.common.Order
-import org.roboquant.strategies.Signal
+import org.roboquant.common.Signal
 import kotlin.random.Random
 
 /**

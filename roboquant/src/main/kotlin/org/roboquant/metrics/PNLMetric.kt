@@ -16,10 +16,10 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.brokers.Account
+import org.roboquant.common.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
 import java.time.Instant
 
 /**

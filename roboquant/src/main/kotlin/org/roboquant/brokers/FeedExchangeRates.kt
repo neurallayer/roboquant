@@ -19,7 +19,7 @@ package org.roboquant.brokers
 import org.roboquant.common.*
 import org.roboquant.common.Currency
 import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceItem
+import org.roboquant.common.PriceItem
 import org.roboquant.feeds.filter
 import java.time.Instant
 import java.util.*

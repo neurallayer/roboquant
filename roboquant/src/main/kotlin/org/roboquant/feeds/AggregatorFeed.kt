@@ -18,8 +18,14 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import org.roboquant.common.Asset
+import org.roboquant.common.Event
+import org.roboquant.common.Item
+import org.roboquant.common.OrderBook
+import org.roboquant.common.PriceBar
+import org.roboquant.common.PriceQuote
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
+import org.roboquant.common.TradePrice
 import org.roboquant.common.plus
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -28,7 +34,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Aggregate prices in a [feed] to a [PriceBar]. The [aggregationPeriod] is configurable. Right now there is support for
+ * Aggregate prices in a [feed] to a [org.roboquant.common.PriceBar]. The [aggregationPeriod] is configurable. Right now there is support for
  * aggregating the following types of price actions:
  *
  * 1. PriceBar

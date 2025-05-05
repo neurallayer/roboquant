@@ -17,7 +17,8 @@
 package org.roboquant.strategies
 
 import org.roboquant.common.Asset
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
+import org.roboquant.common.Signal
 
 /**
  * SignalStrategy that uses the crossover of two Exponential Moving Averages (EMA) to generate a BUY or SELL signal. It is

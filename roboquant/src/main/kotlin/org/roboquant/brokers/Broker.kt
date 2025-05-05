@@ -16,7 +16,8 @@
 
 package org.roboquant.brokers
 
-import org.roboquant.feeds.Event
+import org.roboquant.common.Account
+import org.roboquant.common.Event
 import org.roboquant.common.Order
 
 /**

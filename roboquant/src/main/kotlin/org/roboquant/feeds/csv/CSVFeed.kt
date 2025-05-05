@@ -22,7 +22,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.ParallelJobs
 import org.roboquant.feeds.HistoricPriceFeed
-import org.roboquant.feeds.PriceItem
+import org.roboquant.common.PriceItem
 import java.io.File
 import java.io.FileReader
 import java.nio.file.Path

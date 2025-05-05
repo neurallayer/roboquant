@@ -20,6 +20,8 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
+import org.roboquant.common.PriceBar
+import org.roboquant.common.PriceItem
 import org.roboquant.common.Timeframe
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -17,7 +17,8 @@
 package org.roboquant.strategies
 
 import kotlinx.coroutines.*
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
+import org.roboquant.common.Signal
 
 /**
  * This Strategy that runs a number of other strategies in parallel and combines the result. The strategies will each run

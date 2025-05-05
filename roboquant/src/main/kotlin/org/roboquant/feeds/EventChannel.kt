@@ -23,13 +23,14 @@ import kotlinx.coroutines.channels.ChannelIterator
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withTimeout
+import org.roboquant.common.Event
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.common.compareTo
 import java.time.Instant
 
 /**
- * Wrapper around a [Channel] for communicating the [events][Event] of a [Feed]. It uses asynchronous communication
+ * Wrapper around a [Channel] for communicating the [events][org.roboquant.common.Event] of a [Feed]. It uses asynchronous communication
  * so the producing and consuming parts are decoupled. An EventChannel has limited capacity to prevent
  * memory problems when using large data feeds.
  *

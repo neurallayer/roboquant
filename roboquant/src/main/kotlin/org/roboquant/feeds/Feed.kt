@@ -21,6 +21,9 @@ package org.roboquant.feeds
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import org.roboquant.common.Asset
+import org.roboquant.common.Event
+import org.roboquant.common.Item
+import org.roboquant.common.PriceItem
 import org.roboquant.common.Timeframe
 import java.time.Instant
 import kotlin.collections.set

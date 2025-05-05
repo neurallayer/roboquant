@@ -17,6 +17,7 @@
 package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
+import org.roboquant.common.Event
 import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlin.test.assertFalse

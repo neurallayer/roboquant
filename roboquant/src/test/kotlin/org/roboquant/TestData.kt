@@ -17,9 +17,9 @@
 
 package org.roboquant
 
-import org.roboquant.brokers.Account
-import org.roboquant.brokers.Position
-import org.roboquant.brokers.sim.InternalAccount
+import org.roboquant.common.Account
+import org.roboquant.common.Position
+import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalk

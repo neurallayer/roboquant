@@ -18,9 +18,9 @@ package org.roboquant.traders
 
 import org.roboquant.TestData
 import org.roboquant.common.Stock
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.TradePrice
-import org.roboquant.strategies.Signal
+import org.roboquant.common.Event
+import org.roboquant.common.TradePrice
+import org.roboquant.common.Signal
 import java.time.Instant
 import kotlin.random.Random
 import kotlin.test.Test

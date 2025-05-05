@@ -19,12 +19,12 @@ package org.roboquant.metrics
 
 import org.hipparchus.stat.correlation.Covariance
 import org.hipparchus.stat.descriptive.moment.Variance
-import org.roboquant.brokers.Account
+import org.roboquant.common.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.PriceSeries
 import org.roboquant.common.Timeframe
 import org.roboquant.common.percent
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
 import java.time.Instant
 import java.util.*
 

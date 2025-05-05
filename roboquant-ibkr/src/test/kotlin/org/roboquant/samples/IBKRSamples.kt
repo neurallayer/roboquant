@@ -18,7 +18,7 @@ package org.roboquant.samples
 
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.common.*
-import org.roboquant.feeds.PriceItem
+import org.roboquant.common.PriceItem
 import org.roboquant.feeds.filter
 import org.roboquant.ibkr.IBKR
 import org.roboquant.ibkr.IBKRBroker

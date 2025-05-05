@@ -17,8 +17,8 @@
 package org.roboquant.ta
 
 import org.roboquant.common.Asset
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceBar
+import org.roboquant.common.Event
+import org.roboquant.common.PriceBar
 import java.time.Instant
 
 /**

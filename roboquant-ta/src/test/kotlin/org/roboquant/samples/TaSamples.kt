@@ -18,7 +18,7 @@ package org.roboquant.samples
 
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.run
-import org.roboquant.strategies.Signal
+import org.roboquant.common.Signal
 import org.roboquant.ta.PriceBarSeries
 import org.roboquant.ta.TaLib
 import org.roboquant.ta.TaLibSignalStrategy

@@ -25,7 +25,7 @@ import org.icepear.echarts.charts.treemap.TreemapSeriesLabel
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.common.*
 import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceItem
+import org.roboquant.common.PriceItem
 import org.roboquant.feeds.filter
 import java.math.BigDecimal
 import java.math.RoundingMode

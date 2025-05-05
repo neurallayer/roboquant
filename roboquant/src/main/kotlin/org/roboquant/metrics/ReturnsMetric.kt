@@ -17,12 +17,12 @@
 package org.roboquant.metrics
 
 import org.hipparchus.stat.descriptive.DescriptiveStatistics
-import org.roboquant.brokers.Account
+import org.roboquant.common.Account
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.common.plus
 import org.roboquant.common.years
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
 import java.time.Instant
 
 private const val EPS = 0.0000000001

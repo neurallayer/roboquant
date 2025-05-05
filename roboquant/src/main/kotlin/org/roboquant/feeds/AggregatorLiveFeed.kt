@@ -19,6 +19,8 @@ package org.roboquant.feeds
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import org.roboquant.common.Asset
+import org.roboquant.common.Event
+import org.roboquant.common.PriceBar
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.common.plus
@@ -30,7 +32,7 @@ import kotlin.math.min
 import kotlin.reflect.KClass
 
 /**
- * Aggregate prices in a live [feed] to a [PriceBar]. The [aggregationPeriod] is configurable. Right now there is
+ * Aggregate prices in a live [feed] to a [org.roboquant.common.PriceBar]. The [aggregationPeriod] is configurable. Right now there is
  * support for aggregating the following types of price actions:
  *
  * 1. PriceBar
@@ -86,7 +88,7 @@ class AggregatorLiveFeed(
                items.forEach {
                    val c = it.close
                    val v = if (it.volume.isFinite()) 0.0 else Double.NaN
-                   history[it.asset] = PriceBar(it.asset, c,c,c,c, v, it.timeSpan)
+                   history[it.asset] = PriceBar(it.asset, c, c, c, c, v, it.timeSpan)
                }
             newEvent
         }

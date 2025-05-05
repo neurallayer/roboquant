@@ -17,7 +17,7 @@
 package org.roboquant.strategies
 
 import org.roboquant.common.*
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
 
 /**
  * The base class for strategies that are interested in historic prices. Subclasses should override one of the

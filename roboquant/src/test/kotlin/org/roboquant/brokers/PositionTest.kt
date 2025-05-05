@@ -20,6 +20,8 @@ import org.roboquant.common.Size
 import org.roboquant.common.Stock
 import org.roboquant.common.Asset
 import org.roboquant.common.Currency.Companion.USD
+import org.roboquant.common.Position
+import org.roboquant.common.pnl
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,7 +42,7 @@ internal class PositionTest {
 
     @Test
     fun size() {
-        val p1 = Position( Size(10), 10.0, 12.0)
+        val p1 = Position(Size(10), 10.0, 12.0)
         assertEquals(Size(10), p1.size)
     }
 

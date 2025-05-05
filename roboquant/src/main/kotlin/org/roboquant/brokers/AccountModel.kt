@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package org.roboquant.brokers.sim
-
-import org.roboquant.brokers.Account
+package org.roboquant.brokers
 
 /**
  * Interface for modelling different types of Accounts used in the [SimBroker], like a [CashAccount] or [MarginAccount]
  *
  * Currently, the main functionality is that at the end of each step the buying power is re-calculated and made
- * available in the attribute [Account.buyingPower].
+ * available in the attribute [org.roboquant.common.Account.buyingPower].
  *
  * But in the future, an implementation could make other updates to the account.
  * For example, calculate borrowing fees or interest payments on the loan value that might apply.

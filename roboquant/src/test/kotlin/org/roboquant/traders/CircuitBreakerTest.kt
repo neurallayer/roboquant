@@ -17,10 +17,10 @@
 package org.roboquant.traders
 
 import org.roboquant.TestData
-import org.roboquant.brokers.Account
+import org.roboquant.common.Account
 import org.roboquant.common.*
-import org.roboquant.feeds.Event
-import org.roboquant.strategies.Signal
+import org.roboquant.common.Event
+import org.roboquant.common.Signal
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals

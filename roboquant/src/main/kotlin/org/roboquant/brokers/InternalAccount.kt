@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.roboquant.brokers.sim
+package org.roboquant.brokers
 
-import org.roboquant.brokers.Account
-import org.roboquant.brokers.Position
 import org.roboquant.common.*
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
 import java.time.Instant
+import kotlin.collections.iterator
 
 /**
  * Internal Account is meant to be used by broker implementations, like the SimBroker. The broker is the only one with

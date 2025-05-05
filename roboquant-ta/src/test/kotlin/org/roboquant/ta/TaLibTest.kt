@@ -18,7 +18,7 @@ package org.roboquant.ta
 
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.roboquant.feeds.PriceBar
+import org.roboquant.common.PriceBar
 import org.roboquant.feeds.apply
 import org.roboquant.feeds.util.HistoricTestFeed
 import java.time.Instant

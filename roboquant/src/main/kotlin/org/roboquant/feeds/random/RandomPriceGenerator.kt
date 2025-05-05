@@ -19,9 +19,13 @@ package org.roboquant.feeds.random
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
 import org.roboquant.common.Currency
+import org.roboquant.common.PriceBar
+import org.roboquant.common.PriceItem
+import org.roboquant.common.PriceItemType
+import org.roboquant.common.PriceQuote
 import org.roboquant.common.Stock
 import org.roboquant.common.TimeSpan
-import org.roboquant.feeds.*
+import org.roboquant.common.TradePrice
 import java.util.*
 
 internal class RandomPriceGenerator(

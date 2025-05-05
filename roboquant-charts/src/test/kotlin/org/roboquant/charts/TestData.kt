@@ -16,9 +16,9 @@
 
 package org.roboquant.charts
 
-import org.roboquant.brokers.Account
-import org.roboquant.brokers.Position
-import org.roboquant.brokers.sim.InternalAccount
+import org.roboquant.common.Account
+import org.roboquant.common.Position
+import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.journals.MemoryJournal

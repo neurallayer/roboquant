@@ -25,7 +25,9 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
+import org.roboquant.common.Event
 import org.roboquant.common.Logging
+import org.roboquant.common.PriceItem
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.*
 import org.roboquant.questdb.PriceActionHandler.Companion.getHandler
@@ -245,7 +247,7 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
 
     /**
      * Generate a new QuestDB table based on the event in the feed and optional limited to the provided timeframe
-     * Supported price-actions: [PriceBar], [PriceQuote] and [TradePrice]
+     * Supported price-actions: [org.roboquant.common.PriceBar], [org.roboquant.common.PriceQuote] and [org.roboquant.common.TradePrice]
      *
      * @param feed the feed you want to record
      * @param timeframe the timeframe

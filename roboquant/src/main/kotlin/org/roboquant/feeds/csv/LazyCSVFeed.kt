@@ -20,9 +20,9 @@ import de.siegmar.fastcsv.reader.CsvReader
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.feeds.AssetFeed
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
 import org.roboquant.feeds.EventChannel
-import org.roboquant.feeds.Item
+import org.roboquant.common.Item
 import java.io.File
 import java.io.FileReader
 import java.nio.file.Path

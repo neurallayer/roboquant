@@ -17,7 +17,7 @@
 package org.roboquant.ta
 
 import org.roboquant.common.Exchange
-import org.roboquant.feeds.PriceBar
+import org.roboquant.common.PriceBar
 import java.time.Instant
 
 /**

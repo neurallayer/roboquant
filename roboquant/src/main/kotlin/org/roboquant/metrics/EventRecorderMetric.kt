@@ -16,7 +16,7 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.brokers.Account
+import org.roboquant.common.Account
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import java.util.*
@@ -64,7 +64,7 @@ class EventRecorderMetric(val timeSpan: TimeSpan = 1.years) : Metric, AssetFeed 
      * The actual timeframe recorded so far.
      */
     override val timeframe
-        get() = events.timeframe
+        get() = events.map { it.time }.timeframe
 
     /**
      * Return the timeline of the events captured

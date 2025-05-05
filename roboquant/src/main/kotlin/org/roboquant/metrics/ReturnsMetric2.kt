@@ -21,12 +21,12 @@ import org.hipparchus.stat.descriptive.moment.Mean
 import org.hipparchus.stat.descriptive.moment.Skewness
 import org.hipparchus.stat.descriptive.moment.StandardDeviation
 import org.hipparchus.stat.descriptive.moment.Variance
-import org.roboquant.brokers.Account
+import org.roboquant.common.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.PriceSeries
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minus
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
 import java.time.Instant
 import kotlin.collections.set
 import kotlin.math.sqrt

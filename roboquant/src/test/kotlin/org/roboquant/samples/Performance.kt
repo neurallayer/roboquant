@@ -16,8 +16,8 @@
 
 package org.roboquant.samples
 
-import org.roboquant.brokers.sim.MarginAccount
-import org.roboquant.brokers.sim.SimBroker
+import org.roboquant.brokers.MarginAccount
+import org.roboquant.brokers.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalk
@@ -25,7 +25,7 @@ import org.roboquant.run
 import org.roboquant.runAsync
 import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMACrossover
-import org.roboquant.strategies.Signal
+import org.roboquant.common.Signal
 import org.roboquant.strategies.Strategy
 import org.roboquant.traders.FlexTrader
 import java.time.Instant

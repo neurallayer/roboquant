@@ -16,6 +16,7 @@
 
 package org.roboquant.common
 
+import org.roboquant.common.Event
 import java.time.Instant
 import kotlin.random.Random
 
@@ -64,12 +65,13 @@ fun Timeline.earliestNotBefore(time: Instant): Int? {
     return if (idx < size) idx else null
 }
 
+
 /**
- * Return the timeframe for this timeline. If the timeline is empty, [Timeframe.EMPTY] will be returned. Both the first
- * and last entries of the timeline are included in the returned timeframe.
+ * Return the Timeframe matching the list of events. The collection has to be chronologically ordered.
  */
-val Timeline.timeframe
-    get() = if (isEmpty()) Timeframe.EMPTY else Timeframe(first(), last(), true)
+val Timeline.timeframe: Timeframe
+    get() = if (isEmpty()) Timeframe.EMPTY else Timeframe(first(), last(), inclusive = true)
+
 
 /**
  * Split the timeline in chunks of [size] and return the corresponding timeframes. The last timeframe can be smaller

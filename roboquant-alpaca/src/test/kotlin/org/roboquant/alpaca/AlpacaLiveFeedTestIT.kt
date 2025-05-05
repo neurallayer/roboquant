@@ -19,8 +19,8 @@ package org.roboquant.alpaca
 import org.roboquant.common.Config
 import org.roboquant.common.Timeframe
 import org.roboquant.common.seconds
-import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.PriceItem
+import org.roboquant.common.PriceBar
+import org.roboquant.common.PriceItem
 import org.roboquant.feeds.filter
 import kotlin.test.Test
 import kotlin.test.assertEquals

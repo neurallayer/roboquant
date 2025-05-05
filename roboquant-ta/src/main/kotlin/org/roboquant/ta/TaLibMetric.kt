@@ -16,11 +16,11 @@
 
 package org.roboquant.ta
 
-import org.roboquant.brokers.Account
+import org.roboquant.common.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetFilter
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceBar
+import org.roboquant.common.Event
+import org.roboquant.common.PriceBar
 import org.roboquant.metrics.Metric
 
 /**

@@ -18,11 +18,12 @@ package org.roboquant.brokers
 
 
 import org.roboquant.TestData
-import org.roboquant.brokers.sim.InternalAccount
 import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import org.roboquant.common.Size
 import org.roboquant.common.Stock
+import org.roboquant.common.long
+import org.roboquant.common.short
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

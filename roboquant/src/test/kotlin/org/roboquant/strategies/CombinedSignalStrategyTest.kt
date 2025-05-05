@@ -17,7 +17,8 @@
 package org.roboquant.strategies
 
 import org.roboquant.TestData
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
+import org.roboquant.common.Signal
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

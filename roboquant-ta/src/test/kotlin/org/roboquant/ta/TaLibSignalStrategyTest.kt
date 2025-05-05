@@ -22,11 +22,11 @@ import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Stock
 import org.roboquant.common.plus
 import org.roboquant.common.seconds
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceBar
+import org.roboquant.common.Event
+import org.roboquant.common.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.util.HistoricTestFeed
-import org.roboquant.strategies.Signal
+import org.roboquant.common.Signal
 import org.roboquant.strategies.Strategy
 import java.time.Instant
 import kotlin.collections.set

@@ -18,7 +18,7 @@ package org.roboquant.samples
 
 import kotlinx.coroutines.runBlocking
 import org.roboquant.common.*
-import org.roboquant.feeds.PriceBar
+import org.roboquant.common.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.journals.MultiRunJournal

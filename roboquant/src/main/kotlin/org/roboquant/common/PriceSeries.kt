@@ -16,7 +16,7 @@
 
 package org.roboquant.common
 
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
 
 /**
  * Holds a fix amount of historic prices. When adding a new value while the buffer is full, the oldest one will be

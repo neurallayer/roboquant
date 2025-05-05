@@ -18,9 +18,9 @@
 
 package org.roboquant.ta
 
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceBar
-import org.roboquant.strategies.Signal
+import org.roboquant.common.Event
+import org.roboquant.common.PriceBar
+import org.roboquant.common.Signal
 import org.roboquant.strategies.Strategy
 import java.lang.Integer.max
 

@@ -20,7 +20,7 @@ import org.icepear.echarts.Option
 import org.icepear.echarts.Pie
 import org.icepear.echarts.charts.pie.PieSeries
 import org.icepear.echarts.components.tooltip.Tooltip
-import org.roboquant.brokers.Account
+import org.roboquant.common.Account
 import org.roboquant.common.Currency
 
 import java.math.BigDecimal

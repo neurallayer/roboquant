@@ -18,6 +18,7 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.coroutines.runBlocking
+import org.roboquant.common.Event
 import org.roboquant.common.Logging
 import java.util.*
 
@@ -27,7 +28,7 @@ import java.util.*
  * a timeframe during the run.
  *
  * This default implementation generates heartbeat signals to ensure components still have an opportunity
- * to act even if no other data is incoming. A heartbeat is an [empty event][Event.empty].
+ * to act even if no other data is incoming. A heartbeat is an [empty event][org.roboquant.common.Event.empty].
  *
  * Changing this value during the play of a feed will not impact the interval of the first coming heartbeat.
  */

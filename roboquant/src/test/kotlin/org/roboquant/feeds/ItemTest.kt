@@ -17,6 +17,8 @@
 package org.roboquant.feeds
 
 import org.roboquant.TestData
+import org.roboquant.common.CorporateItem
+import org.roboquant.common.NewsItem
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

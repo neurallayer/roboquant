@@ -16,8 +16,8 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.brokers.Account
-import org.roboquant.feeds.Event
+import org.roboquant.common.Account
+import org.roboquant.common.Event
 
 /**
  * This metric logs the prices found in the event. Only a single value is logged, for example, the CLOSE price.

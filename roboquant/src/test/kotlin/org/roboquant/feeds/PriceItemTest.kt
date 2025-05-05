@@ -18,7 +18,11 @@ package org.roboquant.feeds
 
 import org.roboquant.TestData
 import org.roboquant.common.Amount
+import org.roboquant.common.OrderBook
+import org.roboquant.common.PriceBar
+import org.roboquant.common.PriceQuote
 import org.roboquant.common.Stock
+import org.roboquant.common.TradePrice
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals

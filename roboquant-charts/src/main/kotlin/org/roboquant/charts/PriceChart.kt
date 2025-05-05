@@ -28,7 +28,7 @@ import org.icepear.echarts.components.series.LineStyle
 import org.roboquant.common.*
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceItem
+import org.roboquant.common.PriceItem
 import org.roboquant.feeds.filter
 import org.roboquant.metrics.Indicator
 import org.roboquant.metrics.apply

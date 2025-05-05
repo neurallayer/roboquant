@@ -20,7 +20,7 @@ import org.roboquant.common.Stock
 import org.roboquant.common.days
 import org.roboquant.common.millis
 import org.roboquant.common.plus
-import org.roboquant.feeds.PriceBar
+import org.roboquant.common.PriceBar
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals

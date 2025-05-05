@@ -23,9 +23,9 @@ import net.jacobpeterson.alpaca.openapi.marketdata.model.StockAdjustment
 import net.jacobpeterson.alpaca.openapi.marketdata.model.StockBar
 import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
-import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.PriceQuote
-import org.roboquant.feeds.TradePrice
+import org.roboquant.common.PriceBar
+import org.roboquant.common.PriceQuote
+import org.roboquant.common.TradePrice
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 

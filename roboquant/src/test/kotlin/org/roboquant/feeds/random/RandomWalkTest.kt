@@ -18,7 +18,7 @@ package org.roboquant.feeds.random
 
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
-import org.roboquant.feeds.PriceBar
+import org.roboquant.common.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
 import kotlin.test.Test

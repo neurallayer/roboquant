@@ -16,7 +16,9 @@
 
 package org.roboquant.feeds
 
+import org.roboquant.common.Event
 import org.roboquant.common.Stock
+import org.roboquant.common.TradePrice
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals

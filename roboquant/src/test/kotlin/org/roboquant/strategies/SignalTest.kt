@@ -17,6 +17,7 @@
 package org.roboquant.strategies
 
 import org.roboquant.common.Currency
+import org.roboquant.common.Signal
 import org.roboquant.common.Stock
 import kotlin.test.Test
 import kotlin.test.assertEquals

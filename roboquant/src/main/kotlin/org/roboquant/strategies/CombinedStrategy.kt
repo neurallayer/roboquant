@@ -16,7 +16,8 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
+import org.roboquant.common.Signal
 
 /**
  * Combine the output of several strategies into a single list of signals. There is no logic included to filter

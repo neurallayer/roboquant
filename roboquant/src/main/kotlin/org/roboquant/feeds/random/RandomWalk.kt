@@ -17,10 +17,10 @@
 package org.roboquant.feeds.random
 
 import org.roboquant.common.*
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.HistoricFeed
-import org.roboquant.feeds.PriceItemType
+import org.roboquant.common.PriceItemType
 import java.time.Instant
 import java.time.LocalDate
 

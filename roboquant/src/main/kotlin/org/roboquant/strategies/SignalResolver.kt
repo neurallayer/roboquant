@@ -18,6 +18,7 @@
 
 package org.roboquant.strategies
 
+import org.roboquant.common.Signal
 import org.roboquant.common.iszero
 
 typealias SignalResolver = List<Signal>.() -> List<Signal>

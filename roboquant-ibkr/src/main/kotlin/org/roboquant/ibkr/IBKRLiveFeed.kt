@@ -21,9 +21,9 @@ import com.ib.client.EClientSocket
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.seconds
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
 import org.roboquant.feeds.LiveFeed
-import org.roboquant.feeds.PriceBar
+import org.roboquant.common.PriceBar
 import org.roboquant.ibkr.IBKR.toContract
 import java.time.Instant
 

@@ -19,8 +19,8 @@ package org.roboquant.feeds.csv
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Stock
-import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.PriceQuote
+import org.roboquant.common.PriceBar
+import org.roboquant.common.PriceQuote
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

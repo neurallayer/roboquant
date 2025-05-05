@@ -16,8 +16,8 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.brokers.Account
-import org.roboquant.feeds.Event
+import org.roboquant.common.Account
+import org.roboquant.common.Event
 
 /**
  * Capture the following high-level statistics about the [Account]:

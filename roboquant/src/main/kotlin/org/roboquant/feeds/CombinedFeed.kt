@@ -17,6 +17,7 @@
 package org.roboquant.feeds
 
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import org.roboquant.common.Event
 import org.roboquant.common.ParallelJobs
 import org.roboquant.common.Timeframe
 import java.util.*

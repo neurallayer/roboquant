@@ -17,13 +17,16 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.TestData
-import org.roboquant.brokers.Account
+import org.roboquant.common.Account
+import org.roboquant.brokers.AccountModel
 import org.roboquant.brokers.Broker
+import org.roboquant.brokers.MarginAccount
+import org.roboquant.brokers.SimBroker
 import org.roboquant.common.*
 import org.roboquant.common.Currency.Companion.JPY
 import org.roboquant.common.Currency.Companion.USD
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.TradePrice
+import org.roboquant.common.Event
+import org.roboquant.common.TradePrice
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals

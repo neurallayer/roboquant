@@ -42,7 +42,7 @@ import org.roboquant.common.Timeframe
 import org.roboquant.common.getBySymbol
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceBar
+import org.roboquant.common.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.metrics.Indicator
 

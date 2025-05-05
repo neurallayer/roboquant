@@ -17,10 +17,10 @@
 package org.roboquant.ta
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.brokers.sim.InternalAccount
+import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.Currency
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceBar
+import org.roboquant.common.Event
+import org.roboquant.common.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.util.HistoricTestFeed
 import java.time.Instant

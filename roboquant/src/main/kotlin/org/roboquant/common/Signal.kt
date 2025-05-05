@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.roboquant.strategies
+package org.roboquant.common
 
-import org.roboquant.common.Asset
-import org.roboquant.strategies.SignalType.*
+import org.roboquant.common.SignalType.*
 
 /**
  * This enum class represents the type of signal: [ENTRY], [EXIT] or [BOTH] and can be used by more advanced

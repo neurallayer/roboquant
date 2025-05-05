@@ -20,7 +20,7 @@ import com.ib.client.Bar
 import com.ib.client.EClientSocket
 import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
-import org.roboquant.feeds.PriceBar
+import org.roboquant.common.PriceBar
 import org.roboquant.ibkr.IBKR.toContract
 import java.time.Instant
 import java.time.LocalDate

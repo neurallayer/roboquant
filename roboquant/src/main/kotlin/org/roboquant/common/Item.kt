@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds
+package org.roboquant.common
 
-import org.roboquant.common.Amount
-import org.roboquant.common.Asset
-import org.roboquant.common.TimeSpan
+import kotlin.collections.sumOf
 import kotlin.math.absoluteValue
 
 /**

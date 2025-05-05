@@ -20,6 +20,7 @@ import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.RoboquantException
+import org.roboquant.common.Signal
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

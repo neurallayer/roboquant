@@ -16,9 +16,9 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.brokers.Account
+import org.roboquant.common.Account
 import org.roboquant.common.Wallet
-import org.roboquant.feeds.Event
+import org.roboquant.common.Event
 import kotlin.math.absoluteValue
 
 /**

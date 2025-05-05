@@ -16,8 +16,8 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.brokers.Account
-import org.roboquant.feeds.Event
+import org.roboquant.common.Account
+import org.roboquant.common.Event
 
 /**
  * Alias for metric results, that is a Map with the key being the metric name and the value a number
