@@ -35,7 +35,7 @@ class ProgressMetric : Metric {
     private var events = 0L
 
 
-    override fun calculate(account: Account, event: Event): Map<String, Double> {
+    override fun calculate(event: Event, account: Account): Map<String, Double> {
         actions += event.items.size
 
         return metricResultsOf(

@@ -27,7 +27,7 @@ internal class AccountMetricTest {
     fun calc() {
         val metric = AccountMetric()
         val (account, event) = TestData.metricInput()
-        val result = metric.calculate(account, event)
+        val result = metric.calculate(event, account)
         assertEquals(6, result.size)
         assertContains(result, "account.orders")
         assertContains(result, "account.equity")

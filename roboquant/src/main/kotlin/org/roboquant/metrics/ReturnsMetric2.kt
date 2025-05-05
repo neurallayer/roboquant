@@ -125,7 +125,7 @@ class ReturnsMetric2(
 
     private fun DoubleArray.cumReturns() = fold(1.0) { last, d -> last * (d + 1.0) } - 1.0
 
-    override fun calculate(account: Account, event: Event): Map<String, Double> {
+    override fun calculate(event: Event, account: Account): Map<String, Double> {
         times.add(event.time)
         updateBenchmark(event)
         updateAccount(account)

@@ -45,7 +45,7 @@ interface Metric {
      * Calculate the metric given the [account] and [event] and return the results. This method will be invoked at the
      * end of each step in a run.
      */
-    fun calculate(account: Account, event: Event): Map<String, Double>
+    fun calculate(event: Event, account: Account): Map<String, Double>
 
     /**
      * Reset the state of the component to its initial state. The default implementation is to take no action.

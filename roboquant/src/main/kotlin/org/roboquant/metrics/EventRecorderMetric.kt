@@ -34,7 +34,7 @@ class EventRecorderMetric(val timeSpan: TimeSpan = 1.years) : Metric, AssetFeed 
 
     private val events = Collections.synchronizedList(LinkedList<Event>())
 
-    override fun calculate(account: Account, event: Event): Map<String, Double> {
+    override fun calculate(event: Event, account: Account): Map<String, Double> {
         events.add(event)
         val cutOff = event.time - timeSpan
         synchronized(events) {

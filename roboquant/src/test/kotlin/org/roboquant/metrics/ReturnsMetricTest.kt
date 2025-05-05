@@ -30,7 +30,7 @@ internal class ReturnsMetricTest {
     fun basic() {
         val metric = ReturnsMetric()
         val (account, event) = TestData.metricInput()
-        val result = metric.calculate(account, event)
+        val result = metric.calculate(event, account)
         assertTrue(result.isEmpty())
     }
 

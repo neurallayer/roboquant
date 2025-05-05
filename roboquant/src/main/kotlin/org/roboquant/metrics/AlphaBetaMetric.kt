@@ -84,7 +84,7 @@ class AlphaBetaMetric(
     /**
      * Based on the provided [account] and [event], calculate any metrics and return them.
      */
-    override fun calculate(account: Account, event: Event): Map<String, Double> {
+    override fun calculate(event: Event, account: Account): Map<String, Double> {
         if (event.prices.isEmpty()) return emptyMap()
 
         val prices = event.prices.mapValues { it.value.getPrice(priceType) }

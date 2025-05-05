@@ -27,7 +27,7 @@ internal class PNLMetricTest {
     fun basic() {
         val metric = PNLMetric()
         val (account, event) = TestData.metricInput()
-        val result = metric.calculate(account, event)
+        val result = metric.calculate(event, account)
         assertEquals(4, result.size)
         assertContains(result, "pnl.realized")
         assertContains(result, "pnl.unrealized")

@@ -27,7 +27,7 @@ internal class ExposureMetricTest {
     fun calc() {
         val metric = ExposureMetric()
         val (account, event) = TestData.metricInput()
-        val result = metric.calculate(account, event)
+        val result = metric.calculate(event, account)
         assertEquals(4, result.size)
         assertContains(result, "exposure.net")
         assertContains(result, "exposure.gross")

@@ -61,7 +61,7 @@ internal class AlphaBetaMetricTest {
             internalAccount.setPosition(asset, Position(Size(100), startPrice, price))
             val account = internalAccount.toAccount()
 
-            val r = metric.calculate(account, event)
+            val r = metric.calculate(event, account)
             if (cnt < 50) {
                 assertTrue(r.isEmpty())
             } else {
