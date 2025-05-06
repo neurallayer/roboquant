@@ -17,10 +17,7 @@
 package org.roboquant.ta
 
 import org.roboquant.common.*
-import org.roboquant.common.Item
-import org.roboquant.common.PriceBar
 import java.time.Instant
-import java.util.*
 
 /**
  * PriceBarSeries is a moving window of OHLCV values (PriceBar) of fixed capacity for a single asset.
@@ -97,7 +94,7 @@ open class PriceBarSeries(capacity: Int) {
         return add(priceBar.ohlcv, time)
     }
 
-    
+
     /**
      * Update the buffer with a new [ohlcv] values and [time]. Return true if series is full.
      */
