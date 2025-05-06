@@ -26,7 +26,7 @@ import org.roboquant.common.Account
 import org.roboquant.common.*
 import org.roboquant.common.Event
 import org.roboquant.journals.MetricsJournal
-import org.roboquant.metrics.Metric
+import org.roboquant.journals.metrics.Metric
 import org.roboquant.common.Signal
 import java.nio.file.Files
 import java.nio.file.Path

@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package org.roboquant.metrics
+package org.roboquant.journals.metrics
 
 import org.roboquant.TestData
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
-internal class PNLMetricTest {
+internal class ExposureMetricTest {
 
     @Test
-    fun basic() {
-        val metric = PNLMetric()
+    fun calc() {
+        val metric = ExposureMetric()
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(event, account, listOf(), listOf())
         assertEquals(4, result.size)
-        assertContains(result, "pnl.realized")
-        assertContains(result, "pnl.unrealized")
-        assertContains(result, "pnl.total")
-        assertContains(result, "pnl.mkt")
+        assertContains(result, "exposure.net")
+        assertContains(result, "exposure.gross")
+        assertContains(result, "exposure.long")
+        assertContains(result, "exposure.short")
+        println(result)
     }
 
 }

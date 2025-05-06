@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-package org.roboquant.metrics
+package org.roboquant.journals.metrics
 
 import org.roboquant.TestData
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
-internal class AccountMetricTest {
+internal class PriceMetricTest {
 
     @Test
-    fun calc() {
-        val metric = AccountMetric()
+    fun basic() {
+        val metric = PriceMetric("OPEN")
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(event, account, listOf(), listOf())
-        assertEquals(6, result.size)
-        assertContains(result, "account.orders")
-        assertContains(result, "account.equity")
-        assertContains(result, "account.positions")
-        assertContains(result, "account.buyingpower")
-        assertContains(result, "account.cash")
-        assertContains(result, "account.mdd")
-
-        assertEquals(account.positions.size.toDouble(), result["account.positions"])
+        assertEquals(1, result.size)
+        assertContains(result, "price.open.aaa")
     }
+
 }

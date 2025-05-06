@@ -14,34 +14,35 @@
  * limitations under the License.
  */
 
-package org.roboquant.metrics
+package org.roboquant.journals.metrics
 
 import org.roboquant.TestData
-import org.roboquant.common.Timeframe
-import org.roboquant.common.PriceItem
-import org.roboquant.feeds.filter
+import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.journals.MemoryJournal
+import org.roboquant.run
+import org.roboquant.strategies.EMACrossover
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContains
 import kotlin.test.assertTrue
 
-internal class EventRecorderMetricTest {
+internal class ReturnsMetricTest {
 
     @Test
     fun basic() {
+        val metric = ReturnsMetric()
         val (account, event) = TestData.metricInput()
-        val metric = EventRecorderMetric()
-
-        assertTrue(metric.calculate(event, account, listOf(), listOf()).isEmpty())
-        assertEquals(1, metric.timeline.size)
-        assertEquals(Timeframe(event.time, event.time, true), metric.timeframe)
-
-        metric.calculate(event, account, listOf(), listOf())
-        var results = metric.filter<PriceItem>()
-        assertEquals(2, results.size)
-
-        metric.reset()
-        results = metric.filter()
-        assertTrue(results.isEmpty())
+        val result = metric.calculate(event, account, listOf(), listOf())
+        assertTrue(result.isEmpty())
     }
+
+    @Test
+    fun basic2() {
+        val metric = ReturnsMetric2(minSize = 250)
+        val feed = RandomWalk.lastYears(2)
+        val j = MemoryJournal(metric)
+        run(feed, EMACrossover(), journal = j)
+        assertContains(j.getMetricNames(), "returns.sharperatio")
+    }
+
 
 }

@@ -14,34 +14,29 @@
  * limitations under the License.
  */
 
-package org.roboquant.metrics
+package org.roboquant.journals.metrics
 
 import org.roboquant.TestData
-import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.journals.MemoryJournal
-import org.roboquant.strategies.EMACrossover
+import org.roboquant.common.Event
 import kotlin.test.Test
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class ReturnsMetricTest {
+internal class PositionMetricTest {
 
     @Test
-    fun basic() {
-        val metric = ReturnsMetric()
-        val (account, event) = TestData.metricInput()
-        val result = metric.calculate(event, account, listOf(), listOf())
-        assertTrue(result.isEmpty())
+    fun calc() {
+        val metric = PositionMetric()
+        val account = TestData.usAccount()
+        val result = metric.calculate(Event.empty(), account, listOf(), listOf())
+        assertEquals(account.positions.size * 4, result.size)
+
+        val symbol = account.positions.keys.first().symbol
+        assertContains(result, "position.$symbol.size")
+        assertContains(result, "position.$symbol.value")
+        assertContains(result, "position.$symbol.cost")
+        assertContains(result, "position.$symbol.pnl")
+        assertTrue(result.all { it.key.startsWith("position.") })
     }
-
-    @Test
-    fun basic2() {
-        val metric = ReturnsMetric2(minSize = 250)
-        val feed = RandomWalk.lastYears(2)
-        val j = MemoryJournal(metric)
-        org.roboquant.run(feed, EMACrossover(), journal = j)
-        assertContains(j.getMetricNames(), "returns.sharperatio")
-    }
-
-
 }

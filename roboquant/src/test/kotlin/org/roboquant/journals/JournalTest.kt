@@ -3,7 +3,7 @@ package org.roboquant.journals
 import org.roboquant.common.years
 import org.roboquant.run
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.metrics.AccountMetric
+import org.roboquant.journals.metrics.AccountMetric
 import org.roboquant.strategies.EMACrossover
 import java.time.Instant
 import kotlin.test.Test

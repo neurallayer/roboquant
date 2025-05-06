@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.metrics
+package org.roboquant.journals.metrics
 
 import org.roboquant.TestData
 import org.roboquant.common.Position
@@ -24,6 +24,7 @@ import org.roboquant.common.Size
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.toList
 import org.roboquant.journals.MemoryJournal
+import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -37,7 +38,7 @@ internal class AlphaBetaMetricTest {
         val strategy = EMACrossover.PERIODS_5_15
         val alphaBetaMetric = AlphaBetaMetric(50)
         val logger = MemoryJournal(alphaBetaMetric)
-        org.roboquant.run(feed, strategy, journal = logger)
+        run(feed, strategy, journal = logger)
 
         val alpha = logger.getMetric("account.alpha").last().value
         assertTrue(!alpha.isNaN())

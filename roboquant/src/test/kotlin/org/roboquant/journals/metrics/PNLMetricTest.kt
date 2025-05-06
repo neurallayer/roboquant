@@ -14,29 +14,25 @@
  * limitations under the License.
  */
 
-package org.roboquant.metrics
+package org.roboquant.journals.metrics
 
 import org.roboquant.TestData
-import org.roboquant.common.Event
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
-internal class PositionMetricTest {
+internal class PNLMetricTest {
 
     @Test
-    fun calc() {
-        val metric = PositionMetric()
-        val account = TestData.usAccount()
-        val result = metric.calculate(Event.empty(), account, listOf(), listOf())
-        assertEquals(account.positions.size * 4, result.size)
-
-        val symbol = account.positions.keys.first().symbol
-        assertContains(result, "position.$symbol.size")
-        assertContains(result, "position.$symbol.value")
-        assertContains(result, "position.$symbol.cost")
-        assertContains(result, "position.$symbol.pnl")
-        assertTrue(result.all { it.key.startsWith("position.") })
+    fun basic() {
+        val metric = PNLMetric()
+        val (account, event) = TestData.metricInput()
+        val result = metric.calculate(event, account, listOf(), listOf())
+        assertEquals(4, result.size)
+        assertContains(result, "pnl.realized")
+        assertContains(result, "pnl.unrealized")
+        assertContains(result, "pnl.total")
+        assertContains(result, "pnl.mkt")
     }
+
 }

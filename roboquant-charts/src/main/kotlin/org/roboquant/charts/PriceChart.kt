@@ -30,8 +30,8 @@ import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed
 import org.roboquant.common.PriceItem
 import org.roboquant.feeds.filter
-import org.roboquant.metrics.Indicator
-import org.roboquant.metrics.apply
+import org.roboquant.ta.Indicator
+import org.roboquant.ta.apply
 
 internal fun Array<out Indicator>.toLineSeries(feed: Feed, asset: Asset, timeframe: Timeframe): List<LineSeries> {
     val data = mutableMapOf<String, TimeSeries>()

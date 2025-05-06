@@ -20,7 +20,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.common.Stock
 import org.roboquant.feeds.HistoricFeed
 import org.roboquant.feeds.util.HistoricTestFeed
-import org.roboquant.metrics.apply
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals

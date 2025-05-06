@@ -23,7 +23,7 @@ import org.roboquant.common.years
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.journals.Journal
 import org.roboquant.journals.MultiRunJournal
-import org.roboquant.metrics.AccountMetric
+import org.roboquant.journals.metrics.AccountMetric
 import org.roboquant.strategies.EMACrossover
 import java.io.File
 import kotlin.test.Test

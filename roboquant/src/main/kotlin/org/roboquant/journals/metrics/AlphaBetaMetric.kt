@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.metrics
+package org.roboquant.journals.metrics
 
 
 import org.hipparchus.stat.correlation.Covariance

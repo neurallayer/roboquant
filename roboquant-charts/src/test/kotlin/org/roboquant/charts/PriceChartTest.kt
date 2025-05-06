@@ -19,7 +19,7 @@ package org.roboquant.charts
 import org.roboquant.common.Timeframe
 import org.roboquant.common.Item
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.metrics.Indicator
+import org.roboquant.ta.Indicator
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals

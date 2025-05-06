@@ -44,7 +44,7 @@ import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed
 import org.roboquant.common.PriceBar
 import org.roboquant.feeds.filter
-import org.roboquant.metrics.Indicator
+import org.roboquant.ta.Indicator
 
 /**
  * Plot the price-bars (candlesticks) of an [asset] found in a [feed].

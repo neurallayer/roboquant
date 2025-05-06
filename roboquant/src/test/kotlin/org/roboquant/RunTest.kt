@@ -25,7 +25,7 @@ import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.journals.BasicJournal
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.journals.MultiRunJournal
-import org.roboquant.metrics.PNLMetric
+import org.roboquant.journals.metrics.PNLMetric
 import org.roboquant.strategies.EMACrossover
 import kotlin.test.Test
 import kotlin.test.assertEquals

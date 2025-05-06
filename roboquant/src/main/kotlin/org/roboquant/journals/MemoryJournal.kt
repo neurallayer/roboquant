@@ -3,7 +3,7 @@ package org.roboquant.journals
 import org.roboquant.common.Account
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.Event
-import org.roboquant.metrics.Metric
+import org.roboquant.journals.metrics.Metric
 import org.roboquant.common.Order
 import org.roboquant.common.Signal
 import java.time.Instant

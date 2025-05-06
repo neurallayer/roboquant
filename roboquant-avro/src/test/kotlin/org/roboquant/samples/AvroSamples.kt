@@ -25,7 +25,7 @@ import org.roboquant.common.years
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.journals.MemoryJournal
-import org.roboquant.metrics.AccountMetric
+import org.roboquant.journals.metrics.AccountMetric
 import org.roboquant.runAsync
 import org.roboquant.run
 import org.roboquant.strategies.EMACrossover

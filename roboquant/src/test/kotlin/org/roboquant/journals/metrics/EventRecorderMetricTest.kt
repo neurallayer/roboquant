@@ -14,26 +14,34 @@
  * limitations under the License.
  */
 
-package org.roboquant.metrics
+package org.roboquant.journals.metrics
 
 import org.roboquant.TestData
+import org.roboquant.common.Timeframe
+import org.roboquant.common.PriceItem
+import org.roboquant.feeds.filter
 import kotlin.test.Test
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-internal class ProgressMetricTest {
+internal class EventRecorderMetricTest {
 
     @Test
-    fun calc() {
-        val metric = ProgressMetric()
+    fun basic() {
         val (account, event) = TestData.metricInput()
-        val result = metric.calculate(event, account, listOf(), listOf())
-        assertEquals(3, result.size)
-        assertContains(result, "progress.actions")
-        assertContains(result, "progress.events")
-        assertContains(result, "progress.walltime")
+        val metric = EventRecorderMetric()
 
-        assertEquals(1.0, result["progress.events"])
-        assertEquals(event.items.size.toDouble(), result["progress.actions"])
+        assertTrue(metric.calculate(event, account, listOf(), listOf()).isEmpty())
+        assertEquals(1, metric.timeline.size)
+        assertEquals(Timeframe(event.time, event.time, true), metric.timeframe)
+
+        metric.calculate(event, account, listOf(), listOf())
+        var results = metric.filter<PriceItem>()
+        assertEquals(2, results.size)
+
+        metric.reset()
+        results = metric.filter()
+        assertTrue(results.isEmpty())
     }
+
 }

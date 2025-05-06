@@ -22,7 +22,7 @@ import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.journals.MemoryJournal
-import org.roboquant.metrics.AccountMetric
+import org.roboquant.journals.metrics.AccountMetric
 import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
 

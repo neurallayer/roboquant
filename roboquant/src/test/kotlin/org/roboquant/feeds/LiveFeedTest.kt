@@ -20,7 +20,7 @@ import kotlinx.coroutines.*
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.common.*
 import org.roboquant.journals.MemoryJournal
-import org.roboquant.metrics.ProgressMetric
+import org.roboquant.journals.metrics.ProgressMetric
 import org.roboquant.strategies.EMACrossover
 import java.time.Instant
 import java.time.temporal.ChronoUnit

@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package org.roboquant.metrics
+package org.roboquant.journals.metrics
 
 import org.roboquant.TestData
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.text.get
 
-internal class ExposureMetricTest {
+internal class ProgressMetricTest {
 
     @Test
     fun calc() {
-        val metric = ExposureMetric()
+        val metric = ProgressMetric()
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(event, account, listOf(), listOf())
-        assertEquals(4, result.size)
-        assertContains(result, "exposure.net")
-        assertContains(result, "exposure.gross")
-        assertContains(result, "exposure.long")
-        assertContains(result, "exposure.short")
-        println(result)
-    }
+        assertEquals(3, result.size)
+        assertContains(result, "progress.actions")
+        assertContains(result, "progress.events")
+        assertContains(result, "progress.walltime")
 
+        assertEquals(1.0, result["progress.events"])
+        assertEquals(event.items.size.toDouble(), result["progress.actions"])
+    }
 }

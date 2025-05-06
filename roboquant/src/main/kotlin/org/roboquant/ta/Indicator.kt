@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.metrics
+package org.roboquant.ta
 
 import org.roboquant.common.Asset
 import org.roboquant.common.Observation
@@ -25,6 +25,7 @@ import org.roboquant.common.Item
 import org.roboquant.common.PriceItem
 import org.roboquant.feeds.apply
 import java.time.Instant
+import kotlin.collections.iterator
 
 /**
  * Indicator calculates zero or more values based on an action and the time. Indicators are not used in a normal back

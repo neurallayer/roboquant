@@ -112,7 +112,7 @@ class JupyterCore(
         val version = options["version"] ?: Config.info.version
         logger.debug { "version=$version" }
         val deps = mutableSetOf(
-            "org.roboquant:roboquant-ta:$version"
+            "org.roboquant:roboquant:$version"
         )
         val load = options["modules"] ?: ""
         logger.debug { "modules=$load" }
