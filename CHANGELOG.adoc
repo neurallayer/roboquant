@@ -4,13 +4,14 @@
 == Major changes in 3.0
 Roboquant version 3.0 has many changes, several of them are breaking changes. The key reason was to clean-up and simplify areas that were a hard to maintain and/or extend. This makes it easier for people to contiue to try new trading ideas and hack their way _roboquant_ if required.
 
-Also removed some modules that didn't get the attention they deserved in the last few years. If people want to bring them back (and maintain them), that cn always be discussed.
+Also removed some modules that didn't get the attention they deserved in the last few years. If people want to bring them back (and maintain them), that can always be discussed.
 
-A non-extensive list of the major changes:
+A non-exhaustive list of the major changes:
 
 - Signals themselves simplified and now use a double value for the rating rather than an enum. This is better suited for more advanced (ML) type of algos.
 - Removed the `Lifecycle` interface including `reset` for the components (`Strategy`, `Trader`, `Broker`).
-- Order handling is simplified for integration with real brokers. For example, order-ids are handout by the broker (during the place order method). So they are no longer assigned when creating the order. This is more inline how most brokers work.
+- Order handling is simplified for integration with real brokers. For example, order-ids are always handout by the broker (during the place order method). So they are no longer assigned when creating the order. This is more inline how most brokers work.
+- The technical analysis functionality is now part of the core roboquant module.
 - Removed the `Roboquant` class. You can now directly use the standalone functions `run` and `runAsync`.
 +
 [source,kotlin]
@@ -26,9 +27,10 @@ val feed = CSVFeed("data/US")
 val account = run(feed, strategy)
 ----
 
-- SimBroker order execution is simplified. Every order type has its own executor that is responsible for every aspect of the execution. A bit less configurable, but much easier to roll your own implementation.
+- SimBroker order execution is simplified. There is a single order type by default. A bit less configurable, but much easier to roll your own implementation.
 - Improved the `Broker` interface. Only the `broker.sync()` call now provides access to the `account` object.
-- `MetricsLogger` is replaced by `Journal` and `MetricsJournal`. Journal has access to more data (also new orders and signals).
+- Simplified TiF (Time In Force) logic
+- `MetricsLogger` is replaced by `Journal` and `MetricsJournal`. Journal has access to more data (also newly created orders and signals).
 +
 [source,kotlin]
 ----
@@ -43,8 +45,8 @@ fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Or
     * `Policy` is renamed to `Trader`, functionality stays the same
 - For the time being removed the machine learning module. Rethinking what frameworks to use for future ML algo trading.
 - Different asset types (f.e FOREX, STOCKS, FUTURES), are now their own sub-class.
-- Removed the `roboquant-binance` module. It was using an old unsupported Binance API. And since Binance no longer operates in my country, it is difficult to move to the newer API without be able to test it.
-- Removed the `roboquant-polygon` and `roboquant-server` modules, wasn't using them anymore (easy to bring back)
+- Removed the `roboquant-binance` module. It was using an old unsupported Binance API. And since Binance no longer operates in my country, it is difficult to move to the newer API without being able to test it.
+- Removed the `roboquant-polygon` and `roboquant-server` modules, wasn't using them anymore (easy to bring back if someone wants to maintain them)
 - Use the new Alpaca library that is based on published OpenAPI specification.
 - Simplified AvroFeed (have to see if this is not too simple). Had to drop the `feed.assets` method to make this possible.
 - Updated most of the dependencies. Only not yet moved to Kotlin 2.0 since Jupyter Notebooks are not yet supported.

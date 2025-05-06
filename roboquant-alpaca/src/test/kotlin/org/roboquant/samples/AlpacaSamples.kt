@@ -122,7 +122,7 @@ internal class AlpacaSamples {
 
         // We get minute data
         val tf = Timeframe.parse("2016-01-01", "2024-05-05")
-        feed.retrieveStockPriceBars("AAPL", timeframe = tf, "1Min")
+        feed.retrieveStockPriceBars("AAPL", timeframe = tf, frequency = "1Min")
         println(feed)
     }
 

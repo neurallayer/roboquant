@@ -97,19 +97,7 @@ open class PriceBarSeries(capacity: Int) {
         return add(priceBar.ohlcv, time)
     }
 
-    /**
-     * Update the buffer with a new [item] and [time], but only if the item is a price-bar.
-     * Return true if a value has been added and it is full.
-     */
-    fun add(item: Item, time: Instant): Boolean {
-        return if (item is PriceBar) {
-            add(item, time)
-        } else {
-            false
-        }
-    }
-
-
+    
     /**
      * Update the buffer with a new [ohlcv] values and [time]. Return true if series is full.
      */

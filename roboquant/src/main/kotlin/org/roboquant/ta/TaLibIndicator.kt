@@ -17,6 +17,7 @@
 package org.roboquant.ta
 
 import org.roboquant.common.Item
+import org.roboquant.common.PriceBar
 import java.time.Instant
 
 /**
@@ -45,7 +46,7 @@ class TaLibIndicator(
      * @see Indicator.calculate
      */
     override fun calculate(item: Item, time: Instant): Map<String, Double> {
-        if (series.add(item, time)) {
+        if (item is PriceBar && series.add(item, time)) {
             try {
                 return block.invoke(taLib, series)
             } catch (ex: InsufficientData) {

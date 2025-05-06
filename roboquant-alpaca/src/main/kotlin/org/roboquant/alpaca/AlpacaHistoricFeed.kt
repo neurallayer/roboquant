@@ -23,11 +23,9 @@ import net.jacobpeterson.alpaca.openapi.marketdata.model.StockAdjustment
 import net.jacobpeterson.alpaca.openapi.marketdata.model.StockBar
 import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
-import org.roboquant.common.PriceBar
-import org.roboquant.common.PriceQuote
-import org.roboquant.common.TradePrice
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
+import kotlin.collections.joinToString
 
 
 /**
@@ -60,12 +58,13 @@ class AlpacaHistoricFeed(
     /**
      * Retrieve the [PriceQuote] for a number of [symbols] and specified [timeframe].
      */
-    fun retrieveStockQuotes(symbols: String, timeframe: Timeframe) {
+    fun retrieveStockQuotes(vararg symbols: String, timeframe: Timeframe) {
         val (start, end) = toOffset(timeframe)
         var nextPageToken: String? = null
         do {
+            val symbolsString = symbols.joinToString((","))
             val resp = stockData.stockQuotes(
-                symbols, start, end, null, "", config.stockFeed, "USD", nextPageToken, Sort.ASC
+                symbolsString, start, end, null, "", config.stockFeed, "USD", nextPageToken, Sort.ASC
             )
             for ((symbol, quotes) in resp.quotes) {
                 val asset = Stock(symbol)
@@ -90,13 +89,14 @@ class AlpacaHistoricFeed(
     /**
      * Retrieve the [PriceQuote] for a number of [symbols] and specified [timeframe].
      */
-    fun retrieveStockTrades(symbols: String, timeframe: Timeframe) {
+    fun retrieveStockTrades(vararg symbols: String, timeframe: Timeframe) {
 
         val (start, end) = toOffset(timeframe)
         var nextPageToken: String? = null
         do {
+            val symbolsString = symbols.joinToString((","))
             val resp = stockData.stockTrades(
-                symbols, start, end, null, "", config.stockFeed, "USD", nextPageToken, Sort.ASC
+                symbolsString, start, end, null, "", config.stockFeed, "USD", nextPageToken, Sort.ASC
             )
             for ((symbol, trades) in resp.trades) {
                 val asset = Stock(symbol)
@@ -125,17 +125,17 @@ class AlpacaHistoricFeed(
      * Retrieve the [PriceBar]  for a number of [symbols] and the specified [timeframe].
      */
     fun retrieveStockPriceBars(
-        symbols: String,
+        vararg symbols: String,
         timeframe: Timeframe,
         frequency: String = "1Day",
         adjustment: StockAdjustment = StockAdjustment.ALL
     ) {
         val (start, end) = toOffset(timeframe)
-
+        val symbolsString = symbols.joinToString((","))
         var nextPageToken: String? = null
         do {
             val resp = stockData.stockBars(
-                symbols,
+                symbolsString,
                 frequency,
                 start,
                 end,
