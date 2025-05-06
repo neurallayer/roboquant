@@ -20,7 +20,6 @@ import org.roboquant.TestData
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
-import kotlin.text.get
 
 internal class AccountMetricTest {
 
