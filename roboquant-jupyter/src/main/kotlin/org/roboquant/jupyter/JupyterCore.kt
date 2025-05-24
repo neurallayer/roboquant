@@ -134,6 +134,7 @@ class JupyterCore(
             "org.roboquant.common.*",
             "org.roboquant.journals.metrics.*",
             "org.roboquant.strategies.*",
+            "org.roboquant.traders.*",
             "org.roboquant.feeds.*",
             "org.roboquant.feeds.csv.*",
             "org.roboquant.feeds.random.*",
