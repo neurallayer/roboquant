@@ -28,7 +28,7 @@
     <artifactId>roboquant</artifactId>
     <packaging>jar</packaging>
     <name>roboquant</name>
-    <description>roboquant is a fast algorithmic trading platform written in Kotlin.</description>
+    <description>roboquant is a fast algorithmic trading platform</description>
 
     <build>
         <plugins>

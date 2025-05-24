@@ -27,7 +27,7 @@ image:https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboq
 image:https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboquant&metric=sqale_rating[Maintainability Rating, link=https://sonarcloud.io/component_measures?id=neurallayer_roboquant&metric=new_maintainability_rating&view=list]
 
 
-_Roboquant_ is an algorithmic trading platform that is fast and flexible while at the same time strives to be developer friendly. It is fully open source, written in Kotlin, and can be used in Jupyter Notebooks as well as standalone applications.
+_Roboquant_ is an algorithmic trading platform that is fast and flexible while at the same time strives to be developer friendly. It is fully open source, and can be used in Jupyter Notebooks as well as standalone applications.
 
 It is designed to be used by anyone serious about algo trading, from beginning retail traders to established trading firms. You can find out more at *https://roboquant.org[roboquant.org]*.
 
