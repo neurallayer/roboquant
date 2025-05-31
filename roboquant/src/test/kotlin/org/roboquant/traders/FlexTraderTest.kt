@@ -35,7 +35,7 @@ internal class FlexTraderTest {
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.createOrders(signals, account, event)
+        val orders = policy.createOrders(signals, event, account)
         assertTrue(orders.isEmpty())
     }
 
@@ -60,11 +60,11 @@ internal class FlexTraderTest {
 
         val event1 = Event(Instant.now(), listOf(TradePrice(asset, 5.0)))
         val account = TestData.usAccount()
-        val orders1 = policy.createOrders(signals, account, event1)
+        val orders1 = policy.createOrders(signals, event1, account)
         assertTrue(orders1.isEmpty())
 
         val event2 = Event(Instant.now(), listOf(TradePrice(asset, 15.0)))
-        val orders2 = policy.createOrders(signals, account, event2)
+        val orders2 = policy.createOrders(signals, event2, account)
         assertTrue(orders2.isNotEmpty())
     }
 
@@ -76,7 +76,7 @@ internal class FlexTraderTest {
         val signals = listOf(Signal.buy(asset))
         val event = Event(Instant.now(), listOf(TradePrice(asset, 5.0)))
         val account = TestData.usAccount()
-        return policy.createOrders(signals, account, event)
+        return policy.createOrders(signals, event, account)
     }
 
 
@@ -88,7 +88,7 @@ internal class FlexTraderTest {
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.createOrders(signals, account, event)
+        val orders = policy.createOrders(signals, event, account)
         assertTrue(orders.isEmpty())
     }
 

@@ -104,7 +104,7 @@ suspend fun runAsync(
 
             // Generate signals and place orders
             val signals = strategy?.createSignals(event) ?: listOf()
-            val orders = trader.createOrders(signals, account, event)
+            val orders = trader.createOrders(signals, event, account)
             broker.placeOrders(orders)
 
             journal?.track(event, account, signals, orders)

@@ -29,7 +29,7 @@ import org.roboquant.common.Signal
 interface Strategy  {
 
     /**
-     * Generate zero or more [signals][org.roboquant.common.Signal] based on received [event].
+     * Generate zero or more [signals][Signal] based on received [event].
      */
     fun createSignals(event: Event): List<Signal>
 

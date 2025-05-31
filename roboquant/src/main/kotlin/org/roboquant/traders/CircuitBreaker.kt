@@ -37,7 +37,7 @@ class CircuitBreaker(val trader: Trader, private val maxOrders: Int, private val
     private val logger = Logging.getLogger(this::class)
 
     private fun exceeds(newOrders: Int, time: Instant): Boolean {
-        if (newOrders > maxOrders) return false
+        if (newOrders > maxOrders) return true
         val lookbackTime = time - period
         var orders = newOrders
         for (entry in history) {
@@ -48,8 +48,8 @@ class CircuitBreaker(val trader: Trader, private val maxOrders: Int, private val
         return false
     }
 
-    override fun createOrders(signals: List<Signal>, account: Account, event: Event): List<Order> {
-        val orders = trader.createOrders(signals, account, event)
+    override fun createOrders(signals: List<Signal>, event: Event, account: Account): List<Order> {
+        val orders = trader.createOrders(signals, event, account)
         if (orders.isEmpty()) return emptyList()
 
         return if (exceeds(orders.size, event.time)) {
