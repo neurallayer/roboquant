@@ -38,7 +38,7 @@ import org.roboquant.common.short
  * [maintenanceMarginLong]
  * @property minimumEquity the minimum equity requirement, defaults to 0.0 (denoted in Account.baseCurrency)
  */
-class MarginAccount(
+class MarginAccountModel(
     private val initialMargin: Double = 50.percent,
     private val maintenanceMarginLong: Double = 30.percent,
     private val maintenanceMarginShort: Double = maintenanceMarginLong,

@@ -55,7 +55,7 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
     override var buyingPower: Amount = Amount(baseCurrency, 0.0)
 
     /**
-     * Trades
+     * Trades that happened to far
      */
     override val trades = mutableListOf<Trade>()
 
@@ -75,6 +75,9 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
         cash.clear()
     }
 
+    /**
+     * Delete orders with the same id as the one provided.
+     */
     fun deleteOrder(order: Order) {
         orders.removeIf { it.id == order.id }
     }

@@ -31,13 +31,14 @@ import java.time.ZoneId
  * @property initialDeposit initial deposit, default is 1 million USD
  * @param baseCurrency the base currency to use for reporting amounts, default is the (first) currency found in the
  * initial deposit
- * @property accountModel the account model (like cash or margin) to use, default is [CashAccount]
+ * @property accountModel the account model (like cash or margin) to use, default is [CashAccountModel]
+ * @property exchangeZoneId the tiemzone of the exchange, used for GTD time in force calculations
  * @constructor Create a new instance of SimBroker
  */
 open class SimBroker(
     val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
-    private val accountModel: AccountModel = CashAccount(),
+    private val accountModel: AccountModel = CashAccountModel(),
     private val exchangeZoneId: ZoneId = ZoneId.of("UTC")
 ) : Broker {
 
@@ -69,10 +70,14 @@ open class SimBroker(
         account.deleteOrder(order)
     }
 
-    fun updatePosition(asset: Asset, size: Size, price: Double) {
+    /**
+     * Update the position and return the realized PNL
+     */
+    fun updatePosition(asset: Asset, size: Size, price: Double): Double {
         val position = account.positions[asset]
         if (position == null) {
             account.positions[asset] = Position(size, price, price)
+            return 0.0
         } else {
 
             val newSize = position.size + size
@@ -87,6 +92,13 @@ open class SimBroker(
             }
 
             account.positions[asset] = Position(newSize, avgPrice, price)
+            return if (size.sign != newSize.sign) {
+                asset.value(position.size, price - position.avgPrice).value
+            } else {
+                asset.value(size, price - position.avgPrice).value
+            }
+
+
         }
     }
 
@@ -113,9 +125,11 @@ open class SimBroker(
             val price = event.getPrice(order.asset)
             if (price != null) {
                 if (order.isExecutable(price)) {
-                    updatePosition(order.asset, order.size, price)
+                    val pnl = updatePosition(order.asset, order.size, price)
                     val value = order.asset.value(order.size, price)
                     account.cash.withdraw(value)
+                    val trade = Trade(order.asset, event.time, order.size, price, pnl)
+                    account.trades.add(trade)
                     deleteOrder(order)
                 }
             }

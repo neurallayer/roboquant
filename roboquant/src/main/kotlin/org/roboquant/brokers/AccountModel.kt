@@ -17,7 +17,7 @@
 package org.roboquant.brokers
 
 /**
- * Interface for modelling different types of Accounts used in the [SimBroker], like a [CashAccount] or [MarginAccount]
+ * Interface for modelling different types of Accounts used in the [SimBroker], like a [CashAccountModel] or [MarginAccountModel]
  *
  * Currently, the main functionality is that at the end of each step the buying power is re-calculated and made
  * available in the attribute [org.roboquant.common.Account.buyingPower].

@@ -36,7 +36,7 @@ import org.roboquant.common.short
  * @property minimum the minimum amount of cash balance required to maintain in the account, defaults to 0.0. It is
  * denoted in the base currency of the account (similar to the buyingPower).
  */
-class CashAccount(private val minimum: Double = 0.0) : AccountModel {
+class CashAccountModel(private val minimum: Double = 0.0) : AccountModel {
 
     /**
      * @see [AccountModel.updateAccount]

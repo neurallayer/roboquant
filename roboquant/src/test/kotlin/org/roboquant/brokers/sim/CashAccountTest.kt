@@ -19,7 +19,7 @@ package org.roboquant.brokers.sim
 import org.roboquant.common.Account
 import org.roboquant.brokers.AccountModel
 import org.roboquant.brokers.Broker
-import org.roboquant.brokers.CashAccount
+import org.roboquant.brokers.CashAccountModel
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.SimBroker
 import org.roboquant.common.*
@@ -60,7 +60,7 @@ internal class CashAccountTest {
     fun testCashAccount() {
         // Slide one example in code
         val initial = 10_000.EUR
-        val broker = getSimBroker(initial, accountModel = CashAccount())
+        val broker = getSimBroker(initial, accountModel = CashAccountModel())
         val abc = Stock("ABC", EUR)
         val xyz = Stock("XYZ")
 

@@ -20,7 +20,7 @@ import org.roboquant.TestData
 import org.roboquant.common.Account
 import org.roboquant.brokers.AccountModel
 import org.roboquant.brokers.Broker
-import org.roboquant.brokers.MarginAccount
+import org.roboquant.brokers.MarginAccountModel
 import org.roboquant.brokers.SimBroker
 import org.roboquant.common.*
 import org.roboquant.common.Currency.Companion.JPY
@@ -38,7 +38,7 @@ internal class MarginAccountTest {
     fun test3() {
         val account = TestData.internalAccount()
         val cc = account.baseCurrency
-        val uc = MarginAccount()
+        val uc = MarginAccountModel()
         uc.updateAccount(account)
         assertTrue(account.buyingPower.value > account.cash[cc])
     }
@@ -47,7 +47,7 @@ internal class MarginAccountTest {
     fun test4() {
         val account = TestData.internalAccount()
         val cc = account.baseCurrency
-        val uc = MarginAccount(20.0)
+        val uc = MarginAccountModel(20.0)
         uc.updateAccount(account)
         assertTrue(account.buyingPower.value > account.cash[cc])
     }
@@ -73,7 +73,7 @@ internal class MarginAccountTest {
     fun testMarginAccountLong() {
         // Slide-2 example in code
         val initial = 1_000_000.JPY
-        val broker = getSimBroker(initial, MarginAccount())
+        val broker = getSimBroker(initial, MarginAccountModel())
         val abc = Stock("ABC", JPY)
 
         var account = update(broker, abc, 1000)
@@ -101,7 +101,7 @@ internal class MarginAccountTest {
     fun testMarginAccountShort() {
         // The example on slide-3 in code
         val initial = 20_000.USD
-        val broker = getSimBroker(initial, MarginAccount())
+        val broker = getSimBroker(initial, MarginAccountModel())
         val abc = Stock("ABC")
 
         var account = update(broker, abc, 200, -50)

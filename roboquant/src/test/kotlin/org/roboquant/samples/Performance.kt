@@ -16,7 +16,7 @@
 
 package org.roboquant.samples
 
-import org.roboquant.brokers.MarginAccount
+import org.roboquant.brokers.MarginAccountModel
 import org.roboquant.brokers.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.*
@@ -152,7 +152,7 @@ private object Performance {
                 getStrategy(SKIP + 1),
             )
 
-            val broker = SimBroker(accountModel = MarginAccount())
+            val broker = SimBroker(accountModel = MarginAccountModel())
             val trader = FlexTrader {
                 shorting = true
             }
