@@ -16,6 +16,8 @@
 
 package org.roboquant.common
 
+import org.roboquant.brokers.ExchangeRates
+import org.roboquant.brokers.NoExchangeRates
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.NumberFormat
@@ -110,7 +112,7 @@ class Amount(val currency: Currency, val value: Double)  {
     fun convert(to: Currency, time: Instant): Amount {
         if (currency == to) return this
         if (value == 0.0) return Amount(to, 0.0)
-        return Config.exchangeRates.convert(this, to, time)
+        return converter.convert(this, to, time)
     }
 
     /** @suppress **/
@@ -130,6 +132,17 @@ class Amount(val currency: Currency, val value: Double)  {
     fun toWallet(): Wallet {
         return Wallet(this)
     }
+
+    companion object {
+
+        var converter: ExchangeRates = NoExchangeRates()
+
+        fun registerConvertor(converter: ExchangeRates) {
+            Amount.converter = converter
+
+        }
+    }
+
 
 }
 

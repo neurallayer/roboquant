@@ -16,9 +16,6 @@
 
 package org.roboquant.common
 
-import org.roboquant.brokers.ExchangeRates
-import org.roboquant.brokers.NoExchangeRates
-import org.roboquant.common.Config.exchangeRates
 import org.roboquant.common.Config.random
 import java.nio.file.Files
 import java.nio.file.Path
@@ -31,7 +28,6 @@ import kotlin.random.Random
  * The configuration for roboquant that contains access to environment properties and has several global properties
  * that can be set:
  *
- * - The exchange rates [exchangeRates]
  * - The [random] number generator
  *
  */
@@ -91,12 +87,6 @@ object Config {
     fun setProperty(name: String, value: String) {
         properties[name] = value
     }
-
-    /**
-     * The exchange rates to use when dealing with multiple currencies. The default is [NoExchangeRates]
-     * which as the name suggests will not support conversions between currencies.
-     */
-    var exchangeRates: ExchangeRates = NoExchangeRates()
 
     /**
      * Default [Random] number generator to use, typically used by methods as a default value when no other random

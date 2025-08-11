@@ -107,7 +107,7 @@ internal class SimBrokerTest {
     @Test
     fun placeOrdersMultipleOrders() {
         val er = FixedExchangeRates(USD, EUR to 0.8)
-        Config.exchangeRates = er
+        Amount.registerConvertor(er)
         val broker = SimBroker()
         val event = TestData.event()
         val orders = listOf(TestData.euMarketOrder(), TestData.usMarketOrder())

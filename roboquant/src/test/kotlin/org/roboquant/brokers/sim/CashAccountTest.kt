@@ -64,7 +64,7 @@ internal class CashAccountTest {
         val abc = Stock("ABC", EUR)
         val xyz = Stock("XYZ")
 
-        Config.exchangeRates = FixedExchangeRates(EUR, USD to 0.9)
+        Amount.registerConvertor(FixedExchangeRates(EUR, USD to 0.9))
 
         var account = update(broker, abc, 100)
         assertEquals(10_000.EUR, account.buyingPower)

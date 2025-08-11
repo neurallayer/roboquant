@@ -38,7 +38,6 @@ open class SimBroker(
     val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val accountModel: AccountModel = CashAccount(),
-    private val orderEntry: MutableMap<String, LocalDate> = mutableMapOf(),
     private val exchangeZoneId: ZoneId = ZoneId.of("UTC")
 ) : Broker {
 
@@ -48,6 +47,8 @@ open class SimBroker(
     constructor(deposit: Number, currencyCode: String = "USD") : this(
         Amount(Currency.getInstance(currencyCode), deposit).toWallet()
     )
+
+    private val orderEntry: MutableMap<String, LocalDate> = mutableMapOf()
 
     private val pendingOrders = mutableListOf<Order>()
 

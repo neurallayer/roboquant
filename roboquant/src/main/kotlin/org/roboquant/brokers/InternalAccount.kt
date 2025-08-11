@@ -55,6 +55,11 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
     override var buyingPower: Amount = Amount(baseCurrency, 0.0)
 
     /**
+     * Trades
+     */
+    override val trades = mutableListOf<Trade>()
+
+    /**
      * Portfolio with its open positions. Positions are removed as soon as they are closed
      */
     override val positions = mutableMapOf<Asset, Position>()

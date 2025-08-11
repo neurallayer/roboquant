@@ -14,8 +14,7 @@ import kotlin.collections.iterator
  * - The [orders]
  *
  * Some convenience methods convert a multi-currency Wallet to a single-currency Amount.
- * For this to work, you'll need to have the appropriate exchange rates defined
- * at [Config.exchangeRates].
+ * For this to work, you'll need to have the appropriate exchange rates defined.
  *
  * @property baseCurrency the base currency of the account
  * @property lastUpdate time that the account was last updated
@@ -33,6 +32,7 @@ interface Account {
     val orders: List<Order>
     val positions: Map<Asset, Position>
     val buyingPower: Amount
+    val trades: List<Trade>
 
     /**
      * Cash balances converted to a single amount denoted in the [baseCurrency] of the account. If you want to know

@@ -31,7 +31,7 @@ internal class IBKRSamples {
 
     @Test
     internal fun broker() {
-        Config.exchangeRates = FixedExchangeRates(Currency.USD, Currency.EUR to 1.1)
+        Amount.registerConvertor(FixedExchangeRates(Currency.USD, Currency.EUR to 1.1))
         val broker = IBKRBroker()
         val account = broker.sync()
 
@@ -89,7 +89,7 @@ internal class IBKRSamples {
         IBKR.register(208813719, googl)
 
         val broker = IBKRBroker()
-        Config.exchangeRates = broker.exchangeRates
+        Amount.registerConvertor(broker.exchangeRates)
         val account = broker.sync()
         println(account)
 
