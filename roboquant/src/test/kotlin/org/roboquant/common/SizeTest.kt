@@ -81,6 +81,7 @@ internal class SizeTest {
         assertTrue(size.isFractional)
         assertEquals(BigDecimal("10.10"), size.toBigDecimal().setScale(2))
         assertEquals(10.10, size.toDouble())
+        assertEquals(Size(10), size.round(0))
 
         // Equality test
         assertEquals(size, Size("10.10"))
