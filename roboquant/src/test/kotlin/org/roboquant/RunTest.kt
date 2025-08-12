@@ -43,7 +43,7 @@ internal class RunTest {
 
 
     @Test
-    fun runAsyncTest() = runBlocking {
+    fun runAsyncTest()  {
 
         assertDoesNotThrow {
             runBlocking {
@@ -112,11 +112,10 @@ internal class RunTest {
 
         feed.timeframe.sample(3.months).forEach {
             jobs.add {
-                val tf = it
-                val acc = runAsync(feed, EMACrossover(), timeframe = tf)
+                val acc = runAsync(feed, EMACrossover(), timeframe = it)
                 println(acc.lastUpdate)
-                println(tf)
-                assertTrue(acc.lastUpdate in tf)
+                println(it)
+                assertTrue(acc.lastUpdate in it)
             }
         }
         jobs.joinAllBlocking()

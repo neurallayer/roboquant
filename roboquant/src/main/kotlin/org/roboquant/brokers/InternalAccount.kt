@@ -122,8 +122,9 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
         return this
     }
 
-
-
+    /**
+     * Short overview of account state
+     */
     override fun toString(): String {
         val pString = positions.map { it.value.size.toString() + "@" + it.key.symbol }.joinToString(separator = ", ")
         val oString = orders.joinToString(separator = ", ") { it.size.toString() + "@" + it.asset.symbol }
@@ -135,6 +136,7 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
             equity       : ${equity()}
             positions    : $pString
             open orders  : $oString
+            trades       : ${trades.size}
         """.trimIndent()
 
     }

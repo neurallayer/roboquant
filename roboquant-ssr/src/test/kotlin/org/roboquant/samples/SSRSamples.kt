@@ -26,7 +26,7 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
- * Copyright 2020-2023 Neural Layer
+ * Copyright 2020-2025 Neural Layer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

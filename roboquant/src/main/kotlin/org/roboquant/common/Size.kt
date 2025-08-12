@@ -141,7 +141,7 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
         get() = value.sign
 
     /**
-     * Round the size to nearest fraction
+     * Round down the size to nearest fraction
      */
     fun round(scale: Int) = Size(toBigDecimal().setScale(scale, RoundingMode.DOWN))
 

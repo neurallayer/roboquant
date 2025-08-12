@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 
-package org.roboquant.optimize
+package org.roboquant.charts
 
 
-/**
- * This collection holds the (hyper-)parameters that can be used in a [SearchSpace] to define that space.
- */
-class Params : LinkedHashMap<String, Any>() {
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
-    /**
-     * Returns the [String] value for the provided parameter [name]
-     */
-    fun getString(name: String) = get(name) as String
+internal class TradeChartTest {
 
-    /**
-     * Returns the [Int] value for the provided parameter [name]
-     */
-    fun getInt(name: String) = get(name) as Int
+    @Test
+    fun test() {
+        val account = TestData.usAccount()
+        val chart = TradeChart(account.trades)
+        assertTrue(chart.renderJson().isNotBlank())
+    }
 
-    /**
-     * Returns the [Double] value for the provided parameter [name]
-     */
-    fun getDouble(name: String) = get(name) as Double
+
 
 }
-

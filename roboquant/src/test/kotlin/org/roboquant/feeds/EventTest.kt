@@ -32,7 +32,7 @@ internal class EventTest {
         val event = Event(now, emptyList())
         assertTrue(event.prices.isEmpty())
         val asset = Stock("Dummy")
-        assertTrue(event.getPrice(asset) == null)
+        assertEquals(event.getPrice(asset), null)
         assertTrue(event.items.isEmpty())
     }
 
