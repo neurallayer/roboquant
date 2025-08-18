@@ -25,7 +25,10 @@ internal class TimeSeriesChartTest {
 
     @Test
     fun single() {
-        val data = TestData.data
+        var data = TestData.data
+        data = data.normalize().clean()
+        assertDoesNotThrow { data.average() }
+
         val chart = TimeSeriesChart(data)
 
         assertDoesNotThrow {

@@ -33,6 +33,7 @@ internal class OrderTest {
         assertTrue(order.size.nonzero)
         assertFalse(order.size.iszero)
         assertEquals(order.limit, 100.0)
+        assertTrue(order.fill.iszero)
     }
 
 

@@ -39,6 +39,8 @@ internal class FeedTest {
     fun basic() {
         val feed = MyFeed()
         assertEquals(Timeframe.INFINITE, feed.timeframe)
+        val errors = feed.validate()
+        assertTrue { errors.isEmpty() }
     }
     
     @Test

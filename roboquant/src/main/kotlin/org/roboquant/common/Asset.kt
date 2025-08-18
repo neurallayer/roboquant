@@ -97,9 +97,6 @@ data class Option(override val symbol: String, override val currency: Currency) 
             return Option(symbol, Currency.getInstance(currencyCode))
         }
 
-        fun fromSymbol(symbol: String): Option {
-            return Option(symbol, Currency.USD) // TODO
-        }
     }
 
     override fun serialize(): String {

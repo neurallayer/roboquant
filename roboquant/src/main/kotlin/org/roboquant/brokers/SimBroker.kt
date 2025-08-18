@@ -75,31 +75,31 @@ open class SimBroker(
      */
     fun updatePosition(asset: Asset, size: Size, price: Double): Double {
         val position = account.positions[asset]
+
+        // Open Position
         if (position == null) {
             account.positions[asset] = Position(size, price, price)
             return 0.0
-        } else {
-
-            val newSize = position.size + size
-
-            val avgPrice = when {
-                size.sign != newSize.sign -> price
-
-                newSize.absoluteValue > size.absoluteValue ->
-                    (size.toDouble() * position.avgPrice + size.toDouble() * price) / newSize.toDouble()
-
-                else -> position.avgPrice
-            }
-
-            account.positions[asset] = Position(newSize, avgPrice, price)
-            return if (size.sign != newSize.sign) {
-                asset.value(position.size, price - position.avgPrice).value
-            } else {
-                asset.value(size, price - position.avgPrice).value
-            }
-
-
         }
+
+        // Increase position
+        val newSize = position.size + size
+        if (position.size.sign == size.sign) {
+            val avgPrice = (size.toDouble() * position.avgPrice + size.toDouble() * price) / newSize.toDouble()
+            account.positions[asset] = Position(newSize, avgPrice = avgPrice, mktPrice = price)
+            return 0.0
+        }
+
+        // Decrease position
+        if (size.absoluteValue <= position.size.absoluteValue) {
+            account.positions[asset] = Position(newSize, position.avgPrice, price)
+            return asset.value(size, position.avgPrice - price).value
+        }
+
+        // Switch position side
+        account.positions[asset] = Position(newSize, price, price)
+        return asset.value(position.size, price - position.avgPrice).value
+
     }
 
     private fun isExpired(order: Order, time: Instant): Boolean {

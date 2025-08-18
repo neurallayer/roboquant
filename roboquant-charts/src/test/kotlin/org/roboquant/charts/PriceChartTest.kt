@@ -49,6 +49,10 @@ internal class PriceChartTest {
             override fun calculate(item: Item, time: Instant): Map<String, Double> {
                 return mapOf("one" to 1.0, "two" to 2.0)
             }
+
+            override fun clear() {
+                // NOP
+            }
         }
 
         val tf = Timeframe.fromYears(2020, 2021)
