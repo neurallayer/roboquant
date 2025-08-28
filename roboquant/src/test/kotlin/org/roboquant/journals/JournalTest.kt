@@ -1,5 +1,6 @@
 package org.roboquant.journals
 
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.common.years
 import org.roboquant.run
 import org.roboquant.feeds.random.RandomWalk
@@ -18,14 +19,13 @@ internal class JournalTest {
     fun basic() {
         val feed = RandomWalk.lastYears(5)
         val journal = BasicJournal()
-        run(feed, EMACrossover(), journal=journal)
+        run(feed, EMACrossover(), journal = journal)
         assertTrue(journal.nEvents > 0)
         assertTrue(journal.nOrders > 0)
         assertTrue(journal.maxPositions > 0)
         assertTrue(journal.nItems > 0)
         assertTrue(journal.nSignals > 0)
         assertTrue(journal.lastTime!! > Instant.MIN)
-
     }
 
     @Test
@@ -36,10 +36,14 @@ internal class JournalTest {
         }
         val tfs = feed.timeframe.split(1.years)
         for (tf in tfs) {
-            run(feed, EMACrossover(), journal=mrj.getJournal(), timeframe=tf)
+            run(feed, EMACrossover(), journal = mrj.getJournal(), timeframe = tf)
         }
         assertContains(mrj.getMetricNames(), "account.equity")
         assertEquals(tfs.size, mrj.getRuns().size)
-
+        assertTrue(mrj.getMetric("account.equity").isNotEmpty())
+        assertDoesNotThrow {
+            mrj.load(listOf("run-1"))
+            mrj.getMetric("fdjshfdhsf", "fhdjkfhdjk")
+        }
     }
 }

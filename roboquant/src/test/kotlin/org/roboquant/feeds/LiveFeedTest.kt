@@ -25,6 +25,7 @@ import org.roboquant.strategies.EMACrossover
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class LiveFeedTest {
@@ -35,6 +36,7 @@ internal class LiveFeedTest {
         class MyLiveFeed : LiveFeed()
 
         val feed1 = MyLiveFeed()
+        assertFalse { feed1.isActive }
         val feed2 = MyLiveFeed()
         val feed = CombinedLiveFeed(feed1, feed2)
 
@@ -79,6 +81,7 @@ internal class LiveFeedTest {
         }
 
         val feed = MyLiveFeed()
+
         val tf = Timeframe.next(1.seconds)
 
         val jobs = ParallelJobs()

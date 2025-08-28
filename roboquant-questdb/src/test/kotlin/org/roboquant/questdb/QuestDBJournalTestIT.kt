@@ -54,6 +54,7 @@ internal class QuestDBJournalTestIT {
         logger.removeRun("test-run")
         logger.removeAllRuns()
         logger.close()
+        QuestDBJournal.close(folder.toPath())
     }
 
     @Test

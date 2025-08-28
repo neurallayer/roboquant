@@ -50,11 +50,6 @@ abstract class HistoricPriceStrategy(
         return result
     }
 
-    companion object {
-        const val BUY = 1.0
-        const val SELL = -1.0
-    }
-
     /**
      * Generate a signal based on the provided [asset] and [data]. Default implementation is to call [generateRating]
      * to get the rating.

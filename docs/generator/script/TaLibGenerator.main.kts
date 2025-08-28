@@ -234,31 +234,31 @@ class TaLibGenerator(private val root: JsonObject) {
      */
     fun genMethod(): String {
 
-        return """
+        return $$"""
             
         /**
-         * Calculate **$desc** using the provided input data and by default return the most recent result. 
+         * Calculate **$$desc** using the provided input data and by default return the most recent result. 
          * You can set [previous] if you don't want the most recent result.
          * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
          *
-         * This indicator belongs to the group **$groupId**.
+         * This indicator belongs to the group **$$groupId**.
          */
-        fun $fixedFnName(${getInput(true)}, $constructor previous:Int=0): ${returnType()} {
-            val endIdx = $firstInput.lastIndex - previous
-            ${getOutputDecl()}
+        fun $$fixedFnName($${getInput(true)}, $$constructor previous:Int=0): $${returnType()} {
+            val endIdx = $$firstInput.lastIndex - previous
+            $${getOutputDecl()}
             val startOutput = MInteger()
             val endOutput = MInteger()
-            val ret = core.$fnName(endIdx, endIdx, $inputParams, $optional startOutput, endOutput, ${getOutputNames()})
+            val ret = core.$$fnName(endIdx, endIdx, $$inputParams, $$optional startOutput, endOutput, $${getOutputNames()})
             if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
             val last = endOutput.value - 1
             if (last < 0) {
-                val lookback = core.${callLookback()} + previous
-                throw InsufficientDataException("Not enough data to calculate $fixedFnName, minimal lookback period is ${'$'}lookback")
+                val lookback = core.$${callLookback()} + previous
+                throw InsufficientDataException("Not enough data to calculate $$fixedFnName, minimal lookback period is $lookback")
             }
-            return ${returnStatement()}
+            return $${returnStatement()}
         }
 
-        ${genPriceBarSeriesMethod()}
+        $${genPriceBarSeriesMethod()}
 
     """.trimIndent()
     }
