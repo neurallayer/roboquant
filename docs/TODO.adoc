@@ -63,17 +63,11 @@ The topics mentioned here are some of the ideas for the future releases:
 * [X] Improve overall test coverage
 * [X] Hardening code base
 
-== Version 3 and later (2024 and beyond)
+== Version 3 and later (2025 and beyond)
 
 The topics mentioned here are some of the ideas for the future releases:
 
-* [ ] Support Kotlin 2.0
-* [ ] Add support for reading different types of data feeds besides price actions
-* [ ] Better and more complete integrations with brokers and crypto-exchanges
-* [ ] Advanced policies, like auto re-balancing portfolios
-* [ ] Machine-learning-based strategies
-* [ ] Right now messages support the English format only, add L10N/I18N support
-* [ ] Make video(s) that show the steps to develop and test your own strategies
-* [ ] Come up with a way users can easily share strategies, code snippets and other best practices
-* [ ] Better support for displaying multiple metrics/indicators on a single chart
-
+* [x] Move to Kotlin 2.x
+* [x] Harmonize API with the Python version
+* [x] Simplify ways to extend the various components
+* [x] Remove unused integrations
