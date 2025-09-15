@@ -18,6 +18,7 @@
 package org.roboquant.common
 
 import org.roboquant.common.Asset.Companion.SEP
+import org.roboquant.common.Asset.Companion.registry
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -40,7 +41,7 @@ interface Asset : Comparable<Asset> {
     val symbol: String
     val currency: Currency
 
-    fun serialize() : String
+    fun serialize(): String
 
     /**
      * Contains methods to create specific asset types, like options or futures using international standards to
@@ -55,18 +56,15 @@ interface Asset : Comparable<Asset> {
         val registry = mutableMapOf<String, (String) -> Asset>()
 
         fun deserialize(value: String): Asset {
+            println("Called deserial")
             return cache.getOrPut(value) {
                 val (assetType, serString) = value.split(SEP, limit = 2)
-                registry.getValue(assetType)(serString)
+                println(assetType)
+                println(registry)
+                val deserializerFunction = registry.getValue(assetType)
+                deserializerFunction(serString)
             }
         }
-
-        init {
-            registry["Crypto"] = Crypto::deserialize
-            registry["Stock"] = Stock::deserialize
-            registry["Option"] = Option::deserialize
-        }
-
 
     }
 
@@ -84,13 +82,16 @@ interface Asset : Comparable<Asset> {
     }
 
 
-
 }
 
 
-data class Option(override val symbol: String, override val currency: Currency) :Asset {
+data class Option(override val symbol: String, override val currency: Currency) : Asset {
 
     companion object {
+
+        init {
+            registry["Option"] = Option::deserialize
+        }
 
         fun deserialize(value: String): Asset {
             val (symbol, currencyCode) = value.split(SEP)
@@ -105,13 +106,17 @@ data class Option(override val symbol: String, override val currency: Currency) 
 }
 
 
-data class Crypto(override val symbol: String, override val currency: Currency) :Asset {
+data class Crypto(override val symbol: String, override val currency: Currency) : Asset {
 
     override fun serialize(): String {
         return "Crypto$SEP$symbol$SEP$currency"
     }
 
     companion object {
+
+        init {
+            registry["Crypto"] = Crypto::deserialize
+        }
 
 
         fun deserialize(value: String): Asset {
@@ -127,13 +132,18 @@ data class Crypto(override val symbol: String, override val currency: Currency) 
 }
 
 
-data class Stock(override val symbol: String, override val currency: Currency = Currency.USD) :Asset {
+data class Stock(override val symbol: String, override val currency: Currency = Currency.USD) : Asset {
 
     override fun serialize(): String {
         return "Stock$SEP$symbol$SEP$currency"
     }
 
     companion object {
+
+
+        init {
+            registry["Stock"] = Stock::deserialize
+        }
 
         fun deserialize(value: String): Asset {
             val (symbol, currencyCode) = value.split(SEP)
@@ -143,16 +153,25 @@ data class Stock(override val symbol: String, override val currency: Currency = 
 }
 
 
-
-data class Forex(override val symbol: String, override val currency: Currency) :Asset {
+data class Forex(override val symbol: String, override val currency: Currency) : Asset {
 
     override fun serialize(): String {
         return "Forex$SEP$symbol$SEP$currency"
     }
 
     companion object {
+
+        init {
+            registry["Forex"] = Forex::deserialize
+        }
+
         fun fromSymbol(symbol: String): Forex {
             return Forex(symbol, Currency.USD) // TODO
+        }
+
+        fun deserialize(value: String): Asset {
+            val (symbol, currencyCode) = value.split(SEP)
+            return Forex(symbol, Currency.getInstance(currencyCode))
         }
     }
 }
@@ -171,8 +190,8 @@ val Collection<Asset>.symbols: Array<String>
     get() = map { it.symbol }.distinct().toTypedArray()
 
 
-
 fun main() {
+
     val apple = Stock("AAPL")
     val appleSer = apple.serialize()
     println(Asset.deserialize(appleSer))
