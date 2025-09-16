@@ -31,7 +31,6 @@ internal class AlpacaBrokerTestIT {
 
         assertTrue(cash.isNotEmpty())
         assertFalse(cash.isMultiCurrency())
-        println(account)
 
         assertDoesNotThrow {
             broker.placeOrders(emptyList())

@@ -300,17 +300,21 @@ fun Number.round(fractions: Int = 2): BigDecimal =
  */
 fun String.toCurrencyPair(): Pair<Currency, Currency>? {
     val codes = split('_', '-', ' ', '/', '.', ':')
-    return if (codes.size == 2) {
-        val c1 = Currency.getInstance(codes.first().uppercase())
-        val c2 = Currency.getInstance(codes.last().uppercase())
-        Pair(c1, c2)
-    } else if (codes.size == 1 && length == 6) {
-        // Assume we have two currency-codes, each of lengths 3
-        val c1 = Currency.getInstance(substring(0, 3).uppercase())
-        val c2 = Currency.getInstance(substring(3, 6).uppercase())
-        Pair(c1, c2)
-    } else {
-        null
+    return when (codes.size) {
+        2 -> {
+            val c1 = Currency.getInstance(codes.first().uppercase())
+            val c2 = Currency.getInstance(codes.last().uppercase())
+            Pair(c1, c2)
+        }
+        1 if length == 6 -> {
+            // Assume we have two currency-codes, each of lengths 3
+            val c1 = Currency.getInstance(substring(0, 3).uppercase())
+            val c2 = Currency.getInstance(substring(3, 6).uppercase())
+            Pair(c1, c2)
+        }
+        else -> {
+            null
+        }
     }
 }
 

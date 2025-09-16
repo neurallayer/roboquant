@@ -62,7 +62,7 @@ class TaLibGenerator(private val root: JsonObject) {
     }
 
     val desc = root.getAttr("ShortDescription")
-    private val className: String = root.get("CamelCaseName").asString
+    // private val className: String = root.get("CamelCaseName").asString
     val fnName = className.unCapitalize()
     val fixedFnName = if (fnName == "cdlStickSandwhich") "cdlStickSandwich" else fnName
     val inputParams = getInput()

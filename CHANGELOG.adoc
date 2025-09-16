@@ -32,13 +32,6 @@ val account = run(feed, strategy)
 - Improved the `Broker` interface. Only the `broker.sync()` call now provides access to the `account` object.
 - Simplified TiF (Time In Force) logic, for now with support for GTC and DAY.
 - `MetricsLogger` is replaced by `Journal` and `MetricsJournal`. Journal has access to more data (also newly created orders and signals).
-+
-[source,kotlin]
-----
-fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) {
-    TODO()
-}
-----
 - Hearth-beat generation for live feeds now done at consumer level via a time-out. This avoids a lot of possible errors and complications when for example nesting live feeds.
 - Better naming convention for many classes/attributes. The main ones are:
     * Event `actions` are now called `items`.

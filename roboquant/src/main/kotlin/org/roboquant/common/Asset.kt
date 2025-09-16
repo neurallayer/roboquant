@@ -56,11 +56,8 @@ interface Asset : Comparable<Asset> {
         val registry = mutableMapOf<String, (String) -> Asset>()
 
         fun deserialize(value: String): Asset {
-            println("Called deserial")
             return cache.getOrPut(value) {
                 val (assetType, serString) = value.split(SEP, limit = 2)
-                println(assetType)
-                println(registry)
                 val deserializerFunction = registry.getValue(assetType)
                 deserializerFunction(serString)
             }
@@ -189,13 +186,3 @@ fun Collection<Asset>.getBySymbol(symbol: String): Asset = first { it.symbol == 
 val Collection<Asset>.symbols: Array<String>
     get() = map { it.symbol }.distinct().toTypedArray()
 
-
-fun main() {
-
-    val apple = Stock("AAPL")
-    val appleSer = apple.serialize()
-    println(Asset.deserialize(appleSer))
-
-    val abn = Stock("ABNA", Currency.EUR)
-    println(abn.serialize())
-}
