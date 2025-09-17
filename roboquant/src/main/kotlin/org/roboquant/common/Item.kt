@@ -392,9 +392,9 @@ class CorporateItem(val asset: Asset, val type: String, val value: Double) : Ite
  * Useful when you want to integrate sentiment analysis as part of the trading strategy.
  *
  * @property items list of news items
- * @constructor Create new News action
+ * @constructor Create new News items
  */
-class NewsItem(val items: List<NewsItem>) : Item {
+data class NewsItems(val items: List<NewsItem>) : Item {
 
     /**
      * News item contains a single news item (text) with optionally extra metadata like
@@ -404,6 +404,12 @@ class NewsItem(val items: List<NewsItem>) : Item {
      * @property meta
      * @constructor Create new News item
      */
-    class NewsItem(val content: String, val meta: Map<String, Any>)
+    data class NewsItem(
+        val id: String,
+        val assets: List<Asset>? = null,
+        val content: String,
+        val headline: String? = null,
+        val url: String? = null,
+        val meta: Map<String, Any>? = null
+    )
 }
-
