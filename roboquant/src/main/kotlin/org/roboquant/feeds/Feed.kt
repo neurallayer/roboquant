@@ -109,7 +109,9 @@ inline fun <reified T : Item> Feed.filter(
 
     try {
         while (true) {
-            val o = channel.receive()
+            val o = withTimeoutOrNull(timeframe.duration.toMillis()) {
+                channel.receive()
+            } ?: break
             val newResults = o.items.filterIsInstance<T>().filter(filter).map { Pair(o.time, it) }
             result.addAll(newResults)
         }
