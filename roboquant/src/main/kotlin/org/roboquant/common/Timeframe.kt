@@ -41,6 +41,7 @@ import kotlin.random.Random
  * @property end end time of timeframe
  * @property inclusive should te [end] time be inclusive, default is false
  */
+@Suppress("ReplaceCallWithBinaryOperator")
 data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolean = false) : Serializable {
 
     /**
@@ -69,7 +70,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     /**
      * Return true is this is an empty timeframe, false otherwise
      */
-    fun isEmpty() = start == end && !inclusive
+    fun isEmpty() = start.equals(end) && !inclusive
 
     /**
      * @suppress
@@ -221,7 +222,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * before or equal the end time.
      */
     private fun beforeEnd(time: Instant): Boolean {
-        return time < end || (inclusive && time == end)
+        return time < end || (inclusive && time.equals(end))
     }
 
     /**
@@ -241,9 +242,9 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * Is this timeframe within a single day given the provided [zoneId].
      */
     fun isSingleDay(zoneId: ZoneId): Boolean {
-        if (start == Instant.MIN || end == Instant.MAX) return false
+        if (start.equals(Instant.MIN) || end.equals(Instant.MAX)) return false
         val realEnd = if (inclusive) end else end.minusNanos(1)
-        return start.atZone(zoneId).toLocalDate() == realEnd.atZone(zoneId).toLocalDate()
+        return start.atZone(zoneId).toLocalDate().equals(realEnd.atZone(zoneId).toLocalDate())
     }
 
     /**
@@ -306,12 +307,12 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
             val last = begin + period
             val tf = when {
                 last < end -> Timeframe(begin, last)
-                last == end && inclusive -> Timeframe(begin, end, true)
+                last.equals(end) && inclusive -> Timeframe(begin, end, true)
                 includeRemaining -> Timeframe(begin, end, inclusive)
                 else -> null
             }
             addNotNull(tf)
-            done = tf == null || tf.end == end
+            done = tf == null || tf.end.equals(end)
             begin = last - overlap
         }
     }
@@ -347,8 +348,8 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * Return a string representation of the timeframe
      */
     override fun toString(): String {
-        val s1 = if (start == MIN) "MIN" else if (start == MAX) "MAX" else start.toString()
-        val s2 = if (end == MIN) "MIN" else if (end == MAX) "MAX" else end.toString()
+        val s1 = if (start.equals(MIN)) "MIN" else if (start.equals(MAX)) "MAX" else start.toString()
+        val s2 = if (end.equals(MIN)) "MIN" else if (end.equals(MAX)) "MAX" else end.toString()
         val end = if (inclusive) ']' else '>'
         return "[$s1 - $s2$end"
     }
@@ -366,8 +367,8 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         }
 
         val fmt = formatter.withZone(ZoneOffset.UTC)
-        val s1 = if (start == MIN) "MIN" else if (start == MAX) "MAX" else fmt.format(start)
-        val s2 = if (end == MIN) "MIN" else if (end == MAX) "MAX" else fmt.format(end)
+        val s1 = if (start.equals(MIN)) "MIN" else if (start.equals(MAX)) "MAX" else fmt.format(start)
+        val s2 = if (end.equals(MIN)) "MIN" else if (end.equals(MAX)) "MAX" else fmt.format(end)
         return "$s1 - $s2"
     }
 
@@ -385,7 +386,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      */
     operator fun minus(period: TimeSpan): Timeframe {
         val e = makeValid(end - period)
-        val incl = (end == MAX) || inclusive
+        val incl = end.equals(MAX) || inclusive
         return Timeframe(makeValid(start - period), e, incl)
     }
 
@@ -398,7 +399,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      */
     operator fun plus(period: TimeSpan): Timeframe {
         val e = makeValid(end + period)
-        val incl = (end == MAX) || inclusive
+        val incl = (end.equals(MAX)) || inclusive
         return Timeframe(makeValid(start + period), e, incl)
     }
 
@@ -410,7 +411,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      */
     fun extend(before: TimeSpan, after: TimeSpan = before): Timeframe {
         val e = makeValid(end + after)
-        val incl = (end == MAX) || inclusive
+        val incl = (end.equals(MAX)) || inclusive
         return Timeframe(makeValid(start - before), e, incl)
     }
 

@@ -70,7 +70,8 @@ class ReturnsMetric(
         val time = event.time
 
         // Initialize first time
-        if (nextTime == Instant.MIN) {
+        @Suppress("ReplaceCallWithBinaryOperator")
+        if (nextTime.equals(Instant.MIN)) {
             nextTime = time + period
             lastTime = time
             lastValue = account.equity().convert(account.baseCurrency, event.time).value

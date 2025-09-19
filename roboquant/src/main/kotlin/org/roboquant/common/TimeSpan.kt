@@ -22,12 +22,6 @@ import java.time.*
 import java.time.temporal.ChronoUnit
 
 /**
- * Deprecated, use [TimeSpan] instead
- */
-@Deprecated("Renamed to TimeSpan", ReplaceWith("TimeSpan", "org.roboquant.common.TimeSpan"))
-typealias TradingPeriod = TimeSpan
-
-/**
  * TimeSpan is an immutable class that unifies the JVM classes Duration and Period and allows to use them
  * more easily in your code. It can store time-spans as small as nanoseconds.
  *
@@ -117,7 +111,8 @@ class TimeSpan internal constructor(internal val period: Period, internal val du
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         return if (other is TimeSpan) {
-            period == other.period && duration == other.duration
+            @Suppress("ReplaceCallWithBinaryOperator")
+            period.equals(other.period) && duration.equals(other.duration)
         } else {
             false
         }
@@ -205,7 +200,8 @@ val Long.nanos
 fun Instant.plus(period: TimeSpan, zoneId: ZoneId): Instant {
     // Optimized path for HFT
     if (period == TimeSpan.ZERO) return this
-    val result = if (period.period == Period.ZERO) this else atZone(zoneId).plus(period.period).toInstant()
+    @Suppress("ReplaceCallWithBinaryOperator")
+    val result = if (period.period.equals(Period.ZERO)) this else atZone(zoneId).plus(period.period).toInstant()
     return result.plus(period.duration)
 }
 
@@ -215,7 +211,8 @@ fun Instant.plus(period: TimeSpan, zoneId: ZoneId): Instant {
 fun Instant.minus(period: TimeSpan, zoneId: ZoneId): Instant {
     // Optimized path for HFT
     if (period == TimeSpan.ZERO) return this
-    val result = if (period.period == Period.ZERO) this else atZone(zoneId).minus(period.period).toInstant()
+    @Suppress("ReplaceCallWithBinaryOperator")
+    val result = if (period.period.equals(Period.ZERO)) this else atZone(zoneId).minus(period.period).toInstant()
     return result.minus(period.duration)
 }
 

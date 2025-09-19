@@ -45,7 +45,7 @@ class Exchange private constructor(
     fun sameDay(first: Instant, second: Instant): Boolean {
         val dt1 = LocalDate.ofInstant(first, zoneId)
         val dt2 = LocalDate.ofInstant(second, zoneId)
-        return dt1 == dt2
+        return dt1.equals(dt2)
     }
 
     /**

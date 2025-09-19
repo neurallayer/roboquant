@@ -113,7 +113,8 @@ class LazyCSVFeed(
                 var done = false
                 while (!done) {
                     val entry = queue.firstOrNull()
-                    if (entry != null && entry.time == now) {
+                    @Suppress("ReplaceCallWithBinaryOperator")
+                    if (entry != null && entry.time.equals(now)) {
                         items.add(entry.price)
                         queue.remove()
                         val asset = entry.price.asset

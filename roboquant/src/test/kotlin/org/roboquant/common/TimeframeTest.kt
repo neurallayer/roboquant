@@ -73,7 +73,9 @@ internal class TimeframeTest {
         assertEquals(100, subFrames.size)
         assertTrue(subFrames.all { it.start >= tf.start })
         assertTrue(subFrames.all { it.end <= tf.end })
-        assertTrue(subFrames.all { it.end == it.start + 2.months })
+
+        @Suppress("ReplaceCallWithBinaryOperator")
+        assertTrue(subFrames.all { it.end.equals(it.start + 2.months) })
 
         tf.split(1.years).forEach { period ->
             period.sample(1.months, 100).forEach {
