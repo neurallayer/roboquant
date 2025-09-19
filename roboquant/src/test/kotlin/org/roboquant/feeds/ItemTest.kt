@@ -16,9 +16,11 @@
 
 package org.roboquant.feeds
 
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.roboquant.TestData
 import org.roboquant.common.CorporateItem
-import org.roboquant.common.NewsItem
+import org.roboquant.common.NewsItems
+import org.roboquant.common.Stock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -34,11 +36,16 @@ internal class ItemTest {
 
     @Test
     fun newsAction() {
-        val item = NewsItem.NewsItem("Some text", mapOf("source" to "TWITTER"))
-        val action = NewsItem(listOf(item))
+        val item = NewsItems.NewsItem(
+            id = "1",
+            content = "Some text",
+            assets = listOf(Stock("AAPL")),
+            meta = mapOf("source" to "TWITTER"))
+        val action = NewsItems(listOf(item))
         assertEquals(1, action.items.size)
         assertEquals("Some text", action.items.first().content)
-        assertEquals(1, action.items[0].meta.size)
+        assertTrue(item.assets.orEmpty().any { it.symbol == "AAPL" })
+        assertEquals(1, action.items[0].meta?.size)
         assertFalse(action.items.isEmpty())
     }
 }
