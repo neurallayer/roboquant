@@ -100,7 +100,8 @@ interface AssetFeed : Feed {
  */
 inline fun <reified T : Item> Feed.filter(
     timeframe: Timeframe = Timeframe.INFINITE,
-    crossinline filter: (T) -> Boolean = { true }
+    timeOutMillis: Long = -1,
+    crossinline filter: (T) -> Boolean = { true },
 ): List<Pair<Instant, T>> = runBlocking {
 
     val channel = EventChannel(timeframe = timeframe)
@@ -109,9 +110,7 @@ inline fun <reified T : Item> Feed.filter(
 
     try {
         while (true) {
-            val o = withTimeoutOrNull(timeframe.duration.toMillis()) {
-                channel.receive()
-            } ?: break
+            val o = channel.receive( timeOutMillis )
             val newResults = o.items.filterIsInstance<T>().filter(filter).map { Pair(o.time, it) }
             result.addAll(newResults)
         }

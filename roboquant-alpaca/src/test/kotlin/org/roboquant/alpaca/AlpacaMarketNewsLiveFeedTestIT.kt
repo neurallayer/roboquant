@@ -39,13 +39,17 @@ internal class AlpacaMarketNewsLiveFeedTestIT {
         val feed = AlpacaMarketNewsLiveFeed()
         feed.subscribe(Stock("AAPL"))
 
-
-        val items = feed.filter<NewsItems>(Timeframe.next(liveTestTime) )
+        val timeframe = Timeframe.next(liveTestTime)
+        val items = feed.filter<NewsItems>(
+            timeframe = Timeframe.next(liveTestTime),
+            timeOutMillis = timeframe.duration.toMillis()
+        )
         feed.close()
         if (items.isNotEmpty()) {
             val newsItems = items.first().second
             val hasAAPL = newsItems.items.firstOrNull()?.assets?.any { it.symbol == "AAPL" } == true
             if (newsItems.items.firstOrNull()?.assets != null) assertTrue(hasAAPL)
+            println("At least one news item found for AAPL")
         } else {
             println("No news actions found, perhaps exchange is closed or no news in timeframe")
         }

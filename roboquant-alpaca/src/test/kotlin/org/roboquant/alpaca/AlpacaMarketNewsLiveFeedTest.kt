@@ -67,7 +67,10 @@ internal class AlpacaMarketNewsLiveFeedTest {
         }
 
         val timeframe = Timeframe.next(TimeSpan(seconds = 1))
-        val received = feed.filter<NewsItems>(timeframe)
+        val received = feed.filter<NewsItems>(
+            timeframe = timeframe,
+            timeOutMillis = timeframe.duration.toMillis()
+        )
         job.cancel()
         feed.close()
 
