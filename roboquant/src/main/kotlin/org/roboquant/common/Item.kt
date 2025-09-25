@@ -362,8 +362,6 @@ data class OrderBook(
     private fun List<OrderBookEntry>.max() = this.maxOf { it.limit }
     private fun List<OrderBookEntry>.min() = this.minOf { it.limit }
 
-    // override fun toString(): String = "$asset bids:${bids.size} asks:${asks.size}"
-
     /**
      * Instruction book entry contains the [size] and [limit] price
      *

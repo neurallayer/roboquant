@@ -64,11 +64,7 @@ class AlpacaMarketNewsLiveFeed(
         subscriptions.clear()
         subscriptions.addAll(assets )
         // Forward subscriptions to the underlying websocket
-        try {
-            alpacaAPI?.newsMarketDataStream()?.newsSubscriptions = subscriptions.symbols.toSet()
-        } catch (e: Exception) {
-            logger.info { "Unable to update news subscriptions immediately: ${e.message}" }
-        }
+        alpacaAPI?.newsMarketDataStream()?.newsSubscriptions = subscriptions.symbols.toSet()
         logger.info { "Subscribed to news for symbols=$subscriptions" }
     }
 
