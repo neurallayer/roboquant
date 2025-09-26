@@ -115,7 +115,6 @@ class EMACrossover(
         }
 
         val oldDirection = calculator.getDirection()
-        calculator.addPrice(price)
         if (calculator.addPrice(price)) {
             val newDirection = calculator.getDirection()
 
