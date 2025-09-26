@@ -53,7 +53,7 @@ class CircuitBreaker(val trader: Trader, private val maxOrders: Int, private val
         if (orders.isEmpty()) return emptyList()
 
         return if (exceeds(orders.size, event.time)) {
-            logger.info { "trottling orders, not sending ${orders.size} orders" }
+            logger.info { "throttling orders, not sending ${orders.size} orders" }
             emptyList()
         } else {
             history.addFirst(Pair(event.time, orders.size))
