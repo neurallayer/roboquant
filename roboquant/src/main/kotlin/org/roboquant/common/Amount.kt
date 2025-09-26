@@ -220,6 +220,12 @@ val Number.RUB
 val Number.INR
     get() = Amount(Currency.INR, toDouble())
 
+/**
+ * Amount in [Currency.KRW]
+ */
+val Number.KRW
+    get() = Amount(Currency.KRW, toDouble())
+
 // Extensions to make it easier to create amounts for common cryptocurrencies
 
 /**
