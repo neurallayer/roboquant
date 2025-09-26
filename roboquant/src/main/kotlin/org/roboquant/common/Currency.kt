@@ -135,6 +135,11 @@ class Currency private constructor(val currencyCode: String) {
         val INR = getInstance("INR")
 
         /**
+         * South Korean won
+         */
+        val KRW = getInstance("KRW")
+
+        /**
          * Bitcoin
          */
         val BTC = getInstance("BTC", 8)
