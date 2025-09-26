@@ -42,7 +42,7 @@ open class CombinedStrategy(val strategies: Collection<Strategy>, private val si
             val s = strategy.createSignals(event)
             signals.addAll(s)
         }
-        return signalResolver?.let { signals } ?: signals
+        return signalResolver?.let { signals.it() } ?: signals
     }
 
 

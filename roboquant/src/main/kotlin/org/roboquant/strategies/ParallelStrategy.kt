@@ -63,7 +63,7 @@ class ParallelStrategy(val strategies: Collection<Strategy>, private val signalR
             }
             deferredList.forEach { signals.addAll(it.await()) }
         }
-        return signalResolver?.let { signals } ?: signals
+        return signalResolver?.let { signals.it() } ?: signals
     }
 
 }

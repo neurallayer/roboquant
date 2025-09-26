@@ -19,6 +19,7 @@ package org.roboquant.strategies
 import org.roboquant.TestData
 import org.roboquant.common.Event
 import org.roboquant.common.Signal
+import org.roboquant.common.Stock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -38,24 +39,34 @@ internal class CombinedSignalStrategyTest {
     fun test() {
         val s1 = MyStrategy()
         val s2 = MyStrategy()
-        val s = CombinedStrategy(s1, s2)
+
+        val signal = Signal(asset = Stock("A"), rating = 999.0)
+        val resolver: SignalResolver = { listOf(signal) }
+        val s = CombinedStrategy(s1, s2, signalResolver = resolver)
         assertEquals(2, s.strategies.size)
 
         val signals = mutableListOf<Signal>()
         for (event in TestData.events(10)) signals += s.createSignals(event)
-        assertTrue(signals.isEmpty())
+
+        val expected = (1..10).map { signal }
+        assertEquals(expected, signals)
     }
 
     @Test
     fun test2() {
         val s1 = MyStrategy()
         val s2 = MyStrategy()
-        val s = ParallelStrategy(s1, s2)
+
+        val signal = Signal(asset = Stock("A"), rating = 999.0)
+        val resolver: SignalResolver = { listOf(signal) }
+        val s = ParallelStrategy(s1, s2, signalResolver = resolver)
         assertEquals(2, s.strategies.size)
 
         val signals = mutableListOf<Signal>()
         for (event in TestData.events(10)) signals += s.createSignals(event)
-        assertTrue(signals.isEmpty())
+
+        val expected = (1..10).map { signal }
+        assertEquals(expected, signals)
     }
 
 
