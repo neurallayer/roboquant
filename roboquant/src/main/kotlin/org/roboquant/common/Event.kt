@@ -19,9 +19,13 @@ class Event(val time: Instant, val items: List<Item>) : Comparable<Event> {
      * you need access to all prices for an asset, iterate over the [items] directly.
      */
     val prices: Map<Asset, PriceItem> by lazy {
-        val result = HashMap<Asset, PriceItem>(items.size)
-        for (action in items) if (action is PriceItem) result[action.asset] = action
-        result
+        buildMap(items.size) {
+            for (action in items) {
+                if (action is PriceItem) {
+                    set(action.asset, action)
+                }
+            }
+        }
     }
 
     /**

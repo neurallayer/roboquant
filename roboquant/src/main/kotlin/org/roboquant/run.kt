@@ -89,9 +89,9 @@ suspend fun runAsync(
     val job = feed.playBackground(channel)
     val progressBar = if (showProgressBar) {
         val tf = if (timeframe.isFinite()) timeframe else feed.timeframe
-        val pb = ProgressBar(tf)
-        pb.start()
-        pb
+        ProgressBar(tf).also {
+            it.start()
+        }
     } else null
 
     try {
@@ -103,7 +103,7 @@ suspend fun runAsync(
             val account = broker.sync(event)
 
             // Generate signals and place orders
-            val signals = strategy?.createSignals(event) ?: listOf()
+            val signals = strategy?.createSignals(event) ?: emptyList()
             val orders = trader.createOrders(signals, event, account)
             broker.placeOrders(orders)
 
