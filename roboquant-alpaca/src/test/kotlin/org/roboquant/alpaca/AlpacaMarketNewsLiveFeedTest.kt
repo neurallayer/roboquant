@@ -35,6 +35,7 @@ internal class AlpacaMarketNewsLiveFeedTest {
      * This test doesn't need a real API key as it mocks the Alpaca API.
      */
     @Test
+    @Suppress("RunBlocking")
     fun testMockReceiveNews() = runBlocking {
         // Do NOT connect to Alpaca
         val feed = AlpacaMarketNewsLiveFeed(autoConnect = false)

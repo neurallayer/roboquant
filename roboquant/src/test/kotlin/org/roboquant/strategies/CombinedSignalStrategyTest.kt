@@ -22,7 +22,6 @@ import org.roboquant.common.Signal
 import org.roboquant.common.Stock
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 internal class CombinedSignalStrategyTest {
 
