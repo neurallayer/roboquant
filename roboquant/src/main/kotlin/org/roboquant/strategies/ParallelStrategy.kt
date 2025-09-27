@@ -52,18 +52,15 @@ class ParallelStrategy(val strategies: Collection<Strategy>, private val signalR
      * @see Strategy.createSignals
      */
     override fun createSignals(event: Event): List<Signal> {
-        val signals = mutableListOf<Signal>()
-        runBlocking {
-            val deferredList = mutableListOf<Deferred<List<Signal>>>()
-            for (strategy in strategies) {
-                val deferred = scope.async {
+        val signals: List<Signal> = runBlocking {
+            strategies.map { strategy ->
+                scope.async {
                     strategy.createSignals(event)
                 }
-                deferredList.add(deferred)
-            }
-            deferredList.forEach { signals.addAll(it.await()) }
+            }.awaitAll().flatten()
         }
-        return signalResolver?.let { signals.it() } ?: signals
+        return signalResolver?.let { signals.it() }
+            ?: signals
     }
 
 }

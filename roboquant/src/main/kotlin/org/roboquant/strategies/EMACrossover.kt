@@ -98,13 +98,13 @@ class EMACrossover(
     }
 
     override fun createSignals(event: Event): List<Signal> {
-        val signals = mutableListOf<Signal>()
-        for ((asset, priceItem) in event.prices) {
-            val price = priceItem.getPrice(priceType)
-            val signal = generate(asset, price)
-            if (signal != null) signals.add(signal)
-        }
-        return signals
+        return event.prices
+            .mapNotNull { (asset, priceItem) ->
+                generate(
+                    asset = asset,
+                    price = priceItem.getPrice(priceType),
+                )
+            }
     }
 
     private fun generate(asset: Asset, price: Double): Signal? {

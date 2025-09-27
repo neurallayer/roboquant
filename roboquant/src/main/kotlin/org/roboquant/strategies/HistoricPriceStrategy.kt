@@ -41,13 +41,13 @@ abstract class HistoricPriceStrategy(
 
     override fun createSignals(event: Event): List<Signal> {
         val assets = history.addAll(event, period, priceType)
-        val result = mutableListOf<Signal>()
-        for (asset in assets) {
-            val data = history.getValue(asset).toDoubleArray()
-            val signal = generateSignal(asset, data)
-            result.addNotNull(signal)
-        }
-        return result
+        return assets
+            .mapNotNull { asset ->
+                generateSignal(
+                    asset = asset,
+                    data = history.getValue(asset).toDoubleArray(),
+                )
+            }
     }
 
     /**
@@ -55,8 +55,8 @@ abstract class HistoricPriceStrategy(
      * to get the rating.
      */
     open fun generateSignal(asset: Asset, data: DoubleArray): Signal? {
-        val rating = generateRating(data)
-        return if (rating == null) null else Signal(asset, rating)
+        return generateRating(data)
+            ?.let { Signal(asset, rating = it) }
     }
 
     /**
