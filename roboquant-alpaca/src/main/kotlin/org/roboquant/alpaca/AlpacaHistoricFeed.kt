@@ -133,6 +133,15 @@ class AlpacaHistoricFeed(
         val (start, end) = toOffset(timeframe)
         val symbolsString = symbols.joinToString((","))
         var nextPageToken: String? = null
+
+        val timeSpan = when  {
+            frequency.endsWith("Day") -> TimeSpan(days = frequency.filter { it.isDigit() }.toInt())
+            frequency.endsWith("Min") -> TimeSpan(minutes = frequency.filter { it.isDigit() }.toInt())
+            frequency.endsWith("Hour") -> TimeSpan(hours = frequency.filter { it.isDigit() }.toInt())
+            frequency.endsWith("Month") -> TimeSpan(months = frequency.filter { it.isDigit() }.toInt())
+            else -> null
+        }
+
         do {
             val resp = stockData.stockBars(
                 symbolsString,
@@ -148,7 +157,7 @@ class AlpacaHistoricFeed(
                 Sort.ASC
             )
             for ((symbol, bars) in resp.bars) {
-                processBars(symbol, bars, null)
+                processBars(symbol, bars, timeSpan)
             }
             nextPageToken = resp.nextPageToken
         } while (nextPageToken != null)

@@ -86,8 +86,6 @@ class PriceChart(
     private fun priceSeries(): LineSeries {
         val entries = feed.filter<PriceItem>(timeframe) { it.asset == asset }
         val data = entries.map {
-            // val price = it.second.getPriceAmount(priceType)
-            // it.first to price.toBigDecimal()
             val price = it.second.getPrice(priceType)
             it.first to price
         }
