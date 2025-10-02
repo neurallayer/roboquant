@@ -193,7 +193,70 @@ internal class TaLibSignalStrategyTest {
         assertTrue(s.values.last().isNotEmpty())
     }
 
+    @Test
+    fun testGeneratePositiveRatedSignalsWhenScoreBlockProvided() {
+        val strategy = TaLibStrategy(2)
 
+        strategy.buy { false }
+        strategy.buyScore { 0.3 }
 
+        val s = run(strategy, 10)
+        assertEquals(10, s.entries.size)
+        assertTrue(s.values.first().isEmpty())
+
+        val last = s.values.last()
+        assertTrue(last.isNotEmpty())
+        assertTrue(last.all { it.rating > 0.0 && it.rating <= 1.0 })
+        assertTrue(last.all { kotlin.math.abs(it.rating - 0.3) < 1e-9 })
+    }
+
+    @Test
+    fun testGenerateNegativeRatedSignalsWhenScoreBlockProvided() {
+        val strategy = TaLibStrategy(2)
+
+        strategy.sell { false }
+        strategy.sellScore { 0.6 }
+
+        val s = run(strategy, 10)
+        assertEquals(10, s.entries.size)
+        assertTrue(s.values.first().isEmpty())
+
+        val last = s.values.last()
+        assertTrue(last.isNotEmpty())
+        assertTrue(last.all { it.rating < 0.0 && it.rating >= -1.0 })
+        assertTrue(last.all { kotlin.math.abs(it.rating + 0.6) < 1e-9 })
+    }
+
+    @Test
+    fun testScoreIsClamped() {
+        val strategy = TaLibStrategy(2)
+
+        strategy.buyScore { 2.5 }
+
+        val s = run(strategy, 5)
+        val last = s.values.last()
+
+        assertTrue(last.isNotEmpty())
+        assertTrue(last.all { kotlin.math.abs(it.rating - 1.0) < 1e-9 })
+    }
+
+    @Test
+    fun testScoreTakePrecedenceOverBoolean() {
+        val strategy = TaLibStrategy(2)
+
+        strategy.buy { false }
+        strategy.sell { true }
+
+        strategy.buyScore { 0.4 }
+        strategy.sellScore { 0.2 }
+
+        val s = run(strategy, 10)
+        val last = s.values.last()
+
+        assertTrue(last.isNotEmpty())
+        assertTrue(last.any { kotlin.math.abs(it.rating - 0.4) < 1e-9 })
+        assertTrue(last.any { kotlin.math.abs(it.rating + 0.2) < 1e-9 })
+        assertTrue(last.all { it.rating in -1.0..1.0 })
+    }
 }
 

@@ -38,6 +38,10 @@ class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
     private var sellFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
     private var buyFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
 
+    // Optional score-based functions (0.0..1.0). If set, they take precedence over the boolean ones.
+    private var sellScoreFn: (TaLib.(series: PriceBarSeries) -> Double)? = null
+    private var buyScoreFn: (TaLib.(series: PriceBarSeries) -> Double)? = null
+
     // Contains the historic PriceBarSeries per Asset
     private val assetPriceBarSeries = AssetPriceBarSeries(initialCapacity)
 
@@ -172,6 +176,21 @@ class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
     }
 
     /**
+     * Define the buy condition using a score between 0.0 and 1.0.
+     * If the returned score is greater than 0.0, a BUY signal will be generated with the score as rating.
+     * The provided block will only be called if the initial capacity of historic prices has been filled.
+     *
+     *  # Example
+     * ```
+     * strategy.buyScore { ()) -> 0.3 }
+     * }
+     * ```
+     */
+    fun buyScore(block: TaLib.(series: PriceBarSeries) -> Double) {
+        buyScoreFn = block
+    }
+
+    /**
      * Define the sell conditions, return true if you want to generate a SELL signal, false otherwise.
      * The provided block will only be called if the initial capacity of historic prices has been filled.
      *
@@ -184,6 +203,21 @@ class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
      */
     fun sell(block: TaLib.(series: PriceBarSeries) -> Boolean) {
         sellFn = block
+    }
+
+    /**
+     * Define the sell condition using a score between 0.0 and 1.0.
+     * If the returned score is greater than 0.0, a SELL signal will be generated with the negative score as rating.
+     * The provided block will only be called if the initial capacity of historic prices has been filled.
+     *
+     *  # Example
+     * ```
+     * strategy.sellScore { ()) -> 0.3 }
+     * }
+     * ```
+     */
+    fun sellScore(block: TaLib.(series: PriceBarSeries) -> Double) {
+        sellScoreFn = block
     }
 
     /**
@@ -200,8 +234,25 @@ class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
                 val asset = priceBar.asset
                 val priceSerie = assetPriceBarSeries.getValue(asset)
                 try {
-                    if (buyFn.invoke(taLib, priceSerie)) results.add(Signal.buy(asset))
-                    if (sellFn.invoke(taLib, priceSerie)) results.add(Signal.sell(asset))
+                    // BUY: prefer score-based block if provided
+                    val buyScoreBlock = buyScoreFn
+                    if (buyScoreBlock != null) {
+                        val raw = buyScoreBlock.invoke(taLib, priceSerie)
+                        val score = raw.coerceIn(0.0, 1.0)
+                        if (score > 0.0) results.add(Signal(asset, score))
+                    } else if (buyFn.invoke(taLib, priceSerie)) {
+                        results.add(Signal.buy(asset))
+                    }
+
+                    // SELL: prefer score-based block if provided
+                    val sellScoreBlock = sellScoreFn
+                    if (sellScoreBlock != null) {
+                        val raw = sellScoreBlock.invoke(taLib, priceSerie)
+                        val score = raw.coerceIn(0.0, 1.0)
+                        if (score > 0.0) results.add(Signal(asset, -score))
+                    } else if (sellFn.invoke(taLib, priceSerie)) {
+                        results.add(Signal.sell(asset))
+                    }
                 } catch (ex: InsufficientData) {
                     priceSerie.increaseCapacity(ex.minSize)
                 }
