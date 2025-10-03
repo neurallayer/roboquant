@@ -8,7 +8,7 @@ Also removed some modules that didn't get the attention they deserved in the las
 
 A non-exhaustive list of the major changes:
 
-- Signals themselves simplified and now use a double value for the rating rather than an enum. This is better suited for more advanced (ML) type of algos.
+- Signals themselves are simplified and now use a double value for the rating rather than an enum. This is better suited for more advanced (ML) type of algos.
 - Removed the `Lifecycle` interface including `reset` for the components (`Strategy`, `Trader`, `Broker`).
 - Moved to Kotlin 2.x
 - Order handling is simplified. For example, order-ids are always handout by the broker (during the place order method). So they are no longer assigned when creating the order. This is more inline how most brokers work.
