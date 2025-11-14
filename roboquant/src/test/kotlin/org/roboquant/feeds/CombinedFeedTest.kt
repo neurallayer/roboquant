@@ -30,7 +30,7 @@ internal class CombinedFeedTest {
 
     @Test
     fun testCombinedFeed2() {
-        val f1 = RandomWalk.lastYears(1)
+        val f1 = RandomWalk.lastYears()
         val f2 = RandomWalk.lastYears(2)
         val cf = CombinedFeed(f1, f2)
         assertTrue { cf.timeframe == f2.timeframe }
@@ -49,7 +49,7 @@ internal class CombinedFeedTest {
 
     @Test
     fun testCombinedFeed4(){
-        val f1 = RandomWalk.lastYears(1)
+        val f1 = RandomWalk.lastYears()
         val f2 = RandomWalk.lastYears(2)
         val cf = CombinedFeed(f1, f2, channelCapacity = 10)
         assertTrue { cf.timeframe == f2.timeframe }
@@ -68,7 +68,7 @@ internal class CombinedFeedTest {
 
     @Test
     fun testCombinedFeed5() = runBlocking {
-        val f1 = RandomWalk.lastYears(1)
+        val f1 = RandomWalk.lastYears()
         val f2 = RandomWalk.lastYears(2)
         val cf = CombinedFeed(f1, f2)
         feedTest(cf)

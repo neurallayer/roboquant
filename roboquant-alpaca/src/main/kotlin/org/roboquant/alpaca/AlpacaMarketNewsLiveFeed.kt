@@ -49,7 +49,7 @@ class AlpacaMarketNewsLiveFeed(
     /**
      * Holds the current set of subscribed symbols.
      */
-    val subscriptions: MutableSet<Asset> = mutableSetOf()
+    private val subscriptions: MutableSet<Asset> = mutableSetOf()
 
     init {
         config.configure()

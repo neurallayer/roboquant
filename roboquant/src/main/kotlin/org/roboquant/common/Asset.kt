@@ -53,7 +53,7 @@ interface Asset : Comparable<Asset> {
 
         private val cache = ConcurrentHashMap<String, Asset>()
 
-        val registry = mutableMapOf<String, (String) -> Asset>()
+        val registry: MutableMap<String, (String) -> Asset> = mutableMapOf<String, (String) -> Asset>()
 
         fun deserialize(value: String): Asset {
             return cache.getOrPut(value) {

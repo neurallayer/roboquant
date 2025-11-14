@@ -66,7 +66,7 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
          * Load the latest exchange rate file directly from the ECB website. This method [uses cache][useCache] by
          * default to avoid making unnecessary requests.
          */
-        fun fromWeb(useCache: Boolean = true) = ECBExchangeRates(DEFAULT_ECB_URL, compressed = true, useCache)
+        fun fromWeb(useCache: Boolean = true): ECBExchangeRates = ECBExchangeRates(DEFAULT_ECB_URL, compressed = true, useCache)
 
         /**
          * Load the ECB exchange rates from a local CSV file
@@ -74,7 +74,7 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
          * @param path
          * @param compressed
          */
-        fun fromFile(path: String, compressed: Boolean = false) =
+        fun fromFile(path: String, compressed: Boolean = false): ECBExchangeRates =
             ECBExchangeRates("file:$path", compressed = compressed)
     }
 

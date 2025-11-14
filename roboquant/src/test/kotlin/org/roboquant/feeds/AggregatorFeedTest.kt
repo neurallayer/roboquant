@@ -32,7 +32,7 @@ internal class AggregatorFeedTest {
 
     @Test
     fun basic() {
-        val feed = RandomWalk.lastDays(1)
+        val feed = RandomWalk.lastDays()
         val items1 = feed.toList()
 
         val aggFeed = AggregatorFeed(feed, 15.minutes)

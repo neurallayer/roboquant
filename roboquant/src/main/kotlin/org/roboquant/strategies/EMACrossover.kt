@@ -71,7 +71,7 @@ class EMACrossover(
          * @return new EMACrossover
          */
         val PERIODS_12_26: EMACrossover
-            get() = EMACrossover(12, 26)
+            get() = EMACrossover()
 
         /**
          * Predefined EMA Crossover with 5 steps for fast EMA and 15 steps for slow EMA

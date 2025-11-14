@@ -44,7 +44,12 @@ class AccountMetric : Metric {
     /**
      * @see Metric.calculate
      */
-    override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) = buildMap {
+    override fun calculate(
+        event: Event,
+        account: Account,
+        signals: List<Signal>,
+        orders: List<Order>
+    ): Map<String, Double> = buildMap {
 
         val equity = account.convert(account.equity()).value
         if (equity > peak) peak = equity

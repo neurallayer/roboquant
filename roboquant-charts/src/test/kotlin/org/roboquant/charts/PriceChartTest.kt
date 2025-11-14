@@ -30,7 +30,7 @@ internal class PriceChartTest {
 
     @Test
     fun test() {
-        val feed = RandomWalk.lastYears(1)
+        val feed = RandomWalk.lastYears()
         val asset = feed.assets.first()
         val chart = PriceChart(feed, asset)
         val html = chart.renderJson()

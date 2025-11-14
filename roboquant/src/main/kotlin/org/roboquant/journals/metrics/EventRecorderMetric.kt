@@ -63,7 +63,7 @@ class EventRecorderMetric(val timeSpan: TimeSpan = 1.years) : Metric, AssetFeed 
     /**
      * The actual timeframe recorded so far.
      */
-    override val timeframe
+    override val timeframe: Timeframe
         get() = events.map { it.time }.timeframe
 
     /**

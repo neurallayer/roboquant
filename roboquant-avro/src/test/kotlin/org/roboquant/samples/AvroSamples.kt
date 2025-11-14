@@ -89,8 +89,7 @@ internal class AvroSamples {
         val avroFeed = AvroFeed("/tmp/us_stocks_all.avro")
 
         avroFeed.record(
-            feed,
-            true
+            feed
         )
 
     }
@@ -105,8 +104,7 @@ internal class AvroSamples {
         val avroFeed = AvroFeed("/tmp/nasdaq_stocks.avro")
 
         avroFeed.record(
-            feed,
-            true
+            feed
         )
 
     }

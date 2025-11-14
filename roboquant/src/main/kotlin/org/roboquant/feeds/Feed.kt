@@ -98,6 +98,7 @@ interface AssetFeed : Feed {
  * Convenience method to play a feed and return the actions of a certain type [T]. Additionally, the feed can be
  * restricted to a certain [timeframe] and if required an additional [filter] can be provided.
  */
+@Suppress("RunBlocking")
 inline fun <reified T : Item> Feed.filter(
     timeframe: Timeframe = Timeframe.INFINITE,
     timeOutMillis: Long = -1,

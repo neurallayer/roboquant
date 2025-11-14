@@ -45,11 +45,11 @@ internal class TaLibSignalStrategyTest {
 
         val strategy = TaLibStrategy(50)
         strategy.buy { price ->
-            ema(price.close, 30) > ema(price.close, 50) && cdlMorningStar(price)
+            ema(price.close) > ema(price.close, 50) && cdlMorningStar(price)
         }
 
         strategy.sell { price ->
-            cdl3BlackCrows(price) || (cdl2Crows(price, 1) && ema(price.close, 30) < ema(price.close, 50))
+            cdl3BlackCrows(price) || (cdl2Crows(price, 1) && ema(price.close) < ema(price.close, 50))
         }
 
         val x = run(strategy, 60)

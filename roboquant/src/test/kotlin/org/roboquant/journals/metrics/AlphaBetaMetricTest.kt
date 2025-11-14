@@ -49,7 +49,7 @@ internal class AlphaBetaMetricTest {
 
     @Test
     fun test2() {
-        val feed = RandomWalk.lastYears(1, nAssets = 5)
+        val feed = RandomWalk.lastYears(nAssets = 5)
         val asset = feed.assets.first()
         val internalAccount = InternalAccount(Currency.USD)
         val metric = AlphaBetaMetric(50)

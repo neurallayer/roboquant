@@ -192,7 +192,7 @@ class AvroFeed(private val file: File) : Feed {
         append: Boolean = false,
         syncInterval: Int = DataFileConstants.DEFAULT_SYNC_INTERVAL,
         assetFilter: AssetFilter = AssetFilter.all()
-    ) = runBlocking {
+    ): Unit = runBlocking {
 
         val channel = EventChannel(timeframe = timeframe)
         val schema = Schema.Parser().parse(SCHEMA)

@@ -17,8 +17,6 @@
 package org.roboquant.avro
 
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.MethodOrderer.Alphanumeric
-import org.junit.jupiter.api.TestMethodOrder
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.common.*
@@ -30,7 +28,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@TestMethodOrder(Alphanumeric::class)
+
 internal class AvroFeedTest {
 
     private class MyFeed(override val assets: Set<Asset>) : AssetFeed {
@@ -62,24 +60,15 @@ internal class AvroFeedTest {
     }
 
 
-
-
     @Test
-    fun feedPlayback() {
-        val feed3 = AvroFeed(fileName)
-        assertTrue(feed3.timeframe.inclusive)
-        val tf = feed3.timeframe
-        runBlocking {
-            var cnt = 0
-            for (event in play(feed3)) {
-                assertTrue(event.time in tf)
-                cnt++
-            }
-        }
+    fun combined() {
+        record()
+        append()
+        playback()
     }
 
-    @Test
-    fun supportedPriceActions() {
+
+    private fun record() {
         val asset = Stock("DUMMY")
         val p1 = PriceBar(asset, 10.0, 10.0, 10.0, 10.0, 1000.0)
         val p2 = TradePrice(asset, 10.0, 1000.0)
@@ -106,16 +95,26 @@ internal class AvroFeedTest {
 
     }
 
+    private fun playback() {
+        val feed3 = AvroFeed(fileName)
+        assertTrue(feed3.exists())
+        println(feed3.timeframe)
+        assertTrue(feed3.timeframe.inclusive)
+        val tf = feed3.timeframe
+        runBlocking {
+            for (event in play(feed3)) {
+                assertTrue(event.time in tf)
+            }
+        }
+    }
 
-
-    @Test
-    fun append() {
+    private fun append() {
         val now = Instant.now()
         val past = Timeframe(now - 2.years, now - 1.years)
         val feed = RandomWalk(past, 1.days)
         val fileName = File(folder, "test2.avro").path
         val feed2 = AvroFeed(fileName)
-        feed2.record(feed, compress = true)
+        feed2.record(feed)
 
         val past2 = Timeframe(now - 1.years, now)
         val feed3 = RandomWalk(past2, 1.days)

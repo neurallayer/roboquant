@@ -24,7 +24,7 @@ internal class PerformanceChartTest {
 
     @Test
     fun test() {
-        val feed = RandomWalk.lastYears(1)
+        val feed = RandomWalk.lastYears()
         val chart = PerformanceChart(feed)
         assertTrue(chart.renderJson().isNotBlank())
     }

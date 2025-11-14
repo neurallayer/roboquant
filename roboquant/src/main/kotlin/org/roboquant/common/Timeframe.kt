@@ -104,7 +104,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         /**
          * The empty timeframe doesn't contain any time.
          */
-        val EMPTY = Timeframe(MIN, MIN, false)
+        val EMPTY = Timeframe(MIN, MIN)
 
         // Different formatters used when displaying a timeframe
         private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -156,7 +156,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         fun fromYears(first: Int, last: Int, zoneId: ZoneId = ZoneOffset.UTC): Timeframe {
             val start = ZonedDateTime.of(first, 1, 1, 0, 0, 0, 0, zoneId)
             val stop = ZonedDateTime.of(last, 1, 1, 0, 0, 0, 0, zoneId)
-            return Timeframe(start.toInstant(), stop.toInstant(), inclusive = false)
+            return Timeframe(start.toInstant(), stop.toInstant())
         }
 
         /**

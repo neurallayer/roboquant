@@ -111,7 +111,7 @@ class Exchange private constructor(
         /**
          * List of all the registered exchanges
          */
-        val exchanges
+        val exchanges: MutableCollection<Exchange>
             get() = instances.values
 
         private val instances = ConcurrentHashMap<String, Exchange>()
@@ -152,102 +152,102 @@ class Exchange private constructor(
          * The default exchange is the exchange with as exchangeCode an empty string and used as a fallback if an
          * exchange cannot be found or an exchange is not specified. It uses New York timezone.
          */
-        val DEFAULT = addInstance("", NY_TIMEZONE)
+        val DEFAULT: Exchange = addInstance("", NY_TIMEZONE)
 
         /**
          * Generic US Exchange
          */
-        val US = addInstance("US", NY_TIMEZONE)
+        val US: Exchange = addInstance("US", NY_TIMEZONE)
 
         /**
          * New York Stock Exchange (US)
          */
-        val NYSE = addInstance("NYSE", NY_TIMEZONE)
+        val NYSE: Exchange = addInstance("NYSE", NY_TIMEZONE)
 
         /**
          * NASDAQ (US) Stock Exchange
          */
-        val NASDAQ = addInstance("NASDAQ", NY_TIMEZONE)
+        val NASDAQ: Exchange = addInstance("NASDAQ", NY_TIMEZONE)
 
         /**
          * BATS (US) Stock Exchange
          */
-        val BATS = addInstance("BATS", NY_TIMEZONE)
+        val BATS: Exchange = addInstance("BATS", NY_TIMEZONE)
 
         /**
          * CBOE (US) Stock Exchange
          */
-        val CBOE = addInstance("CBOE", NY_TIMEZONE)
+        val CBOE: Exchange = addInstance("CBOE", NY_TIMEZONE)
 
         /**
          * ARCA (US) Stock Exchange
          */
-        val ARCA = addInstance("ARCA", NY_TIMEZONE)
+        val ARCA: Exchange = addInstance("ARCA", NY_TIMEZONE)
 
         /**
          * AMEX (US) Stock Exchange
          */
-        val AMEX = addInstance("AMEX", NY_TIMEZONE)
+        val AMEX: Exchange = addInstance("AMEX", NY_TIMEZONE)
 
         /**
          * Toronto Stock Exchange
          */
-        val TSX = addInstance("TSX", "America/Toronto")
+        val TSX: Exchange = addInstance("TSX", "America/Toronto")
 
         /**
          * Amsterdam Stock Exchange
          */
-        val AEB = addInstance("AEB", "Europe/Amsterdam", "09:00", "17:30")
+        val AEB: Exchange = addInstance("AEB", "Europe/Amsterdam", "09:00", "17:30")
 
         /**
          * London Stock Exchange
          */
-        val LSE = addInstance("LSE", "Europe/London", "08:00", "16:30")
+        val LSE: Exchange = addInstance("LSE", "Europe/London", "08:00", "16:30")
 
         /**
          * German Stock Exchange
          */
-        val DEX = addInstance("DEX", "Europe/Berlin", "09:00", "17:30")
+        val DEX: Exchange = addInstance("DEX", "Europe/Berlin", "09:00", "17:30")
 
         /**
          * Swiss Stock Exchange
          */
-        val SIX = addInstance("SIX", "Europe/Zurich", "09:00", "17:20")
+        val SIX: Exchange = addInstance("SIX", "Europe/Zurich", "09:00", "17:20")
 
         /**
          * Paris Stock Exchange
          */
-        val PAR = addInstance("PAR", "Europe/Paris", "09:00", "17:30")
+        val PAR: Exchange = addInstance("PAR", "Europe/Paris", "09:00", "17:30")
 
         /**
          * Tokyo Stock Exchange
          */
-        val JPX = addInstance("JPX", "Asia/Tokyo", "09:00", "15:00")
+        val JPX: Exchange = addInstance("JPX", "Asia/Tokyo", "09:00", "15:00")
 
         /**
          * Shanghai Stock Exchange
          */
-        val SSE = addInstance("SSE", "Asia/Shanghai", "09:30", "15:00")
+        val SSE: Exchange = addInstance("SSE", "Asia/Shanghai", closing = "15:00")
 
         /**
          * Hong Kong Stock Exchange
          */
-        val SEKH = addInstance("SEHK", "Asia/Hong_Kong", "09:30", "16:00")
+        val SEKH: Exchange = addInstance("SEHK", "Asia/Hong_Kong")
 
         /**
          * Sydney Stock Exchange
          */
-        val SSX = addInstance("SSX", "Australia/Sydney", "10:00", "16:00")
+        val SSX: Exchange = addInstance("SSX", "Australia/Sydney", "10:00")
 
         /**
          * Generic 24x7 Crypto Exchange
          */
-        val CRYPTO = addInstance("CRYPTO", "UTC", "00:00", "23:59:59.999")
+        val CRYPTO: Exchange = addInstance("CRYPTO", "UTC", "00:00", "23:59:59.999")
 
         /**
          * Generic 24x7 Forex Exchange
          */
-        val FOREX = addInstance("FOREX", "UTC", "00:00", "23:59:59.999")
+        val FOREX: Exchange = addInstance("FOREX", "UTC", "00:00", "23:59:59.999")
 
     }
 }

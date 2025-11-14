@@ -25,7 +25,7 @@ internal class SignalChartTest {
 
     @Test
     fun test() {
-        val feed = RandomWalk.lastYears(1)
+        val feed = RandomWalk.lastYears()
         val strat = EMACrossover()
         val chart = SignalChart(feed, strat)
         assertDoesNotThrow {

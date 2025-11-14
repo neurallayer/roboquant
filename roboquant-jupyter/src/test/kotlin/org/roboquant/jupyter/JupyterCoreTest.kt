@@ -48,7 +48,7 @@ internal class JupyterCoreTest {
 
     @Test
     fun extensions() {
-        val feed = RandomWalk.lastYears(1)
+        val feed = RandomWalk.lastYears()
         val chart = PriceChart(feed, feed.assets.first())
         assertDoesNotThrow {
             chart.asHTML("dark")

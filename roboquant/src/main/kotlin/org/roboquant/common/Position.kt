@@ -47,7 +47,7 @@ data class Position(
         /**
          * Create an empty position
          */
-        fun empty(): Position = Position(Size.ZERO, 0.0, 0.0)
+        fun empty(): Position = Position(Size.ZERO, mktPrice = 0.0)
     }
 
     /**

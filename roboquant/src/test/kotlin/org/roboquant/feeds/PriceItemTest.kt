@@ -122,7 +122,7 @@ internal class PriceItemTest {
     fun testTradePrice() {
         val asset = Stock("DUMMY")
         val p = TradePrice(asset, 10.0, 100.0)
-        assertEquals(10.0, p.getPrice("DEFAULT"))
+        assertEquals(10.0, p.getPrice())
         assertEquals(100.0, p.volume)
         assertEquals(10.0, p.price)
     }

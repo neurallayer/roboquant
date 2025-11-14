@@ -124,7 +124,7 @@ abstract class Chart {
     /**
      * Height for charts, default being 500 pixels. Subclasses can override this value
      */
-    var height = 500
+    var height: Int = 500
 
     /**
      * Set a custom title for the chart. If not set, a default title will be generated. If you don't want a title, set
@@ -144,7 +144,7 @@ abstract class Chart {
          * The URL of the ECHARTS javascript library to use.
          * This script includes some roboquant specific functions and is hosted on GitHub
          */
-        const val JSURL =
+        const val JSURL: String =
             "https://cdn.jsdelivr.net/gh/neurallayer/roboquant-jupyter-js@$COMMIT/echarts.min.js?version=$COMMIT"
 
         /**
@@ -153,7 +153,7 @@ abstract class Chart {
          * before serializing the result to the browser, the sample size will first be reduced. A good value might
          * be 100_000, but this depends on your computer.
          */
-        var maxSamples = Int.MAX_VALUE
+        var maxSamples: Int = Int.MAX_VALUE
 
         // Make this a variable so charts work for both Chinese and western users.
 

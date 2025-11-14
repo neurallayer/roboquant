@@ -39,7 +39,7 @@ internal class QuestDBJournalTestIT {
     lateinit var folder2: File
 
     private fun simpleRun(journal: Journal) {
-        val feed = RandomWalk.lastYears(1)
+        val feed = RandomWalk.lastYears()
         org.roboquant.run(feed, EMACrossover(), journal = journal)
     }
 

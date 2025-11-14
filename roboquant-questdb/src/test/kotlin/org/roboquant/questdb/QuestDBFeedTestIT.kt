@@ -36,7 +36,7 @@ internal class QuestDBFeedTestIT {
     @Test
     fun basic() {
         val recorder = QuestDBFeed("pricebars", folder.toPath())
-        val inputFeed = RandomWalk.lastYears(1)
+        val inputFeed = RandomWalk.lastYears()
 
         recorder.record<PriceBar>(inputFeed)
 
@@ -51,7 +51,7 @@ internal class QuestDBFeedTestIT {
     @Test
     fun append() {
         val recorder = QuestDBFeed("pricebars2", folder.toPath())
-        val inputFeed = RandomWalk.lastYears(1)
+        val inputFeed = RandomWalk.lastYears()
         val tfs = inputFeed.timeframe.split(3.months)
         recorder.record<PriceBar>(inputFeed, tfs.first())
         tfs.drop(1).forEach { recorder.record<PriceBar>(inputFeed, it, true) }

@@ -148,8 +148,6 @@ data class CSVConfig(
             val result = CSVConfig(
                 priceParser = PriceBarParser(1, 2, 3, 4, autodetect = false),
                 timeParser = { columns -> Instant.parse(columns[0]) },
-                separator = ',',
-                hasHeader = true,
                 assetBuilder = { name: String ->
                     val symbol = name.split(' ')[0].uppercase()
                     Stock(symbol = symbol, currency)

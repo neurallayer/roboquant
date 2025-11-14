@@ -47,7 +47,7 @@ fun run(
     trader: Trader = FlexTrader(),
     timeframe: Timeframe = Timeframe.INFINITE,
     broker: Broker = SimBroker(),
-    channel: EventChannel = EventChannel(timeframe, 10),
+    channel: EventChannel = EventChannel(timeframe),
     timeOutMillis: Long = -1,
     showProgressBar: Boolean = false
 ): Account = runBlocking {
@@ -82,7 +82,7 @@ suspend fun runAsync(
     trader: Trader = FlexTrader(),
     timeframe: Timeframe = Timeframe.INFINITE,
     broker: Broker = SimBroker(),
-    channel: EventChannel = EventChannel(timeframe, 10),
+    channel: EventChannel = EventChannel(timeframe),
     timeOutMillis: Long = -1,
     showProgressBar: Boolean = false
 ): Account {
@@ -108,6 +108,8 @@ suspend fun runAsync(
             broker.placeOrders(orders)
 
             journal?.track(event, account, signals, orders)
+
+            // To support notebook cell execution that get stopped
             if (thread.isInterrupted) throw InterruptedException()
         }
     } catch (_: ClosedReceiveChannelException) {

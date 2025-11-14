@@ -49,7 +49,6 @@ internal class AlpacaMarketNewsLiveFeedTest {
                 assets = listOf(Stock("AAPL")),
                 content = "First test news",
                 headline = "AAPL News 1",
-                url = null,
                 meta = mapOf("source" to "test")
             )
             feed.sendNews(t0, NewsItems(listOf(n1)))
@@ -61,7 +60,6 @@ internal class AlpacaMarketNewsLiveFeedTest {
                 assets = listOf(Stock("AAPL")),
                 content = "Second test news",
                 headline = "AAPL News 2",
-                url = null,
                 meta = mapOf("source" to "test")
             )
             feed.sendNews(t0.plusMillis(25), NewsItems(listOf(n2)))

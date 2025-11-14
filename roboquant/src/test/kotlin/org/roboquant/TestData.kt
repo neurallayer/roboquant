@@ -112,7 +112,7 @@ internal object TestData {
         return result
     }
 
-    val feed = RandomWalk.lastYears(1, 2)
+    val feed = RandomWalk.lastYears(nAssets = 2)
 
 }
 

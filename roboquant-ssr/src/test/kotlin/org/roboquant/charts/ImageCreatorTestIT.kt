@@ -27,7 +27,7 @@ import kotlin.test.assertTrue
 internal class ImageCreatorTestIT {
 
     private val imageCreator = ImageCreator()
-    private val feed = RandomWalk.lastYears(1, nAssets = 5)
+    private val feed = RandomWalk.lastYears(nAssets = 5)
 
     @TempDir
     lateinit var folder: File

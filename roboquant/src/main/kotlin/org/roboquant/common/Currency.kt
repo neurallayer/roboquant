@@ -34,7 +34,7 @@ class Currency private constructor(val currencyCode: String) {
     /**
      * The name to use when displaying this currency, default is the currency code
      */
-    val displayName
+    val displayName: String
         get() = currencyCode
 
     /**
@@ -77,82 +77,82 @@ class Currency private constructor(val currencyCode: String) {
         /**
          * United States Dollar
          */
-        val USD = getInstance("USD")
+        val USD: Currency = getInstance("USD")
 
         /**
          * European Euro
          */
-        val EUR = getInstance("EUR")
+        val EUR: Currency = getInstance("EUR")
 
         /**
          * Japanese Yen
          */
-        val JPY = getInstance("JPY")
+        val JPY: Currency = getInstance("JPY")
 
         /**
          * British Pound Sterling
          */
-        val GBP = getInstance("GBP")
+        val GBP: Currency = getInstance("GBP")
 
         /**
          * Australian Dollar
          */
-        val AUD = getInstance("AUD")
+        val AUD: Currency = getInstance("AUD")
 
         /**
          * Canadian Dollar
          */
-        val CAD = getInstance("CAD")
+        val CAD: Currency = getInstance("CAD")
 
         /**
          * Swiss Franc
          */
-        val CHF = getInstance("CHF")
+        val CHF: Currency = getInstance("CHF")
 
         /**
          * Chinese Yuan Renminbi
          */
-        val CNY = getInstance("CNY")
+        val CNY: Currency = getInstance("CNY")
 
         /**
          * Hong Kong Dollar
          */
-        val HKD = getInstance("HKD")
+        val HKD: Currency = getInstance("HKD")
 
         /**
          * New Zealand Dollar
          */
-        val NZD = getInstance("NZD")
+        val NZD: Currency = getInstance("NZD")
 
         /**
          * Russian Ruble
          */
-        val RUB = getInstance("RUB")
+        val RUB: Currency = getInstance("RUB")
 
         /**
          * Indian Rupee
          */
-        val INR = getInstance("INR")
+        val INR: Currency = getInstance("INR")
 
         /**
          * South Korean won
          */
-        val KRW = getInstance("KRW")
+        val KRW: Currency = getInstance("KRW")
 
         /**
          * Bitcoin
          */
-        val BTC = getInstance("BTC", 8)
+        val BTC: Currency = getInstance("BTC", 8)
 
         /**
          * Ether
          */
-        val ETH = getInstance("ETH", 8)
+        val ETH: Currency = getInstance("ETH", 8)
 
         /**
          * Tether (stable coin)
          */
-        val USDT = getInstance("USDT", 2)
+        val USDT: Currency = getInstance("USDT", 2)
 
         /**
          * For all already registered currencies increase the number of display digits with [extraDigits]. This doesn't

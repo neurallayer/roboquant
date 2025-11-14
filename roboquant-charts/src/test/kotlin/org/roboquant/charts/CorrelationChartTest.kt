@@ -26,14 +26,14 @@ internal class CorrelationChartTest {
 
     @Test
     fun test() {
-        val feed = RandomWalk.lastYears(1, 5)
+        val feed = RandomWalk.lastYears(nAssets = 5)
         val chart = CorrelationChart(feed, feed.assets)
         assertTrue(chart.renderJson().isNotBlank())
     }
 
     @Test
     fun option() {
-        val feed = RandomWalk.lastYears(1, 5)
+        val feed = RandomWalk.lastYears(nAssets = 5)
         val series = CorrelationChart(feed, feed.assets).getOption().series
         assertTrue(series is Array<*> && series.isArrayOf<SeriesOption>())
         assertTrue(series.first() is HeatmapSeries)

@@ -156,31 +156,31 @@ val Int.years
  * Convert an Int to a [TimeSpan] of months
  */
 val Int.months
-    get() = TimeSpan(0, this)
+    get() = TimeSpan(months = this)
 
 /**
  * Convert an Int to a [TimeSpan] of days
  */
 val Int.days
-    get() = TimeSpan(0, 0, this)
+    get() = TimeSpan(days = this)
 
 /**
  * Convert an Int to a [TimeSpan] of hours
  */
 val Int.hours
-    get() = TimeSpan(0, 0, 0, this)
+    get() = TimeSpan(months = this)
 
 /**
  * Convert an Int to a [TimeSpan] of minutes
  */
 val Int.minutes
-    get() = TimeSpan(0, 0, 0, 0, this)
+    get() = TimeSpan(days = this)
 
 /**
  * Convert an Int to a [TimeSpan] of seconds
  */
 val Int.seconds
-    get() = TimeSpan(0, 0, 0, 0, 0, this, 0L)
+    get() = TimeSpan(seconds = this)
 
 /**
  * Convert a Long to a [TimeSpan] of milliseconds
@@ -192,7 +192,7 @@ val Int.millis
  * Convert an Int to a [TimeSpan] of nanoseconds
  */
 val Long.nanos
-    get() = TimeSpan(0, 0, 0, 0, 0, 0, this)
+    get() = TimeSpan(nanos = this)
 
 /**
  * Add a [period] using the provided [zoneId]. The resulting value will not be lower than [Instant.MAX]

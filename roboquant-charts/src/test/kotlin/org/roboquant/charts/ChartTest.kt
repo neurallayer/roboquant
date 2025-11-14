@@ -45,7 +45,7 @@ internal class ChartTest {
 
     @Test
     fun test() {
-        val f = RandomWalk.lastYears(1, 1)
+        val f = RandomWalk.lastYears(nAssets = 1)
         val asset = f.assets.first()
         val chart = PriceBarChart(f, asset)
         val html = chart.renderJson()

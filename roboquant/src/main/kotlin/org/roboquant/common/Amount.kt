@@ -80,7 +80,7 @@ class Amount(val currency: Currency, val value: Double)  {
     /**
      * Return a new amount containing the absolute value of this amount.
      */
-    val absoluteValue
+    val absoluteValue: Amount
         get() = Amount(currency, value.absoluteValue)
 
     /**
@@ -151,79 +151,79 @@ class Amount(val currency: Currency, val value: Double)  {
 /**
  * Amount in [Currency.EUR]
  */
-val Number.EUR
+val Number.EUR: Amount
     get() = Amount(Currency.EUR, toDouble())
 
 /**
  * Amount in [Currency.USD]
  */
-val Number.USD
+val Number.USD: Amount
     get() = Amount(Currency.USD, toDouble())
 
 /**
  * Amount in [Currency.JPY]
  */
-val Number.JPY
+val Number.JPY: Amount
     get() = Amount(Currency.JPY, toDouble())
 
 /**
  * Amount in [Currency.GBP]
  */
-val Number.GBP
+val Number.GBP: Amount
     get() = Amount(Currency.GBP, toDouble())
 
 /**
  * Amount in [Currency.CHF]
  */
-val Number.CHF
+val Number.CHF: Amount
     get() = Amount(Currency.CHF, toDouble())
 
 /**
  * Amount in [Currency.AUD]
  */
-val Number.AUD
+val Number.AUD: Amount
     get() = Amount(Currency.AUD, toDouble())
 
 /**
  * Amount in [Currency.CAD]
  */
-val Number.CAD
+val Number.CAD: Amount
     get() = Amount(Currency.CAD, toDouble())
 
 /**
  * Amount in [Currency.CNY]
  */
-val Number.CNY
+val Number.CNY: Amount
     get() = Amount(Currency.CNY, toDouble())
 
 /**
  * Amount in [Currency.HKD]
  */
-val Number.HKD
+val Number.HKD: Amount
     get() = Amount(Currency.HKD, toDouble())
 
 /**
  * Amount in [Currency.NZD]
  */
-val Number.NZD
+val Number.NZD: Amount
     get() = Amount(Currency.NZD, toDouble())
 
 /**
  * Amount in [Currency.RUB]
  */
-val Number.RUB
+val Number.RUB: Amount
     get() = Amount(Currency.RUB, toDouble())
 
 /**
  * Amount in [Currency.INR]
  */
-val Number.INR
+val Number.INR: Amount
     get() = Amount(Currency.INR, toDouble())
 
 /**
  * Amount in [Currency.KRW]
  */
-val Number.KRW
+val Number.KRW: Amount
     get() = Amount(Currency.KRW, toDouble())
 
 // Extensions to make it easier to create amounts for common cryptocurrencies
@@ -231,19 +231,19 @@ val Number.KRW
 /**
  * Amount in [Currency.BTC]
  */
-val Number.BTC
+val Number.BTC: Amount
     get() = Amount(Currency.BTC, toDouble())
 
 /**
  * Amount in [Currency.ETH]
  */
-val Number.ETH
+val Number.ETH: Amount
     get() = Amount(Currency.ETH, toDouble())
 
 /**
  * Amount in [Currency.USDT]
  */
-val Number.USDT
+val Number.USDT: Amount
     get() = Amount(Currency.USDT, toDouble())
 
 /**
