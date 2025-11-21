@@ -168,13 +168,13 @@ val Int.days
  * Convert an Int to a [TimeSpan] of hours
  */
 val Int.hours
-    get() = TimeSpan(months = this)
+    get() = TimeSpan(hours = this)
 
 /**
  * Convert an Int to a [TimeSpan] of minutes
  */
 val Int.minutes
-    get() = TimeSpan(days = this)
+    get() = TimeSpan(minutes = this)
 
 /**
  * Convert an Int to a [TimeSpan] of seconds

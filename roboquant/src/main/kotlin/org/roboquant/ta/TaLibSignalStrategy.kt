@@ -78,7 +78,7 @@ class TaLibSignalStrategy(
 
             val strategy = TaLibSignalStrategy { asset, prices ->
                 val (_, _, diff) = macd(prices)
-                val (_, _, diff2) = macd(prices, slowPeriod = 1)
+                val (_, _, diff2) = macd(prices, previous = 1)
                 when {
                     diff < 0.0 && diff2 >= 0.0 -> Signal.buy(asset)
                     diff > 0.0 && diff2 <= 0.0 -> Signal.sell(asset)
