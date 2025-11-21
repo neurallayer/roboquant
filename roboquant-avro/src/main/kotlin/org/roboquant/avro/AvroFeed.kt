@@ -83,7 +83,6 @@ class AvroFeed(private val file: File) : Feed {
 
     override val timeframe: Timeframe by lazy { calcTimeframe() }
 
-
     init {
         logger.info { "New AvroFeed file=$file exist=${exists()}" }
     }

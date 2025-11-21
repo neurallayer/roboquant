@@ -135,6 +135,8 @@ internal class AvroFeedTest {
             val feed = AvroFeed.sp25()
             assertTrue(feed.exists())
             assertEquals(Timeframe.parse("2021-01-04T21:00:00Z", "2024-12-31T21:00:00Z", inclusive = true), feed.timeframe)
+            val list = feed.toList()
+            assertTrue { list.size > 0 }
         }
     }
 

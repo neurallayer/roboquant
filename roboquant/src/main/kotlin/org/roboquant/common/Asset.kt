@@ -48,12 +48,18 @@ interface Asset : Comparable<Asset> {
      * generate the appropriate symbol name.
      */
     companion object {
+        val registry: MutableMap<String, (String) -> Asset> = mutableMapOf<String, (String) -> Asset>()
+
+        init {
+            registry["Stock"] = ::deserializeStock
+            registry["Option"] = ::deserializeOption
+            registry["Forex"] = ::deserializeForex
+            registry["Crypto"] = ::deserializeCrypto
+        }
 
         internal const val SEP = ";"
 
         private val cache = ConcurrentHashMap<String, Asset>()
-
-        val registry: MutableMap<String, (String) -> Asset> = mutableMapOf<String, (String) -> Asset>()
 
         fun deserialize(value: String): Asset {
             return cache.getOrPut(value) {
@@ -81,27 +87,22 @@ interface Asset : Comparable<Asset> {
 
 }
 
+fun deserializeOption(value: String): Asset {
+    val (symbol, currencyCode) = value.split(SEP)
+    return Option(symbol, Currency.getInstance(currencyCode))
+}
 
 data class Option(override val symbol: String, override val currency: Currency) : Asset {
-
-    companion object {
-
-        init {
-            registry["Option"] = Option::deserialize
-        }
-
-        fun deserialize(value: String): Asset {
-            val (symbol, currencyCode) = value.split(SEP)
-            return Option(symbol, Currency.getInstance(currencyCode))
-        }
-
-    }
 
     override fun serialize(): String {
         return "Option$SEP$symbol$SEP$currency"
     }
 }
 
+fun deserializeCrypto(value: String): Asset {
+    val (symbol, currencyCode) = value.split(SEP)
+    return Crypto(symbol, Currency.getInstance(currencyCode))
+}
 
 data class Crypto(override val symbol: String, override val currency: Currency) : Asset {
 
@@ -111,15 +112,6 @@ data class Crypto(override val symbol: String, override val currency: Currency) 
 
     companion object {
 
-        init {
-            registry["Crypto"] = Crypto::deserialize
-        }
-
-
-        fun deserialize(value: String): Asset {
-            val (symbol, currencyCode) = value.split(SEP)
-            return Crypto(symbol, Currency.getInstance(currencyCode))
-        }
 
         fun fromSymbol(symbol: String): Crypto {
             return Crypto(symbol, Currency.USD) // TODO
@@ -128,6 +120,10 @@ data class Crypto(override val symbol: String, override val currency: Currency) 
 
 }
 
+fun deserializeStock(value: String): Asset {
+    val (symbol, currencyCode) = value.split(SEP)
+    return Stock(symbol, Currency.getInstance(currencyCode))
+}
 
 data class Stock(override val symbol: String, override val currency: Currency = Currency.USD) : Asset {
 
@@ -135,20 +131,12 @@ data class Stock(override val symbol: String, override val currency: Currency = 
         return "Stock$SEP$symbol$SEP$currency"
     }
 
-    companion object {
-
-
-        init {
-            registry["Stock"] = Stock::deserialize
-        }
-
-        fun deserialize(value: String): Asset {
-            val (symbol, currencyCode) = value.split(SEP)
-            return Stock(symbol, Currency.getInstance(currencyCode))
-        }
-    }
 }
 
+fun deserializeForex(value: String): Asset {
+    val (symbol, currencyCode) = value.split(SEP)
+    return Forex(symbol, Currency.getInstance(currencyCode))
+}
 
 data class Forex(override val symbol: String, override val currency: Currency) : Asset {
 
@@ -158,18 +146,11 @@ data class Forex(override val symbol: String, override val currency: Currency) :
 
     companion object {
 
-        init {
-            registry["Forex"] = Forex::deserialize
-        }
-
         fun fromSymbol(symbol: String): Forex {
             return Forex(symbol, Currency.USD) // TODO
         }
 
-        fun deserialize(value: String): Asset {
-            val (symbol, currencyCode) = value.split(SEP)
-            return Forex(symbol, Currency.getInstance(currencyCode))
-        }
+
     }
 }
 
