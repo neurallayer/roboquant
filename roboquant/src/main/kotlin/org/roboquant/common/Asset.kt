@@ -18,7 +18,6 @@
 package org.roboquant.common
 
 import org.roboquant.common.Asset.Companion.SEP
-import org.roboquant.common.Asset.Companion.registry
 import java.util.concurrent.ConcurrentHashMap
 
 /**
