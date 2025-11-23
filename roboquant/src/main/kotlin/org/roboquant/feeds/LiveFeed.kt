@@ -48,7 +48,6 @@ abstract class LiveFeed : Feed {
      * Subclasses should call this method or [sendAsync] to send an event. If no channel is active, any event
      * sent will be dropped.
      */
-    @Suppress("RunBlocking")
     protected fun send(event: Event): Unit = runBlocking {
         sendAsync(event)
     }

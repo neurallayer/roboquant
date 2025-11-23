@@ -113,7 +113,6 @@ class AlpacaMarketNewsLiveFeed(
                         "updatedAt" to news.updatedAt,
                     )
                 )
-
                 sendNews(Instant.now(), NewsItems(listOf(item)))
             }
         }

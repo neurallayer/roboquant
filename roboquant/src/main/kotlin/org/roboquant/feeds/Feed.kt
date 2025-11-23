@@ -125,6 +125,7 @@ inline fun <reified T : Item> Feed.filter(
     return@runBlocking result
 }
 
+
 /**
  * Convenience method to apply some logic to a feed
  */

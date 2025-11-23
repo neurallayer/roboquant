@@ -16,14 +16,10 @@
 
 package org.roboquant.alpaca
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.roboquant.common.NewsItems
 import org.roboquant.common.Stock
-import org.roboquant.common.TimeSpan
-import org.roboquant.common.Timeframe
-import org.roboquant.feeds.filter
+import org.roboquant.feeds.EventChannel
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -35,52 +31,41 @@ internal class AlpacaMarketNewsLiveFeedTest {
      * This test doesn't need a real API key as it mocks the Alpaca API.
      */
     @Test
-    @Suppress("RunBlocking")
-    fun testMockReceiveNews() = runBlocking {
+    fun testMockReceiveNews()  {
         // Do NOT connect to Alpaca
         val feed = AlpacaMarketNewsLiveFeed(autoConnect = false)
         feed.subscribe(Stock("AAPL"))
+        val channel = EventChannel()
+        val job = feed.playBackground(channel)
 
         // Emit two news items within the timeframe
-        val job = launch {
-            val t0 = Instant.now()
-            val n1 = NewsItems.NewsItem(
-                id = "n1",
-                assets = listOf(Stock("AAPL")),
-                content = "First test news",
-                headline = "AAPL News 1",
-                meta = mapOf("source" to "test")
-            )
-            feed.sendNews(t0, NewsItems(listOf(n1)))
-
-            delay(50)
-
-            val n2 = NewsItems.NewsItem(
-                id = "n2",
-                assets = listOf(Stock("AAPL")),
-                content = "Second test news",
-                headline = "AAPL News 2",
-                meta = mapOf("source" to "test")
-            )
-            feed.sendNews(t0.plusMillis(25), NewsItems(listOf(n2)))
-        }
-
-        val timeframe = Timeframe.next(TimeSpan(seconds = 1))
-        val received = feed.filter<NewsItems>(
-            timeframe = timeframe,
-            timeOutMillis = timeframe.duration.toMillis()
+        val t0 = Instant.now()
+        val n1 = NewsItems.NewsItem(
+            id = "n1",
+            assets = listOf(Stock("AAPL")),
+            content = "First test news",
+            headline = "AAPL News 1",
+            meta = mapOf("source" to "test")
         )
-        job.cancel()
-        feed.close()
+        feed.sendNews(t0, NewsItems(listOf(n1)))
 
-        // Verify we got exactly two news items in the timeframe
-        assertEquals(2, received.size, "Expected to receive exactly two NewsItems events")
+        val n2 = NewsItems.NewsItem(
+            id = "n2",
+            assets = listOf(Stock("AAPL")),
+            content = "Second test news",
+            headline = "AAPL News 2",
+            meta = mapOf("source" to "test")
+        )
+        feed.sendNews(t0.plusMillis(25), NewsItems(listOf(n2)))
 
-        // And both should reference AAPL in their assets list
-        received.forEach { pair ->
-            val newsItems = pair.second
-            val hasAAPL = newsItems.items.firstOrNull()?.assets?.any { it.symbol == "AAPL" } == true
-            assertEquals(true, hasAAPL)
+        runBlocking {
+            var event = channel.receive()
+            assertEquals(t0, event.time)
+
+            event = channel.receive()
+            assertEquals(t0.plusMillis(25), event.time)
         }
+
+        job.cancel()
     }
 }
