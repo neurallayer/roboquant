@@ -1,14 +1,14 @@
-= Release planning
+# Release planning
 
-== Introduction
+## Introduction
 
 There are still many features planned for _roboquant_. For sure, the lists on this page are also not complete and new features will pop up over time. Prioritization might shift based also based on community input and contribution.
 
 But at least it gives insight into the current planning when to add certain features. And PRs are very welcome and might very well expedite certain features.
 
-See also the link:CONTRIBUTING.adoc[contributing] page on how to submit a PR.
+See also the [contributing](CONTRIBUTING.md) page on how to submit a PR.
 
-== Version 0.8.x (end of 2021)
+## Version 0.8.x (end of 2021)
 
 Version 0.8 is all about making sure that (back-)testing works, and the most common use-cases are covered. Much of the foundation for algo trading is in place with this release:
 
@@ -23,7 +23,7 @@ Version 0.8 is all about making sure that (back-)testing works, and the most com
 * [x] Bring back Interactive Brokers integration
 * [x] See how to best fit crypto trading with current account structure
 
-== Version 0.9.x (2022)
+## Version 0.9.x (2022)
 
 Ensure the API is stable and start including AI and Machine Learning support
 
@@ -31,7 +31,7 @@ Ensure the API is stable and start including AI and Machine Learning support
 * [X] Include demo feeds for quick experimentation
 * [X] Use better approach for generating charts
 
-== Version 1.0 (end of 2022)
+## Version 1.0 (end of 2022)
 
 This version is all about adding stabilizing concepts and APIs. Although there is already integration available in earlier versions, that is just to validate the architectural concepts and design choices:
 
@@ -41,8 +41,7 @@ This version is all about adding stabilizing concepts and APIs. Although there i
 * [X] Refactor the order execution simulation
 * [X] Improve the running of roboquant notebooks on public infra
 
-
-== Version 2 (Q3 2023)
+## Version 2 (Q3 2023)
 
 The topics mentioned here are some of the ideas for the future releases:
 
@@ -55,7 +54,7 @@ The topics mentioned here are some of the ideas for the future releases:
 * [X] Separate charts functionality from Jupyter notebooks
 * [X] Improve the Broker API
 * [X] Smaller core module
-* [X] More consistent naming of API's
+* [X] More consistent naming of API’s
 * [X] Support more CSV file formats out of the box
 * [X] Improved usability of TaLib with auto sizing
 * [X] Sunset no longer suported 3rd party data providers
@@ -63,7 +62,7 @@ The topics mentioned here are some of the ideas for the future releases:
 * [X] Improve overall test coverage
 * [X] Hardening code base
 
-== Version 3 and later (2025 and beyond)
+## Version 3 and later (2025 and beyond)
 
 The topics mentioned here are some of the ideas for the future releases:
 
