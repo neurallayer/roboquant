@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("WildcardImport")
-
 package org.roboquant.ta
 
 import org.roboquant.common.Asset
