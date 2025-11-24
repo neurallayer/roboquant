@@ -24,7 +24,6 @@ import org.roboquant.common.Event
 import org.roboquant.common.PriceBar
 import org.roboquant.common.Signal
 import org.roboquant.common.SignalType
-import org.roboquant.common.iszero
 import org.roboquant.common.nonzero
 import org.roboquant.strategies.Strategy
 
