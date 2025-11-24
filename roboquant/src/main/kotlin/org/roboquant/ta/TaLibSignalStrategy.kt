@@ -24,6 +24,8 @@ import org.roboquant.common.Event
 import org.roboquant.common.PriceBar
 import org.roboquant.common.Signal
 import org.roboquant.common.SignalType
+import org.roboquant.common.iszero
+import org.roboquant.common.nonzero
 import org.roboquant.strategies.Strategy
 
 /**
@@ -145,3 +147,13 @@ class TaLibSignalStrategy(
 
 }
 
+/**
+ * Small util function for quickly defining a TaLib based libraries
+ */
+fun strategy(block: TaLib.(series: PriceBarSeries) -> Double?): TaLibSignalStrategy {
+
+    return TaLibSignalStrategy { asset: Asset, series: PriceBarSeries ->
+        val rating = block(series)
+        if (rating != null && rating.nonzero) Signal(asset, rating) else null
+    }
+}

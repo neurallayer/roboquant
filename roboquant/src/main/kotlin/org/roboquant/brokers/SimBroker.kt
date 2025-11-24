@@ -151,12 +151,15 @@ open class SimBroker(
 
         for (order in pendingOrders) {
             when {
-                order.isCancellation() -> {
+                order.size.iszero -> {
+                    // Cancelation Order
+                    assert(order.id.isNotEmpty())
                     val removed = account.orders.removeAll { it.id == order.id }
                     if (! removed) logger.warn("Skipping cancellation $order")
                 }
 
-                order.isModify() -> {
+                order.id.isNotEmpty() -> {
+                    // Modify order
                     val removed = account.orders.removeIf { it.id == order.id }
                     if (removed)
                         account.orders.add(order)
@@ -165,7 +168,7 @@ open class SimBroker(
                 }
 
                 else -> {
-                    assert(order.id.isBlank())
+                    // Regular create order
                     order.id = nextOrderId++.toString()
                     account.orders.add(order)
                 }

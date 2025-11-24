@@ -19,11 +19,13 @@ package org.roboquant.ta
 import com.tictactec.ta.lib.Compatibility
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import org.roboquant.common.BUY
 import org.roboquant.common.Stock
 import org.roboquant.common.plus
 import org.roboquant.common.seconds
 import org.roboquant.common.Event
 import org.roboquant.common.PriceBar
+import org.roboquant.common.SELL
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.common.Signal
@@ -191,6 +193,21 @@ internal class TaLibSignalStrategyTest {
         assertEquals(10, s.entries.size)
         assertTrue(s.values.first().isEmpty())
         assertTrue(s.values.last().isNotEmpty())
+    }
+
+    @Test
+    fun testStrategyFunction() {
+        val s = strategy {
+            when {
+                ema(it, 20) > ema(it, 35) -> BUY
+                ema(it, 20) < ema(it, 35) -> SELL
+                else -> null
+            }
+        }
+        assertDoesNotThrow {
+            val x = run(s, 50)
+            assertEquals(50, x.size)
+        }
     }
 
 

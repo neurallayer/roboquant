@@ -44,6 +44,17 @@ enum class SignalType {
 }
 
 /**
+ * Default value for a BUY rating
+ */
+const val BUY = 1.0
+
+
+/**
+ * Default value for a SELL rating
+ */
+const val SELL = -1.0
+
+/**
  * Signal provides a rating for an [Asset] and is typically created by a strategy.
  *
  * It depends on the signalConverter how these signals are translated into actual orders, but possible scenarios are:
@@ -53,7 +64,7 @@ enum class SignalType {
  *  - The probability determines the stake (volume) of the order. The more confident, the larger the stake
  *
  * @property asset The asset for which this rating applies
- * @property rating The rating for the asset
+ * @property rating The rating for the asset, typically between -1.0 and 1.0
  * @property type The type of signal, entry, exit or both. [SignalType.BOTH] is the default.
  * @property tag Optional extra tag, for example, the strategy name that generated the signal, default is empty String
  * @constructor Create a new Signal
@@ -67,12 +78,18 @@ class Signal(
 
     companion object {
 
+        /**
+         * Create a BUY signal.
+         */
         fun buy(asset: Asset, type: SignalType = BOTH, tag: String = "") : Signal {
-            return Signal(asset, 1.0, type, tag)
+            return Signal(asset, BUY, type, tag)
         }
 
+        /**
+         * Creae a sell signal.
+         */
         fun sell(asset: Asset, type: SignalType = BOTH, tag: String = "") : Signal {
-            return Signal(asset, -1.0, type, tag)
+            return Signal(asset, SELL, type, tag)
         }
 
     }

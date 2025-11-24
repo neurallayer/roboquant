@@ -7,9 +7,10 @@ enum class TIF {
 }
 
 /**
- * Base class for all types of create orders.
- *
- * The only thing they all have in common is they refer to a single [asset] and can optionally have a tag associated with them.
+ * Data class for all types of orders. Every order has a asset, size and limit specified. The logic that is applied:
+ * - New create orders don't have an id yet until it is set by the broker implementation.
+ * - Cancel orders are orders with a known id and size zero. Only cancellation orders can have a size of zero
+ * - Modify orders are orders with a known id but with updated properties like size and limit.
  */
 data class Order(
     val asset: Asset,
@@ -36,26 +37,34 @@ data class Order(
      */
     var fill = Size.ZERO
 
+    /**
+     * Cancel an existing order
+     */
     fun cancel(): Order {
         require(id != "")
         return copy(size = Size.ZERO)
     }
 
+    /**
+     * Modify an existing order
+     */
     fun modify(size: Size = this.size, limit: Double = this.limit) : Order {
         require(id != "")
         return copy(size = size, limit = limit)
     }
 
+    /**
+     * Return true if an cancellation order, false otherwise.
+     */
     fun isCancellation(): Boolean {
         return size == Size.ZERO && id != ""
     }
 
+    /**
+     * Given the provided price, is this order executable
+     */
     fun isExecutable(price: Double): Boolean {
         return (buy and (price <= limit)) || (sell and (price >= limit))
-    }
-
-    fun isModify(): Boolean {
-        return size != Size.ZERO && id != ""
     }
 
     /**
