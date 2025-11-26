@@ -95,7 +95,7 @@ interface AssetFeed : Feed {
 }
 
 /**
- * Convenience method to play a feed and return the actions of a certain type [T]. Additionally, the feed can be
+ * Convenience method to play a feed and return the items of a certain type [T]. Additionally, the feed can be
  * restricted to a certain [timeframe] and if required an additional [filter] can be provided.
  */
 @Suppress("RunBlocking")
@@ -244,7 +244,7 @@ fun Feed.validate(
 }
 
 /**
- * Convert a collection of price actions to a double array
+ * Convert a collection of price items to a double array
  */
 fun Collection<PriceItem>.toDoubleArray(type: String = "DEFAULT"): DoubleArray =
     this.map { it.getPrice(type) }.toDoubleArray()

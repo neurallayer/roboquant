@@ -62,11 +62,11 @@ internal class LiveFeedTest {
 
                 scope.launch {
                     val asset = Stock("ABC")
-                    val actions = listOf(TradePrice(asset, 100.0))
+                    val items = listOf(TradePrice(asset, 100.0))
 
                     while (true) {
                         try {
-                            sendAsync(event = Event(Instant.now(), actions))
+                            sendAsync(event = Event(Instant.now(), items))
                             delay(delayInMillis)
                             if (stop) break
                         } catch (e: Exception) {

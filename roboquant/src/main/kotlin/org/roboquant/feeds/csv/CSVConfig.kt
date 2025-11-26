@@ -41,7 +41,7 @@ import kotlin.io.path.div
  * @property separator the field separator character, default is ',' (comma)
  * @property timeParser the parser to use for parsing the time column(s)
  * @property priceParser the parser to use for parsing the price and volume column(s)
- * @property assetBuilder the builder to use to create the assets of the price-actions
+ * @property assetBuilder the builder to use to create the assets of the price-items
  * @constructor Create a new CSV config
  */
 data class CSVConfig(

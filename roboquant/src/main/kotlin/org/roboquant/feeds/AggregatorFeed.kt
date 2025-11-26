@@ -35,7 +35,7 @@ import kotlin.math.min
 
 /**
  * Aggregate prices in a [feed] to a [org.roboquant.common.PriceBar]. The [aggregationPeriod] is configurable.
- * Right now there is support for aggregating the following types of price actions:
+ * Right now there is support for aggregating the following types of price items:
  *
  * 1. PriceBar
  * 2. TradePrice
@@ -46,7 +46,7 @@ import kotlin.math.min
  *
  * @property feed the feed to use that has the prices that need to be aggregated
  * @property aggregationPeriod the aggregation period, for example `15.minutes`
- * @property remaining should any remaining actions be sent, default is true
+ * @property remaining should any remaining items be sent, default is true
  *
  */
 class AggregatorFeed(
@@ -62,7 +62,7 @@ class AggregatorFeed(
     }
 
     /**
-     * Provide the timeframe, this can be slightly off since upfront it is not known what the actions are that are
+     * Provide the timeframe, this can be slightly off since upfront it is not known what the items are that are
      * in the underlying feed.
      */
     override val timeframe: Timeframe

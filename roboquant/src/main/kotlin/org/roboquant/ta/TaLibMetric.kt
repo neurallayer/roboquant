@@ -50,10 +50,10 @@ class TaLibMetric(
      */
     override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>): Map<String, Double> {
         val metrics = mutableMapOf<String, Double>()
-        val actions =
+        val items =
             event.items.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset, event.time) }
         val time = event.time
-        for (priceAction in actions) {
+        for (priceAction in items) {
             val asset = priceAction.asset
             val buffer = history.getOrPut(asset) { PriceBarSeries(initialCapacity) }
             if (buffer.add(priceAction, time)) {

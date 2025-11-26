@@ -65,7 +65,7 @@ internal class RandomPriceGenerator(
     }
 
     /**
-     * Generate random single price actions
+     * Generate random single price items
      */
     private fun tradePrice(asset: Asset, price: Double): PriceItem {
         val volume = random.nextInt(volumeRange / 2, volumeRange * 2)

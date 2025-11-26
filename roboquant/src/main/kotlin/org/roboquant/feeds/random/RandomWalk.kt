@@ -85,8 +85,8 @@ class RandomWalk(
         val gen = RandomPriceGenerator(assets.toList(), priceChange, volumeRange, timeSpan, priceType, seed)
         var time = timeframe.start
         while (timeframe.contains(time)) {
-            val actions = gen.next()
-            val event = Event(time, actions)
+            val items = gen.next()
+            val event = Event(time, items)
             channel.send(event)
             time += timeSpan
         }

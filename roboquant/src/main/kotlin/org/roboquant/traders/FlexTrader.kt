@@ -118,7 +118,7 @@ open class FlexTrader(
      * This method will only be invoked if the signal is not closing a position.
      */
     open fun calcSize(amount: Double, signal: Signal, price: Double): Size {
-        require(config.fractions >= 0) { "factions has to be >= 0, found ${config.fractions}" }
+        require(config.fractions >= 0) { "fractions has to be >= 0, found ${config.fractions}" }
         val singleContractValue = signal.asset.value(Size.ONE, price).value
         val size = BigDecimal(amount / singleContractValue).setScale(config.fractions, RoundingMode.DOWN)
         return Size(size)

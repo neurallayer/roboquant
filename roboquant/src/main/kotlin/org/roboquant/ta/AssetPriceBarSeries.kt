@@ -48,7 +48,7 @@ class AssetPriceBarSeries private constructor(
     }
 
     /**
-     * Add all the [PriceBar] actions found in the [event] to this AssetPriceBarSeries
+     * Add all the [PriceBar] items found in the [event] to this AssetPriceBarSeries
      */
     fun addAll(event: Event) {
         for (action in event.items.filterIsInstance<PriceBar>()) {

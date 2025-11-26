@@ -6,16 +6,16 @@ import java.time.Instant
  * An event contains a list of [items] that all happened at the same moment in [time]. An [Item]
  * can be anything, but a common use case is price items like candlesticks.
  *
- * @property items the list of actions that are part of this event
- * @property time the time that the actions in this event became available
+ * @property items the list of items that are part of this event
+ * @property time the time that the items in this event became available
  */
 class Event(val time: Instant, val items: List<Item>) : Comparable<Event> {
 
     /**
-     * Convenience property for accessing the price actions in this event. The result is cached so that accessing
+     * Convenience property for accessing the price items in this event. The result is cached so that accessing
      * this property multiple times is quick.
      *
-     * If there are multiple price actions for a single asset in the event, the last one found will be returned. If
+     * If there are multiple price items for a single asset in the event, the last one found will be returned. If
      * you need access to all prices for an asset, iterate over the [items] directly.
      */
     val prices: Map<Asset, PriceItem> by lazy {
@@ -41,10 +41,10 @@ class Event(val time: Instant, val items: List<Item>) : Comparable<Event> {
     }
 
     /**
-     * Convenience method to get a single price for an [asset] or null if there is no price action present for
+     * Convenience method to get a single price for an [asset] or null if there is no price item present for
      * the asset in this event. Optionally you can specify the [type] of price.
      *
-     * If there are multiple price actions for a single asset in the event, the last one found will be returned. If
+     * If there are multiple price items for a single asset in the event, the last one found will be returned. If
      * you require access to all prices for an asset, access [items] directly.
      */
     fun getPrice(asset: Asset, type: String = "DEFAULT"): Double? {
@@ -63,7 +63,7 @@ class Event(val time: Instant, val items: List<Item>) : Comparable<Event> {
     fun isNotEmpty(): Boolean = items.isNotEmpty()
 
     /**
-     * Return true if this event has no actions, false otherwise
+     * Return true if this event has no items, false otherwise
      */
     fun isEmpty(): Boolean = items.isEmpty()
 
@@ -71,6 +71,6 @@ class Event(val time: Instant, val items: List<Item>) : Comparable<Event> {
      * Provide the event time
      */
     override fun toString(): String {
-        return "Event(time=$time actions=${items.size})"
+        return "Event(time=$time items=${items.size})"
     }
 }

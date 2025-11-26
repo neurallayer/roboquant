@@ -75,17 +75,17 @@ open class HistoricPriceFeed : HistoricFeed {
      */
     @Synchronized
     protected fun add(time: Instant, action: PriceItem) {
-        val actions = events.getOrPut(time) { mutableListOf() }
-        actions.add(action)
+        val items = events.getOrPut(time) { mutableListOf() }
+        items.add(action)
     }
 
     /**
-     * Add all new [actions] to this feed at the provided [time]
+     * Add all new [items] to this feed at the provided [time]
      */
     @Synchronized
-    protected fun addAll(time: Instant, actions: List<PriceItem>) {
+    protected fun addAll(time: Instant, items: List<PriceItem>) {
         val existing = events.getOrPut(time) { mutableListOf() }
-        existing.addAll(actions)
+        existing.addAll(items)
     }
 
     /**

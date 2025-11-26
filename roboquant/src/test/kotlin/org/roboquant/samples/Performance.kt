@@ -67,7 +67,7 @@ private class FastFeed(nAssets: Int, val events: Int) : Feed {
 
     private val assets = mutableListOf<Asset>()
     private val start = Instant.parse("2000-01-01T00:00:00Z")
-    val actions = ArrayList<PriceBar>(nAssets)
+    val items = ArrayList<PriceBar>(nAssets)
     val size = nAssets * events
 
     init {
@@ -75,13 +75,13 @@ private class FastFeed(nAssets: Int, val events: Int) : Feed {
         val data = doubleArrayOf(100.0, 101.0, 99.0, 100.0, 10000.0)
         for (asset in assets) {
             val action = PriceBar(asset, data)
-            actions.add(action)
+            items.add(action)
         }
     }
 
     override suspend fun play(channel: EventChannel) {
         repeat(events) {
-            channel.send(Event(start + it.millis, actions))
+            channel.send(Event(start + it.millis, items))
         }
     }
 

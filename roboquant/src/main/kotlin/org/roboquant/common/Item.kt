@@ -29,7 +29,7 @@ import kotlin.math.absoluteValue
  *
  * # Example
  * ```
- * event.actions.filterIsInstance<PriceBar>(). ...
+ * event.items.filterIsInstance<PriceBar>(). ...
  * ```
  */
 interface Item

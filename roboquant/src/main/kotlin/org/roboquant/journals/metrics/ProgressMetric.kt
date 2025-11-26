@@ -27,21 +27,21 @@ import java.time.Instant
  * following metrics are captured:
  *
  * - `progress.events`: The number of events
- * - `progress.actions`: The number of actions (like candlesticks)
+ * - `progress.items`: The number of items (like candlesticks)
  * - `progress.walltime`: The total wall time in milliseconds
  */
 class ProgressMetric : Metric {
 
     private var startTime = Instant.now().toEpochMilli()
-    private var actions = 0L
+    private var items = 0L
     private var events = 0L
 
 
     override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>): Map<String, Double> {
-        actions += event.items.size
+        items += event.items.size
 
         return metricResultsOf(
-            "progress.actions" to actions,
+            "progress.items" to items,
             "progress.events" to ++events,
             "progress.walltime" to (Instant.now().toEpochMilli() - startTime),
         )
@@ -49,7 +49,7 @@ class ProgressMetric : Metric {
 
     override fun reset() {
         startTime = Instant.now().toEpochMilli()
-        actions = 0
+        items = 0
         events = 0
     }
 
