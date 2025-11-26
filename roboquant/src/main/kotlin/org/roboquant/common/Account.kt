@@ -20,8 +20,9 @@ import kotlin.collections.iterator
  * @property lastUpdate time that the account was last updated
  * @property cash cash balances
  * @property orders List of [Order] of all open orders
- * @property positions List of all open [Position], with maximum one entry per asset
+ * @property positions Map of all open [Position], with the key being the [Asset] and the value the [Position]
  * @property buyingPower amount of buying power available for trading
+ * @property trades List of [Trade] that have been executed
  * @constructor Create a new Account
  */
 interface Account {

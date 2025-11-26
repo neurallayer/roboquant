@@ -72,7 +72,7 @@ data class Position(
      * Returns true if this is an open position, false otherwise
      */
     val open: Boolean
-        get() = !size.iszero
+        get() = size.nonzero
 
 }
 
@@ -89,7 +89,10 @@ val Map<Asset, Position>.short: Map<Asset, Position>
     get() = filterValues { it.short }
 
 
-
+/**
+ * Return the market value of the positions. If there are no positions,
+ * an empty [Wallet] will be returned.
+ */
 fun Map<Asset, Position>.marketValue(): Wallet {
     val result = Wallet()
     for ((asset, position) in this) {
@@ -99,7 +102,10 @@ fun Map<Asset, Position>.marketValue(): Wallet {
     return result
 }
 
-
+/**
+ * Return the (unrealized) pnl of the positions. If there are no positions,
+ * an empty [Wallet] will be returned.
+ */
 fun Map<Asset, Position>.pnl(): Wallet {
     val result = Wallet()
     for ((asset, position) in this) {
@@ -109,7 +115,10 @@ fun Map<Asset, Position>.pnl(): Wallet {
     return result
 }
 
-
+/**
+ * Return the exposure of the positions. If there are no positions,
+ * an empty [Wallet] will be returned.
+ */
 fun Map<Asset, Position>.exposure(): Wallet {
     val result = Wallet()
     for ((asset, position) in this) {

@@ -298,7 +298,7 @@ fun Number.round(fractions: Int = 2): BigDecimal =
 /**
  * Convert a string to a currency pair. Returns null if it could not determine the currencies.
  */
-fun String.toCurrencyPair(): Pair<Currency, Currency>? {
+fun String.toCurrencyPair(): Pair<Currency, Currency> {
     val codes = split('_', '-', ' ', '/', '.', ':')
     return when (codes.size) {
         2 -> {
@@ -313,10 +313,11 @@ fun String.toCurrencyPair(): Pair<Currency, Currency>? {
             Pair(c1, c2)
         }
         else -> {
-            null
+            throw RoboquantException("Not a recognized format")
         }
     }
 }
+
 
 /**
  * Extension to use sumOf for [Amount] values.

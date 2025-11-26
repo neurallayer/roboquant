@@ -51,15 +51,15 @@ class FeedExchangeRates(
 
 
     private fun setRates(feed: Feed) {
-        val actions = feed.filter<PriceItem>()
-        for ((now, action) in actions) {
-            val asset = action.asset
-            val rate = action.getPrice(priceType)
-            val pair = asset.symbol.toCurrencyPair()
-            if (pair != null) {
+        val items = feed.filter<PriceItem>()
+        for ((now, item) in items) {
+            val asset = item.asset
+            val rate = item.getPrice(priceType)
+            try {
+                val pair = asset.symbol.toCurrencyPair()
                 val map = exchangeRates.getOrPut(pair) { TreeMap() }
                 map[now] = rate
-            } else {
+            } catch (_: RoboquantException) {
                 logger.warn { "could map asset to currency pair $asset" }
             }
         }
