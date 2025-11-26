@@ -133,7 +133,7 @@ data class CSVConfig(
                 hasHeader = false,
                 assetBuilder = { name: String ->
                     val symbol = name.split('_')[2]
-                    val currency = symbol.toCurrencyPair()!!
+                    val currency = symbol.toCurrencyPair()
                     Forex(symbol, currency.second)
                 }
             )
@@ -168,7 +168,7 @@ data class CSVConfig(
                 timeParser = { columns -> Instant.ofEpochSecond(columns[0].toLong()) },
                 hasHeader = false,
                 assetBuilder = { name: String ->
-                    val currencyPair = name.toCurrencyPair()!!
+                    val currencyPair = name.toCurrencyPair()
                     Crypto(name, currencyPair.second)
                 }
             )
