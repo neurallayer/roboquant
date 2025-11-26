@@ -91,8 +91,8 @@ internal class LiveFeedTest {
             jobs.add {
                 val j = MemoryJournal(ProgressMetric())
                 org.roboquant.runAsync(feed, EMACrossover(), journal=j, timeframe=it)
-                val actions = j.getMetric("progress.actions").values.last()
-                assertTrue(actions > 2)
+                val items = j.getMetric("progress.items").values.last()
+                assertTrue(items > 2)
             }
         }
 
