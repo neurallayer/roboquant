@@ -60,7 +60,7 @@
         <module>roboquant-alpaca</module>
         <module>roboquant-questdb</module>
         <module>roboquant-ssr</module>
-        <!-- module roboquant-ibkr is part of ibkr profile since it relies on a locally installed library -->
+        <module>roboquant-ibkr</module>
     </modules>
 
     <properties>
@@ -75,6 +75,7 @@
         <ibkr.version>10.19</ibkr.version>
         <surefire.failIfNoSpecifiedTests>false</surefire.failIfNoSpecifiedTests>
         <skipIntegrationTests>true</skipIntegrationTests>
+        <dokka.includes>docs/dokka</dokka.includes>
     </properties>
 
     <repositories>
@@ -92,216 +93,6 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <profiles>
-        <profile>
-            <!-- we can only build the roboquant-ibkr module if the ibkr client is locally installed -->
-            <id>ibkr</id>
-            <activation>
-                <file>
-                    <exists>${maven.repo.local}/com/interactivebrokers/tws-api/${ibkr.version}/tws-api-${ibkr.version}.pom</exists>
-                </file>
-            </activation>
-            <modules>
-                <module>roboquant-ibkr</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>release</id>
-            <properties>
-                <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
-                <dokka.includes>docs/dokka</dokka.includes>
-            </properties>
-            <modules>
-                <module>roboquant-ibkr</module>
-            </modules>
-            <build>
-                <plugins>
-                    <!-- We need to include sources when publishing to Maven Central -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>3.2.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.jetbrains.dokka</groupId>
-                        <artifactId>dokka-maven-plugin</artifactId>
-                        <version>2.1.0</version>
-                        <executions>
-                            <execution>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>javadocJar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <jdkVersion>17</jdkVersion>
-                            <suppressObviousFunctions>true</suppressObviousFunctions>
-                            <reportUndocumented>true</reportUndocumented>
-                            <suppressInheritedMembers>true</suppressInheritedMembers>
-                            <includes>
-                                <include>${dokka.includes}/roboquant.md</include>
-                                <include>${dokka.includes}/roboquant-alpaca.md</include>
-                                <include>${dokka.includes}/roboquant-polygon.md</include>
-                                <include>${dokka.includes}/roboquant-binance.md</include>
-                                <include>${dokka.includes}/roboquant-xchange.md</include>
-                                <include>${dokka.includes}/roboquant-server.md</include>
-                                <include>${dokka.includes}/roboquant-questdb.md</include>
-                                <include>${dokka.includes}/roboquant-avro.md</include>
-                                <include>${dokka.includes}/roboquant-ibkr.md</include>
-                                <include>${dokka.includes}/roboquant-jupyter.md</include>
-                                <include>${dokka.includes}/roboquant-ta.md</include>
-                            </includes>
-                            <sourceLinks>
-                                <link>
-                                    <path>${basedir}/src/main/kotlin</path>
-                                    <url>https://github.com/neurallayer/roboquant/blob/main/${project.artifactId}/src/main/kotlin</url>
-                                    <lineSuffix>#L</lineSuffix>
-                                </link>
-                            </sourceLinks>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-deploy-plugin</artifactId>
-                        <version>3.0.0</version>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>doc</id>
-            <properties>
-                <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
-                <dokka.includes>docs/dokka</dokka.includes>
-            </properties>
-            <build>
-                <plugins>
-                    <!-- We need to include sources when publishing to Maven Central -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>3.2.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.jetbrains.dokka</groupId>
-                        <artifactId>dokka-maven-plugin</artifactId>
-                        <version>2.1.0</version>
-                        <executions>
-                            <execution>
-                                <phase>pre-site</phase>
-                                <goals>
-                                    <goal>dokka</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <jdkVersion>11</jdkVersion>
-                            <suppressObviousFunctions>true</suppressObviousFunctions>
-                            <reportUndocumented>true</reportUndocumented>
-                            <suppressInheritedMembers>true</suppressInheritedMembers>
-                            <includes>
-                                <include>${dokka.includes}/roboquant.md</include>
-                                <include>${dokka.includes}/roboquant-alpaca.md</include>
-                                <include>${dokka.includes}/roboquant-polygon.md</include>
-                                <include>${dokka.includes}/roboquant-binance.md</include>
-                                <include>${dokka.includes}/roboquant-xchange.md</include>
-                                <include>${dokka.includes}/roboquant-server.md</include>
-                                <include>${dokka.includes}/roboquant-questdb.md</include>
-                                <include>${dokka.includes}/roboquant-avro.md</include>
-                                <include>${dokka.includes}/roboquant-ibkr.md</include>
-                                <include>${dokka.includes}/roboquant-jupyter.md</include>
-                                <include>${dokka.includes}/roboquant-ta.md</include>
-                            </includes>
-                            <sourceLinks>
-                                <link>
-                                    <path>${basedir}/src/main/kotlin</path>
-                                    <url>https://github.com/neurallayer/roboquant/blob/main/${project.artifactId}/src/main/kotlin</url>
-                                    <lineSuffix>#L</lineSuffix>
-                                </link>
-                            </sourceLinks>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-site-plugin</artifactId>
-                        <version>3.12.1</version>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-project-info-reports-plugin</artifactId>
-                        <version>3.4.1</version>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <build>
         <sourceDirectory>${basedir}/src/main/kotlin</sourceDirectory>
@@ -381,7 +172,8 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.5.3</version>
                     <configuration>
-                        <consoleOutputReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5ConsoleOutputReporter" />
+                        <consoleOutputReporter
+                                implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5ConsoleOutputReporter"/>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -403,6 +195,90 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.2.1</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>3.0.1</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.13</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>ossrh</serverId>
+                        <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                        <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.jetbrains.dokka</groupId>
+                    <artifactId>dokka-maven-plugin</artifactId>
+                    <version>2.1.0</version>
+                    <executions>
+                        <execution>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>javadocJar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <jdkVersion>17</jdkVersion>
+                        <suppressObviousFunctions>true</suppressObviousFunctions>
+                        <reportUndocumented>true</reportUndocumented>
+                        <suppressInheritedMembers>true</suppressInheritedMembers>
+                        <includes>
+                            <include>${dokka.includes}/roboquant.md</include>
+                            <include>${dokka.includes}/roboquant-alpaca.md</include>
+                            <include>${dokka.includes}/roboquant-polygon.md</include>
+                            <include>${dokka.includes}/roboquant-binance.md</include>
+                            <include>${dokka.includes}/roboquant-xchange.md</include>
+                            <include>${dokka.includes}/roboquant-server.md</include>
+                            <include>${dokka.includes}/roboquant-questdb.md</include>
+                            <include>${dokka.includes}/roboquant-avro.md</include>
+                            <include>${dokka.includes}/roboquant-ibkr.md</include>
+                            <include>${dokka.includes}/roboquant-jupyter.md</include>
+                            <include>${dokka.includes}/roboquant-ta.md</include>
+                        </includes>
+                        <sourceLinks>
+                            <link>
+                                <path>${basedir}/src/main/kotlin</path>
+                                <url>
+                                    https://github.com/neurallayer/roboquant/blob/main/${project.artifactId}/src/main/kotlin
+                                </url>
+                                <lineSuffix>#L</lineSuffix>
+                            </link>
+                        </sourceLinks>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.0.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
