@@ -78,8 +78,6 @@ The build and install is tested using JDK 17 runtime.
 **💡 TIP**\
 If you plan to make many changes and updates to the source code, checkout the [Maven Daemon](https://github.com/apache/maven-mvnd) project that provides faster builds. It is an almost 100% drop-in replacement of the regular maven and is much faster.
 
-If you want to deploy a regular release or snapshot, use the `-P release` option. This will include the required plugins and also generate source- and documentation-jar files. Additionally, it will also build and deploy the `roboquant-ibkr` module, so you’ll need the locally installed IBKR Java client library.
-
 ```shell
 ./mvnw clean deploy
 ```
@@ -94,14 +92,12 @@ For example to compile and run tests, but not IBKR, use the following command:
  ./mvnw clean verify -pl '!roboquant-ibkr' 
 ````
 
-
 Unfortunately, it is not allowed to redistribute the Interactive Brokers Java client. So you’ll have to download the TwsApi.jar file yourself. You can download the stable version `10.19` from here: https://interactivebrokers.github.io and within the downloaded archive file you’ll find the required `TwsApi.jar`.
 Then install the jar file in the local Maven repository on your machine using the following command:
 
 ```shell
 ./mvnw install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=10.19 -Dpackaging=jar
 ```
-
 
 **⚠️ WARNING**\
 If the artefact cannot be found in your local Maven repository during a build, the ibkr profile with the module `roboquant-ibkr` will be skipped.

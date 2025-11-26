@@ -5,7 +5,6 @@ _Roboquant_ couldn’t have been developed without the use of free and open sour
 ## Software
 * [Kotlin](https://kotlinlang.org): modern, concise and safe programming language that makes writing code a joy.
 * [TA-Lib](https://ta-lib.org): an extensive and fast library of technical indicators.
-* [Ta-4j](https://github.com/ta4j/ta4j): another great library for technical analysis.
 * [ECharts-Java](https://github.com/ECharts-Java/ECharts-Java): a Java library that makes it easy to create [ECharts](https://echarts.apache.org) visualizations.
 * [Avro](https://avro.apache.org): data serialization system for fast and efficient storage of data.
 * [Hipparchus](https://www.hipparchus.org/index.html): a library of lightweight, self-contained mathematics and statistics components.

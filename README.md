@@ -121,9 +121,7 @@ The following list includes projects that extend the behavior of roboquant in so
 * Several sample notebooks and a docker container: https://github.com/neurallayer/roboquant-notebook
 
 ## Thanks
-Besides all the [great opensource software](docs/THIRDPARTY.md) that is powering _roboquant_, also special thanks to JetBrains for making a [license](https://www.jetbrains.com/community/opensource/) available for **IntelliJ IDEA**.
-
-![JetBrains](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png)
+Thanks to all the [great opensource software](docs/THIRDPARTY.md) that is powering _roboquant_.
 
 ## Disclaimer
 _Roboquant_ also comes with live trading capabilities. Using this is at your own risk, and there are **NO GUARANTEES** about the correct functioning of the software.

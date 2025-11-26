@@ -80,14 +80,14 @@ internal class LiveFeedTest {
 
         }
 
-        val feed = MyLiveFeed()
-
-        val tf = Timeframe.next(1.seconds)
 
         val jobs = ParallelJobs()
+        val feed = MyLiveFeed()
+        feed.start(delayInMillis = 10)
 
-
+        val tf = Timeframe.next(1.seconds)
         tf.sample(200.millis, 10, resolution = ChronoUnit.MILLIS).forEach {
+            // register multiple runs
             jobs.add {
                 val j = MemoryJournal(ProgressMetric())
                 org.roboquant.runAsync(feed, EMACrossover(), journal=j, timeframe=it)
@@ -96,11 +96,7 @@ internal class LiveFeedTest {
             }
         }
 
-        feed.start(delayInMillis = 50)
-        // println("feed started")
-
         jobs.joinAllBlocking()
-        // println("runs are done")
         feed.stop = true
     }
 
