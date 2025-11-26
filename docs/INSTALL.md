@@ -81,36 +81,35 @@ If you plan to make many changes and updates to the source code, checkout the [M
 If you want to deploy a regular release or snapshot, use the `-P release` option. This will include the required plugins and also generate source- and documentation-jar files. Additionally, it will also build and deploy the `roboquant-ibkr` module, so you’ll need the locally installed IBKR Java client library.
 
 ```shell
-./mvnw clean deploy -P release
+./mvnw clean deploy
 ```
 
 Of course, this requires the having the right credentials for deploying to the Maven Central repo. Also note that `autoReleaseAfterClose` of the `nexus-staging-maven-plugin` is set to false, meaning that if the deployment was sucessfull, you still need to (manually) release the software from staging to production.
 
 ## Interactive Brokers
-If you don’t require integration with Interactive Brokers for your trading, you can skip this step.
+If you don’t require integration with Interactive Brokers for your trading, you can skip the roboquqant-ibkr module.
+For example to compile and run tests, but not IBKR, use the following command:
+
+```shell
+ ./mvnw clean verify -pl '!roboquant-ibkr' 
+````
+
 
 Unfortunately, it is not allowed to redistribute the Interactive Brokers Java client. So you’ll have to download the TwsApi.jar file yourself. You can download the stable version `10.19` from here: https://interactivebrokers.github.io and within the downloaded archive file you’ll find the required `TwsApi.jar`.
-
 Then install the jar file in the local Maven repository on your machine using the following command:
 
 ```shell
-mvn install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=10.19 -Dpackaging=jar
+./mvnw install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=10.19 -Dpackaging=jar
 ```
 
-After this step, you can compile and install the modules including the `roboquant-ibkr` module
-
-```shell
-./mvnw install -P ibkr
-```
 
 **⚠️ WARNING**\
 If the artefact cannot be found in your local Maven repository during a build, the ibkr profile with the module `roboquant-ibkr` will be skipped.
 
 ## Documentation
-There is a special `doc` profile to generate documentation and see if there is something missing. You can run the following command to find missing documentation:
 
 ```shell
-./mvnw dokka:dokka -P doc | grep WARNING
+./mvnw dokka:dokka | grep "Undocumented"
 ```
 
 Please note the `release` profile has its own dokka task to generate a javadoc jar file.

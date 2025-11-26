@@ -44,7 +44,7 @@ enum class SignalType {
 }
 
 /**
- * Default value for a BUY rating
+ * Default value for a BUY rating.
  */
 const val BUY = 1.0
 

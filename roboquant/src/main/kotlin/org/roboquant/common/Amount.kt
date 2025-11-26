@@ -133,9 +133,13 @@ class Amount(val currency: Currency, val value: Double)  {
         return Wallet(this)
     }
 
+    /** @suppress */
     companion object {
 
-        var converter: ExchangeRates = NoExchangeRates()
+        /**
+         * Holds the currently active exchange convertor
+         */
+        private var converter: ExchangeRates = NoExchangeRates()
 
         fun registerConvertor(converter: ExchangeRates) {
             Amount.converter = converter

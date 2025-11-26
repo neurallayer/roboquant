@@ -13,11 +13,34 @@ import kotlin.math.max
  */
 class BasicJournal(private val printToConsole: Boolean = false) : Journal {
 
+    /**
+     * Number of items
+     */
     var nItems: Long = 0L
+
+    /**
+     * Number of orders created
+     */
     var nOrders: Long = 0L
+
+    /**
+     * Number of events
+     */
     var nEvents: Long = 0L
+
+    /**
+     * Maximum number of open positions at the same time
+     */
     var maxPositions: Int = 0
+
+    /**
+     * Number of signals generated
+     */
     var nSignals: Long = 0L
+
+    /**
+     * Last time an event was received
+     */
     var lastTime: Instant? = null
 
     override fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) {

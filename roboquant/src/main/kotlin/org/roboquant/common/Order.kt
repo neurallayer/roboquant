@@ -11,6 +11,7 @@ enum class TIF {
  * - New create orders don't have an id yet until it is set by the broker implementation.
  * - Cancel orders are orders with a known id and size zero. Only cancellation orders can have a size of zero
  * - Modify orders are orders with a known id but with updated properties like size and limit.
+ *
  */
 data class Order(
     val asset: Asset,
@@ -20,9 +21,15 @@ data class Order(
     val tag: String = ""
 )  {
 
+    /**
+     * True if a BUY order, false otherwise
+     */
     val buy: Boolean
         get() = size > 0
 
+    /**
+     * True is a SELL order, false otherwise
+     */
     val sell: Boolean
         get() = size < 0
 
