@@ -121,10 +121,10 @@ class TaLibSignalStrategy(
     override fun createSignals(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
         val time = event.time
-        for (priceAction in event.prices.values.filterIsInstance<PriceBar>()) {
-            val asset = priceAction.asset
+        for (priceItem in event.prices.values.filterIsInstance<PriceBar>()) {
+            val asset = priceItem.asset
             val buffer = history.getOrPut(asset) { PriceBarSeries(initialCapacity) }
-            if (buffer.add(priceAction, time)) {
+            if (buffer.add(priceItem, time)) {
                 try {
                     val signal = block.invoke(taLib, asset, buffer)
                     signals.addNotNull(signal)

@@ -41,8 +41,8 @@ internal class CashAccountTest {
         internal fun update(broker: Broker, asset: Asset, price: Number, orderSize: Int = 0): Account {
             val p = price.toDouble()
             val orders = if (orderSize == 0) emptyList() else listOf(Order(asset, Size(orderSize), p))
-            val action = TradePrice(asset, p)
-            val event = Event(Instant.now(), listOf(action))
+            val item = TradePrice(asset, p)
+            val event = Event(Instant.now(), listOf(item))
             broker.placeOrders(orders)
             return broker.sync(event)
         }

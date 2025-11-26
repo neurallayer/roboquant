@@ -85,8 +85,8 @@ class LiveTestFeed(
     override suspend fun play(channel: EventChannel) {
         for (intRange in prices) {
             for (price in intRange) {
-                val action = getAction(price.toDouble())
-                val event = Event(Instant.now(), listOf(action))
+                val item = getAction(price.toDouble())
+                val event = Event(Instant.now(), listOf(item))
                 channel.send(event)
                 delay(delayInMillis.toLong())
             }

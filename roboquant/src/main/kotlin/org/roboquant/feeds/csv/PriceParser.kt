@@ -93,7 +93,7 @@ class PriceBarParser(
             val str = line[volume]
             if (str.isBlank()) Double.NaN else str.toDouble()
         } else Double.NaN
-        val action = PriceBar(
+        val pb = PriceBar(
             asset,
             line[open].toDouble(),
             line[high].toDouble(),
@@ -102,8 +102,8 @@ class PriceBarParser(
             volume,
             timeSpan
         )
-        if (priceAdjust) action.adjustClose(line[adjustedClose].toDouble())
-        return action
+        if (priceAdjust) pb.adjustClose(line[adjustedClose].toDouble())
+        return pb
     }
 
 }

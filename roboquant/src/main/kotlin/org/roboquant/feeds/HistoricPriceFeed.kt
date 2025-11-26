@@ -71,12 +71,12 @@ open class HistoricPriceFeed : HistoricFeed {
     }
 
     /**
-     * Add a new [action] to this feed at the provided [time]
+     * Add a new [item] to this feed at the provided [time]
      */
     @Synchronized
-    protected fun add(time: Instant, action: PriceItem) {
+    protected fun add(time: Instant, item: PriceItem) {
         val items = events.getOrPut(time) { mutableListOf() }
-        items.add(action)
+        items.add(item)
     }
 
     /**

@@ -28,7 +28,7 @@ import java.time.Instant
 import kotlin.collections.iterator
 
 /**
- * Indicator calculates zero or more values based on an action and the time. Indicators are not used in a normal back
+ * Indicator calculates zero or more values based on an item and the time. Indicators are not used in a normal back
  * test, but rather come in handy when wanting to understand the outcome of some logic.
  *
  * A typical use-case is using a Chart to plot an indicator, possible together with the prices of an asset.
@@ -61,9 +61,9 @@ fun Feed.apply(
     for (asset in assets) {
         indicator.clear()
         val postfix = asset.symbol.lowercase()
-        apply<PriceItem>(timeframe = timeframe) { action, time ->
-            if (action.asset == asset) {
-                val metric = indicator.calculate(action, time)
+        apply<PriceItem>(timeframe = timeframe) { item, time ->
+            if (item.asset == asset) {
+                val metric = indicator.calculate(item, time)
                 for ((key, value) in metric) {
                     val k = if (addSymbolPostfix) "$key.$postfix" else key
                     val l = result.getOrPut(k) { mutableListOf() }

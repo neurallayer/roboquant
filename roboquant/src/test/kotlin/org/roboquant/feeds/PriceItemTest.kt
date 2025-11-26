@@ -56,20 +56,20 @@ internal class PriceItemTest {
     @Test
     fun testOrderBookEmpty() {
         val asset = TestData.euStock()
-        val action = OrderBook(asset, emptyList(), emptyList())
-        assertTrue(action.asks.isEmpty())
-        assertTrue(action.bids.isEmpty())
-        assertEquals(0.0, action.getVolume())
+        val item = OrderBook(asset, emptyList(), emptyList())
+        assertTrue(item.asks.isEmpty())
+        assertTrue(item.bids.isEmpty())
+        assertEquals(0.0, item.getVolume())
     }
 
     @Test
     fun priceBar() {
         val asset = TestData.euStock()
-        val action = PriceBar(asset, 10, 12, 8, 11, 1000)
-        assertEquals(10.0, action.getPrice("OPEN"))
-        assertEquals(12.0, action.getPrice("HIGH"))
-        assertEquals(8.0, action.getPrice("LOW"))
-        assertEquals(11.0, action.getPrice("CLOSE"))
+        val item = PriceBar(asset, 10, 12, 8, 11, 1000)
+        assertEquals(10.0, item.getPrice("OPEN"))
+        assertEquals(12.0, item.getPrice("HIGH"))
+        assertEquals(8.0, item.getPrice("LOW"))
+        assertEquals(11.0, item.getPrice("CLOSE"))
 
         val action2 = PriceBar(asset, 10, 12, 8, 11)
         assertTrue(action2.volume.isNaN())
@@ -80,12 +80,12 @@ internal class PriceItemTest {
     @Test
     fun priceBarMethods() {
         val asset = TestData.euStock()
-        val action = PriceBar(asset, 10, 12, 8, 11, 1000)
-        assertEquals(10.0, action.open)
-        assertEquals(12.0, action.high)
-        assertEquals(8.0, action.low)
-        assertEquals(11.0, action.close)
-        assertEquals(1000.0, action.volume)
+        val item = PriceBar(asset, 10, 12, 8, 11, 1000)
+        assertEquals(10.0, item.open)
+        assertEquals(12.0, item.high)
+        assertEquals(8.0, item.low)
+        assertEquals(11.0, item.close)
+        assertEquals(1000.0, item.volume)
     }
 
     @Test
@@ -104,18 +104,18 @@ internal class PriceItemTest {
     @Test
     fun orderBook() {
         val asset = TestData.euStock()
-        val action = OrderBook(
+        val item = OrderBook(
             asset,
             listOf(OrderBook.OrderBookEntry(100.0, 10.0), OrderBook.OrderBookEntry(100.0, 10.0)),
             listOf(OrderBook.OrderBookEntry(100.0, 9.0), OrderBook.OrderBookEntry(100.0, 9.0))
         )
-        assertEquals(400.0, action.getVolume())
-        assertEquals(2, action.asks.size)
-        assertEquals(2, action.bids.size)
-        assertEquals(9.5, action.getPrice())
-        assertEquals(0.1, action.spread)
-        assertEquals(9.0, action.bestBid)
-        assertEquals(10.0, action.bestOffer)
+        assertEquals(400.0, item.getVolume())
+        assertEquals(2, item.asks.size)
+        assertEquals(2, item.bids.size)
+        assertEquals(9.5, item.getPrice())
+        assertEquals(0.1, item.spread)
+        assertEquals(9.0, item.bestBid)
+        assertEquals(10.0, item.bestOffer)
     }
 
     @Test

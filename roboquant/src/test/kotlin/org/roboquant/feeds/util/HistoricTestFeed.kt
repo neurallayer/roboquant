@@ -52,8 +52,8 @@ class HistoricTestFeed(
         var now = start
         for (range in prices) {
             for (price in range) {
-                val action = getAction(asset, price.toDouble())
-                add(now, action)
+                val item = getAction(asset, price.toDouble())
+                add(now, item)
                 now += timeSpan
             }
         }

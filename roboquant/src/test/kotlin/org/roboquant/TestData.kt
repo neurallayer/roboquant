@@ -105,8 +105,8 @@ internal object TestData {
         var price = 100.0
         repeat(n) {
             if (n % 2 == 0) price += 0.01 * n else price -= 0.01 * n
-            val action = TradePrice(asset, price)
-            val event = Event(start + it.days, listOf(action))
+            val item = TradePrice(asset, price)
+            val event = Event(start + it.days, listOf(item))
             result.add(event)
         }
         return result

@@ -20,9 +20,9 @@ class Event(val time: Instant, val items: List<Item>) : Comparable<Event> {
      */
     val prices: Map<Asset, PriceItem> by lazy {
         buildMap(items.size) {
-            for (action in items) {
-                if (action is PriceItem) {
-                    set(action.asset, action)
+            for (item in items) {
+                if (item is PriceItem) {
+                    set(item.asset, item)
                 }
             }
         }
@@ -58,7 +58,7 @@ class Event(val time: Instant, val items: List<Item>) : Comparable<Event> {
     override fun compareTo(other: Event): Int = time.compareTo(other.time)
 
     /**
-     * Return true if this is event has at least one action, false otherwise
+     * Return true if this is event has at least one item, false otherwise
      */
     fun isNotEmpty(): Boolean = items.isNotEmpty()
 

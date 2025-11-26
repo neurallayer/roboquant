@@ -126,9 +126,9 @@ open class PriceSeries(private var capacity: Int) {
  */
 fun MutableMap<Asset, PriceSeries>.addAll(event: Event, capacity: Int, priceType: String = "DEFAULT"): Set<Asset> {
     val result = mutableSetOf<Asset>()
-    for ((asset, action) in event.prices) {
+    for ((asset, item) in event.prices) {
         val priceSeries = getOrPut(asset) { PriceSeries(capacity) }
-        priceSeries.add(action.getPrice(priceType))
+        priceSeries.add(item.getPrice(priceType))
         if (priceSeries.isFull()) result.add(asset)
     }
     return result

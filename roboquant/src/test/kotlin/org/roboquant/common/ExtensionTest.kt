@@ -16,6 +16,7 @@
 
 package org.roboquant.common
 
+import org.junit.jupiter.api.assertThrows
 import java.time.Instant
 import kotlin.io.path.Path
 import kotlin.test.*
@@ -92,9 +93,8 @@ internal class ExtensionTest {
         val s = "ABCDEF"
         val t = "ABC_DEF"
         assertEquals(s.toCurrencyPair(), t.toCurrencyPair())
-        assertNull("dummy".toCurrencyPair())
+        assertThrows<RoboquantException> {  "dummy".toCurrencyPair() }
     }
-
 
     @Test
     fun instant() {

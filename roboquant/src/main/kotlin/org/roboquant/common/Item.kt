@@ -40,7 +40,7 @@ interface Item
 interface PriceItem : Item {
 
     /**
-     * The underlying asset of the price action
+     * The underlying asset of the price item
      */
     val asset: Asset
 
@@ -80,7 +80,7 @@ enum class PriceItemType {
 
 /**
  * Provides open, high, low, and close prices and volume for a single asset. If the volume is not available, it
- * will return Double.NaN instead. Often this type of price action is also referred to as a candlestick.
+ * will return Double.NaN instead. Often this type of price item is also referred to as a candlestick.
  *
  * To optimize memory and reduce GC overhead, internally the values are stored in a DoubleArray.
  *
@@ -210,7 +210,7 @@ data class TradePrice(override val asset: Asset, val price: Double, val volume: 
 
     /**
      * Returns the underlying [price].
-     * Since this action only holds a single price, the [type] parameter is ignored.
+     * Since this item only holds a single price, the [type] parameter is ignored.
      */
     override fun getPrice(type: String): Double {
         return price

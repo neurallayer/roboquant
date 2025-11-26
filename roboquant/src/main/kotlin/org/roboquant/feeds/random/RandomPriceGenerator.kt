@@ -76,14 +76,14 @@ internal class RandomPriceGenerator(
         for ((idx, asset) in assets.withIndex()) {
             val lastPrice = prices[idx]
             val price = lastPrice.nextPrice().coerceAtLeast(priceChange * 2.0)
-            val action = when (priceType) {
+            val item = when (priceType) {
                 PriceItemType.BAR -> priceBar(asset, price)
                 PriceItemType.TRADE -> tradePrice(asset, price)
                 PriceItemType.QUOTE -> priceQupte(asset, price)
                 else -> throw UnsupportedOperationException("Unknown price type: $priceType")
             }
 
-            add(action)
+            add(item)
             prices[idx] = price
         }
     }

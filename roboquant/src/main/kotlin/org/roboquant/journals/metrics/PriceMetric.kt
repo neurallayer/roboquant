@@ -32,9 +32,9 @@ class PriceMetric(private val priceType: String = "DEFAULT") : Metric {
      * @see Metric.calculate
      */
     override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) = buildMap {
-        for (action in event.prices.values) {
-            val name = "price.$priceType.${action.asset.symbol}".lowercase()
-            put(name, action.getPrice(priceType))
+        for (item in event.prices.values) {
+            val name = "price.$priceType.${item.asset.symbol}".lowercase()
+            put(name, item.getPrice(priceType))
         }
     }
 

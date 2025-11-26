@@ -42,7 +42,7 @@ import kotlin.math.min
  * 3. PriceQuote (midpoint)
  * 4. OrderBook (midpoint)
  *
- * If an action is not recognized, it is ignored.
+ * If an item is not recognized, it is ignored.
  *
  * @property feed the feed to use that has the prices that need to be aggregated
  * @property aggregationPeriod the aggregation period, for example `15.minutes`
@@ -100,8 +100,8 @@ class AggregatorFeed(
                     } while (expiration < time)
                 }
 
-                for (action in event.items) {
-                    val pb = getPriceBar(action, aggregationPeriod) ?: continue
+                for (item in event.items) {
+                    val pb = getPriceBar(item, aggregationPeriod) ?: continue
                     val asset = pb.asset
                     val entry = history[asset]
                     if (entry == null) {

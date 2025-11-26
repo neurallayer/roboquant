@@ -44,10 +44,10 @@ private class FastStrategy(private val skip: Int) : Strategy {
 
     override fun createSignals(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
-        for (action in event.items.filterIsInstance<PriceItem>()) {
+        for (item in event.items.filterIsInstance<PriceItem>()) {
             steps++
             if ((steps % (skip + 1)) == 0) {
-                val signal = if (buy) Signal.buy(action.asset) else Signal.sell(action.asset)
+                val signal = if (buy) Signal.buy(item.asset) else Signal.sell(item.asset)
                 signals.add(signal)
                 buy = !buy
             }
@@ -74,8 +74,8 @@ private class FastFeed(nAssets: Int, val events: Int) : Feed {
         repeat(nAssets) { assets.add(Stock("TEST-$it")) }
         val data = doubleArrayOf(100.0, 101.0, 99.0, 100.0, 10000.0)
         for (asset in assets) {
-            val action = PriceBar(asset, data)
-            items.add(action)
+            val item = PriceBar(asset, data)
+            items.add(item)
         }
     }
 
@@ -97,7 +97,7 @@ private class FastFeed(nAssets: Int, val events: Int) : Feed {
  */
 private object Performance {
 
-    private const val SKIP = 999 // create signal in 1 out of 999 price-action
+    private const val SKIP = 999 // create signal in 1 out of 999 price-items
     private fun getStrategy(skip: Int): Strategy = FastStrategy(skip)
 
     /**

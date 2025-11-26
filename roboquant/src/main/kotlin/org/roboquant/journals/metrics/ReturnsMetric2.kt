@@ -82,8 +82,8 @@ class ReturnsMetric2(
     private fun updateBenchmark(event: Event) {
         var benchmarkReturn = 0.0
         var n = 0
-        for ((asset, action) in event.prices) {
-            val price = action.getPrice(priceType)
+        for ((asset, item) in event.prices) {
+            val price = item.getPrice(priceType)
             val lastPrice = prices[asset]
             if (lastPrice != null) {
                 val r = (price - lastPrice) / lastPrice
