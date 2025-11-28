@@ -31,6 +31,7 @@ import java.time.ZoneId
  * @property initialDeposit initial deposit, default is 1 million USD
  * @param baseCurrency the base currency to use for reporting amounts, default is the (first) currency found in the
  * initial deposit
+ * @param slippage the price slippage as a percentage (0.001 = 0.1%). Default is 0.0
  * @property accountModel the account model (like cash or margin) to use, default is [CashAccountModel]
  * @property exchangeZoneId the tiemzone of the exchange, used for GTD time in force calculations
  * @constructor Create a new instance of SimBroker
@@ -38,8 +39,9 @@ import java.time.ZoneId
 open class SimBroker(
     val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
+    val slippage: Double = 0.0,
     private val accountModel: AccountModel = CashAccountModel(),
-    private val exchangeZoneId: ZoneId = ZoneId.of("UTC")
+    private val exchangeZoneId: ZoneId = ZoneId.of("UTC"),
 ) : Broker {
 
     /**
@@ -68,6 +70,42 @@ open class SimBroker(
 
     private fun deleteOrder(order: Order) {
         account.deleteOrder(order)
+    }
+
+    /**
+     * Get the execution price for an open order. The default implementation is:
+     *
+     * - For quotes return the ask or bid price depending on BUY or SELL.
+     * - For price bars return the open price
+     * - For other price types, return the default price
+     *
+     * Prices are additional corrected for [slippage], where for buy orders the price
+     * becomes higher and for sell orders the price becomes lower.
+     */
+    open fun getExecutionPrice(order: Order, item: PriceItem) : Double {
+        val corr = if (order.buy) (1.0 + slippage) else (1.0 - slippage)
+        return when (item) {
+            is PriceQuote -> if (order.buy) item.askPrice * corr else item.bidPrice * corr
+            is PriceBar -> item.open * corr
+            else -> item.getPrice() * corr
+        }
+    }
+
+    /**
+     * Calculate the fee (commision) for the order excution and return the monetary value
+     * in the currency of the underlying asset. You can overwrite this method if your broker
+     * uses commisions.
+     */
+    open fun getFee(order: Order, fill: Size, price: Double) : Double {
+        return 0.0
+    }
+
+    /**
+     * Return the fill size for the order to be used. Default implementation to
+     * fill the complete remaining order size, so no partial fills.
+     */
+    open fun getFill(order: Order, price: Double) : Size {
+        return order.remaining
     }
 
     /**
@@ -109,6 +147,9 @@ open class SimBroker(
 
     }
 
+    /**
+     * Has the order already expired
+     */
     private fun isExpired(order: Order, time: Instant): Boolean {
         if (order.tif == TIF.GTC) return false
         val orderDate = orderEntry[order.id]
@@ -129,15 +170,21 @@ open class SimBroker(
                 deleteOrder(order)
                 continue
             }
-            val price = event.getPrice(order.asset)
-            if (price != null) {
+            val priceItem = event.prices.get(order.asset)
+
+            // Only execute if there is a known market price for the asset
+            if (priceItem != null) {
+                val price = getExecutionPrice(order, priceItem)
                 if (order.isExecutable(price)) {
-                    val pnl = updatePosition(order.asset, order.size, price)
-                    val value = order.asset.value(order.size, price)
-                    account.cash.withdraw(value)
+                    val fill = getFill(order, price)
+                    val fee = getFee(order, fill, price)
+                    val pnl = updatePosition(order.asset, fill, price) - fee
+                    val cost = order.asset.value(fill, price) + fee
+                    account.cash.withdraw(cost)
                     val trade = Trade(order.asset, event.time, order.size, price, pnl)
+                    order.fill += fill
                     account.trades.add(trade)
-                    deleteOrder(order)
+                    if (order.remaining.iszero) deleteOrder(order)
                 }
             }
         }

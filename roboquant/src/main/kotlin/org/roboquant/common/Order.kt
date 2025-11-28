@@ -22,6 +22,13 @@ data class Order(
 )  {
 
     /**
+     * Return the remaining order size to be filled. This is a derived property
+     * based om the [size] and the [fill]
+     */
+    val remaining: Size
+        get() = size - fill
+
+    /**
      * True if a BUY order, false otherwise
      */
     val buy: Boolean
@@ -79,6 +86,13 @@ data class Order(
      */
     override fun toString(): String {
         return "asset=$asset id=$id tag=$tag"
+    }
+
+    /**
+     * Calculate the remaining value
+     */
+    fun value(price: Double) : Amount {
+        return asset.value(size, price)
     }
 
 }
