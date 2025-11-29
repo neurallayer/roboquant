@@ -79,7 +79,7 @@ open class SimBroker(
      * - For price bars return the open price
      * - For other price types, return the default price
      *
-     * Prices are additional corrected for [slippage], where for buy orders the price
+     * Prices are optionally corrected for [slippage], where for buy orders the price
      * becomes higher and for sell orders the price becomes lower.
      */
     open fun getExecutionPrice(order: Order, item: PriceItem) : Double {
