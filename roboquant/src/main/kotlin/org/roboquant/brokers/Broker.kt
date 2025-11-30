@@ -42,7 +42,7 @@ interface Broker {
      * Place new [orders] at this broker.
      *
      * Typically, this method will invoke the underlying broker API to place the orders and set the corresponding order-id.
-     * Place orders can also be used to update or cancel orders.
+     * Place orders can also be used to update or cancel existing orders.
      */
     fun placeOrders(orders: List<Order>)
 

@@ -72,7 +72,7 @@ fun run(
  * @param trader the trader to default, default is FlexTrader
  * @param timeframe the timeframe to limit this run to, default is `INFINITE` meaning all events in the feed will be used.
  * @param broker the broker to use, default is [SimBroker]
- * @param channel an event channel to use, default is an event channel with capacity of 10.
+ * @param channel an event channel to use, default is an event channel with a capacity of 10.
  * @param showProgressBar, should a progress-bar be shown, default is false.
  */
 suspend fun runAsync(

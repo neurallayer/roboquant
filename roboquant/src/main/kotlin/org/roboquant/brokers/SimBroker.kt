@@ -31,9 +31,9 @@ import java.time.ZoneId
  * @property initialDeposit initial deposit, default is 1 million USD
  * @param baseCurrency the base currency to use for reporting amounts, default is the (first) currency found in the
  * initial deposit
- * @param slippage the price slippage as a percentage (0.001 = 0.1%). Default is 0.0
+ * @param slippage the price slippage (0.001 = 0.1%). Default is 0.0, so no splippage
  * @property accountModel the account model (like cash or margin) to use, default is [CashAccountModel]
- * @property exchangeZoneId the tiemzone of the exchange, used for GTD time in force calculations
+ * @property exchangeZoneId the tiemzone of the exchange, used for GTD time in force calculations. Default is UTC
  * @constructor Create a new instance of SimBroker
  */
 open class SimBroker(
@@ -79,8 +79,8 @@ open class SimBroker(
      * - For price bars return the open price
      * - For other price types, return the default price
      *
-     * Prices are optionally corrected for [slippage], where for buy orders the price
-     * becomes higher and for sell orders the price becomes lower.
+     * Prices are optionally corrected for [slippage], where buy orders will be priced higher
+     * and sell orders will be priced lower.
      */
     open fun getExecutionPrice(order: Order, item: PriceItem) : Double {
         val corr = if (order.buy) (1.0 + slippage) else (1.0 - slippage)
@@ -92,9 +92,9 @@ open class SimBroker(
     }
 
     /**
-     * Calculate the fee (commision) for the order excution and return the monetary value
-     * in the currency of the underlying asset. You can overwrite this method if your broker
-     * uses commisions.
+     * Calculate the fee (commision) for the order fill and return the monetary value
+     * denoted in the currency of the underlying asset. You can overwrite this method
+     * if your broker uses commisions, since the default implementation returns 0.0
      */
     open fun getFee(order: Order, fill: Size, price: Double) : Double {
         return 0.0
@@ -102,43 +102,43 @@ open class SimBroker(
 
     /**
      * Return the fill size for the order to be used. Default implementation to
-     * fill the complete remaining order size, so no partial fills.
+     * fill the complete remaining order size, so thre are no partial fills.
      */
     open fun getFill(order: Order, price: Double) : Size {
         return order.remaining
     }
 
     /**
-     * Update the position and return the realized PNL
+     * Update the position of an asset based on a fill and return the realized PNL
      */
-    fun updatePosition(asset: Asset, size: Size, price: Double): Double {
+    private fun updatePosition(asset: Asset, fill: Size, price: Double): Double {
         val position = account.positions[asset]
 
         // Open Position
         if (position == null) {
-            account.positions[asset] = Position(size, price, price)
+            account.positions[asset] = Position(fill, price, price)
             return 0.0
         }
 
-        val newSize = position.size + size
+        val newSize = position.size + fill
 
         // Close position
         if (newSize.iszero) {
             account.positions.remove(asset)
-            return asset.value(size, position.avgPrice - price).value
+            return asset.value(fill, position.avgPrice - price).value
         }
 
         // Increase position
-        if (position.size.sign == size.sign) {
-            val avgPrice = (size.toDouble() * position.avgPrice + size.toDouble() * price) / newSize.toDouble()
+        if (position.size.sign == fill.sign) {
+            val avgPrice = (fill.toDouble() * position.avgPrice + fill.toDouble() * price) / newSize.toDouble()
             account.positions[asset] = Position(newSize, avgPrice = avgPrice, mktPrice = price)
             return 0.0
         }
 
         // Decrease position
-        if (size.absoluteValue <= position.size.absoluteValue) {
+        if (fill.absoluteValue <= position.size.absoluteValue) {
             account.positions[asset] = Position(newSize, position.avgPrice, price)
-            return asset.value(size, position.avgPrice - price).value
+            return asset.value(fill, position.avgPrice - price).value
         }
 
         // Switch position side
@@ -148,9 +148,9 @@ open class SimBroker(
     }
 
     /**
-     * Has the order already expired
+     * Is the order already expired.
      */
-    private fun isExpired(order: Order, time: Instant): Boolean {
+    open fun isExpired(order: Order, time: Instant): Boolean {
         if (order.tif == TIF.GTC) return false
         val orderDate = orderEntry[order.id]
         if (orderDate != null) {

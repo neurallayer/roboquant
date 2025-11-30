@@ -68,7 +68,7 @@ class Event(val time: Instant, val items: List<Item>) : Comparable<Event> {
     fun isEmpty(): Boolean = items.isEmpty()
 
     /**
-     * Provide the event time
+     * Simple display of an event
      */
     override fun toString(): String {
         return "Event(time=$time items=${items.size})"

@@ -81,13 +81,18 @@ class AvroFeed(private val file: File) : Feed {
 
     private val index by lazy { createIndex() }
 
+    /**
+     * Timeframe covered by this feed
+     */
     override val timeframe: Timeframe by lazy { calcTimeframe() }
 
     init {
         logger.info { "New AvroFeed file=$file exist=${exists()}" }
     }
 
-
+    /**
+     * Check if the underlying file exists
+     */
     fun exists(): Boolean = file.exists()
 
     private fun getReader(): DataFileReader<GenericRecord> {

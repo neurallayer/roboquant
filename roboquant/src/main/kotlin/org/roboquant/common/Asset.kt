@@ -58,10 +58,10 @@ interface Asset : Comparable<Asset> {
 
         internal const val SEP = ";"
 
-        private val cache = ConcurrentHashMap<String, Asset>()
+        private val deserializedCache = ConcurrentHashMap<String, Asset>()
 
         fun deserialize(value: String): Asset {
-            return cache.getOrPut(value) {
+            return deserializedCache.getOrPut(value) {
                 val (assetType, serString) = value.split(SEP, limit = 2)
                 val deserializerFunction = registry.getValue(assetType)
                 deserializerFunction(serString)
@@ -86,11 +86,18 @@ interface Asset : Comparable<Asset> {
 
 }
 
-fun deserializeOption(value: String): Asset {
+private fun deserializeOption(value: String): Asset {
     val (symbol, currencyCode) = value.split(SEP)
     return Option(symbol, Currency.getInstance(currencyCode))
 }
 
+/**
+ * Option asset representing an option contract
+ *
+ * @property symbol the symbol of the option contract
+ * @property currency the currency used for pricing, e.g. USD
+ * @constructor Create a new Option asset
+ */
 data class Option(override val symbol: String, override val currency: Currency) : Asset {
 
     override fun serialize(): String {
@@ -98,11 +105,18 @@ data class Option(override val symbol: String, override val currency: Currency) 
     }
 }
 
-fun deserializeCrypto(value: String): Asset {
+private fun deserializeCrypto(value: String): Asset {
     val (symbol, currencyCode) = value.split(SEP)
     return Crypto(symbol, Currency.getInstance(currencyCode))
 }
 
+/**
+ * Crypto asset representing a cryptocurrency
+ *
+ * @property symbol the symbol of the cryptocurrency, e.g. BTC
+ * @property currency the currency used for pricing, e.g. USD
+ * @constructor Create a new Crypto asset
+ */
 data class Crypto(override val symbol: String, override val currency: Currency) : Asset {
 
     override fun serialize(): String {
@@ -119,11 +133,18 @@ data class Crypto(override val symbol: String, override val currency: Currency) 
 
 }
 
-fun deserializeStock(value: String): Asset {
+private fun deserializeStock(value: String): Asset {
     val (symbol, currencyCode) = value.split(SEP)
     return Stock(symbol, Currency.getInstance(currencyCode))
 }
 
+/**
+ * Stock asset representing a stock
+ *
+ * @property symbol the symbol of the stock, e.g. AAPL
+ * @property currency the currency used for pricing, default is USD
+ * @constructor Create a new Stock asset
+ */
 data class Stock(override val symbol: String, override val currency: Currency = Currency.USD) : Asset {
 
     override fun serialize(): String {
@@ -132,14 +153,20 @@ data class Stock(override val symbol: String, override val currency: Currency = 
 
 }
 
-fun deserializeForex(value: String): Asset {
+private fun deserializeForex(value: String): Asset {
     val (symbol, currencyCode) = value.split(SEP)
     return Forex(symbol, Currency.getInstance(currencyCode))
 }
 
 
 
-
+/**
+ * Forex asset representing a currency pair
+ *
+ * @property symbol the currency pair symbol, e.g. EURUSD
+ * @property currency the quote currency of the pair
+ * @constructor Create a new Forex asset
+ */
 data class Forex(override val symbol: String, override val currency: Currency) : Asset {
 
     override fun serialize(): String {
@@ -158,13 +185,13 @@ data class Forex(override val symbol: String, override val currency: Currency) :
 
 
 /**
- * Get an asset based on its [symbol] name. Will throw a NoSuchElementException if no asset is found. If there are
+ * Find the first asset based on its [symbol] name. Will throw a NoSuchElementException if no asset is found. If there are
  * multiple assets with the same symbol, the first one will be returned.
  */
 fun Collection<Asset>.getBySymbol(symbol: String): Asset = first { it.symbol == symbol }
 
 /**
- * Get all unique symbols from the assets
+ * Get the unique symbols from the collection of assets as a String array.
  */
 val Collection<Asset>.symbols: Array<String>
     get() = map { it.symbol }.distinct().toTypedArray()

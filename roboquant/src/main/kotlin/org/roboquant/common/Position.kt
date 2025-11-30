@@ -26,7 +26,7 @@ import kotlin.collections.iterator
  * Position instances are immutable, so updating a position requires creating a new instance. The actual [size] of the
  * position is precise (doesn't lose precision like is the case with double) using the [Size] class.
  *
- * @property size size of the position, not including any contract multiplier defined at asset contract level
+ * @property size size of the position, not including any contract multiplier defined at the asset contract level
  * @property avgPrice average price paid, in the currency denoted by the asset
  * @property mktPrice last known market price for this asset
  * @property lastUpdate When was this position last updated, typically with a new market price
@@ -45,31 +45,31 @@ data class Position(
     companion object {
 
         /**
-         * Create an empty position
+         * Create an empty position with [size] and [mktPrice] set to 0
          */
         fun empty(): Position = Position(Size.ZERO, mktPrice = 0.0)
     }
 
     /**
-     * Returns true if this is a closed position, false otherwise
+     * Returns true if this is a closed position ([size] == 0), false otherwise
      */
     val closed: Boolean
         get() = size.iszero
 
     /**
-     * IReturns true if this is a short position, false otherwise
+     * Returns true if this is a short position ([size] < 0), false otherwise
      */
     val short: Boolean
         get() = size.isNegative
 
     /**
-     * Returns true if this is a long position, false otherwise
+     * Returns true if this is a long position ([size] > 0), false otherwise
      */
     val long: Boolean
         get() = size.isPositive
 
     /**
-     * Returns true if this is an open position, false otherwise
+     * Returns true if this is an open position ([size] != 0), false otherwise
      */
     val open: Boolean
         get() = size.nonzero

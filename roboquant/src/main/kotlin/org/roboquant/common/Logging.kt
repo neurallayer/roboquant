@@ -23,7 +23,7 @@ import kotlin.reflect.KClass
 
 /**
  * Simple Logging object that provides utility methods to create loggers and supports lazy logging
- * It is an implementation of [org.slf4j.Logger].
+ * It is an implementation of [org.slf4j.Logger] API.
  */
 object Logging {
 

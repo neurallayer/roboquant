@@ -216,6 +216,9 @@ data class TradePrice(override val asset: Asset, val price: Double, val volume: 
         return price
     }
 
+    /**
+     * Return the volume
+     */
     override fun getVolume(type: String): Double {
         return volume
     }

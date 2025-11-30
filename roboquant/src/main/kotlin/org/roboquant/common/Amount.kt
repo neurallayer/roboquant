@@ -72,7 +72,7 @@ class Amount(val currency: Currency, val value: Double)  {
     operator fun unaryMinus(): Amount = Amount(currency, -value)
 
     /**
-     * Does this amount contain a positive value
+     * Does this amount contain a positive value.
      */
     val isPositive: Boolean
         get() = value > 0.0

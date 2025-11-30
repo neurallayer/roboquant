@@ -54,13 +54,15 @@ interface Account {
     fun equity(): Wallet = cash + marketValue()
 
     /**
-     * The unique set of assets hold in the open [positions]
+     * The unique set of assets hold in the [positions]
      */
     val assets: Set<Asset>
         get() = positions.keys
 
     /**
-     * Return the market value of the open positions, optionally filter by one or more asset.
+     * Return the market value of the open [positions], optionally filter by one or more asset.
+     * If no assets are provided, the market value of all open [positions] is returned. If there is
+     * not match, an empty [Wallet] will be returned.
      */
     fun marketValue(vararg assets: Asset): Wallet {
         val v = positions.filterKeys { assets.isEmpty() || it in assets }
@@ -79,8 +81,9 @@ interface Account {
     fun positionSize(asset: Asset) : Size = positions[asset]?.size ?: Size.ZERO
 
     /**
-     * Return the unrealized PNL of the open positions, optionally filter by one or more asset. If there is
-     * not match, an empty [Wallet] will be returned.
+     * Return the unrealized PNL of the open [positions], optionally filter by one or more asset. If there is
+     * not match, an empty [Wallet] will be returned. If no assets are provided, the unrealized PNL of all open
+     * [positions] is returned.
      */
     fun unrealizedPNL(vararg assets: Asset): Wallet {
         val v = positions.filterKeys { assets.isEmpty() || it in assets }
@@ -93,7 +96,8 @@ interface Account {
     }
 
     /**
-     * Convert an [amount] to the account [baseCurrency] using last update of the account as a timestamp
+     * Convert an [amount] to the account [baseCurrency] using last update of the account as a timestamp.
+     *
      */
     fun convert(amount: Amount): Amount = amount.convert(baseCurrency, lastUpdate)
 

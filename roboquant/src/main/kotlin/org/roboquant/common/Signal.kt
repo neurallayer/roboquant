@@ -46,13 +46,13 @@ enum class SignalType {
 /**
  * Default value for a BUY rating.
  */
-const val BUY = 1.0
+const val BUY: Double = 1.0
 
 
 /**
  * Default value for a SELL rating
  */
-const val SELL = -1.0
+const val SELL: Double = -1.0
 
 /**
  * Signal provides a rating for an [Asset] and is typically created by a strategy.

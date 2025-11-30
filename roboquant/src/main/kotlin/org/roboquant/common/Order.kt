@@ -7,11 +7,16 @@ enum class TIF {
 }
 
 /**
- * Data class for all types of orders. Every order has a asset, size and limit specified. The logic that is applied:
+ * Data class for all orders. The logic that is applied:
  * - New create orders don't have an id yet until it is set by the broker implementation.
  * - Cancel orders are orders with a known id and size zero. Only cancellation orders can have a size of zero
  * - Modify orders are orders with a known id but with updated properties like size and limit.
  *
+ * @property asset the underlying asset
+ * @property size the size the order
+ * @property limit the limit price
+ * @property tif the time-in-force policy, default is DAY
+ * @property tag any optional tag string, default is empty string
  */
 data class Order(
     val asset: Asset,
@@ -23,7 +28,7 @@ data class Order(
 
     /**
      * Return the remaining order size to be filled. This is a derived property
-     * based om the [size] and the [fill]
+     * based om the [size] minus the [fill]
      */
     val remaining: Size
         get() = size - fill
