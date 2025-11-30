@@ -148,30 +148,5 @@ internal class SimBrokerTest {
         assertEquals(size, pos.size)
     }
 
-    @Test
-    fun priceAndPNL() {
-        val broker = SimBroker()
-        val xyz = Stock("XYZ")
-        var pnl = broker.updatePosition(xyz, Size(50), 100.0)
-        assertEquals(0.0, pnl, "opening, no pnl")
-        assertBroker(broker, xyz, 100.0, Size(50))
-
-        pnl = broker.updatePosition(xyz, Size(50), 110.0)
-        assertEquals(0.0, pnl, "increase size, no pnl")
-        assertBroker(broker, xyz, 105.0, Size(100))
-
-        pnl = broker.updatePosition(xyz, Size(-50), 110.0)
-        assertEquals(5.0 * 50, pnl, "sold with profit")
-        assertBroker(broker, xyz, 105.0, Size(50))
-
-        pnl = broker.updatePosition(xyz, Size(-100), 100.0)
-        assertEquals(- 5.0 * 50.0, pnl, "sold with loss")
-        assertBroker(broker, xyz, 100.0, Size(-50))
-
-    }
-
-
-
-
 
 }

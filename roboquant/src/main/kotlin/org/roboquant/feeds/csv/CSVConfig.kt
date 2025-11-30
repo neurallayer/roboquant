@@ -235,7 +235,7 @@ data class CSVConfig(
      * @param line
      * @return
      */
-    fun processLine(line: List<String>, asset: Asset): PriceEntry {
+    internal fun processLine(line: List<String>, asset: Asset): PriceEntry {
         val now = timeParser.parse(line)
         val item = priceParser.parse(line, asset)
         return PriceEntry(now, item)

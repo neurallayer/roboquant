@@ -137,6 +137,9 @@ class CSVFeed(
 
 }
 
+/**
+ * Internal class to hold a time & price entry
+ */
 internal class PriceEntry(val time: Instant, val price: PriceItem) : Comparable<PriceEntry> {
 
     /**
