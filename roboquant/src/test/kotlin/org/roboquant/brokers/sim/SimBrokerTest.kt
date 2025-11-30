@@ -139,14 +139,4 @@ internal class SimBrokerTest {
 
     }
 
-
-    private fun assertBroker(broker: SimBroker, asset: Asset, price: Double, size: Size) {
-        val account = broker.sync()
-        val pos = account.positions[asset]
-        assertNotNull(pos)
-        assertEquals(price,  pos.avgPrice)
-        assertEquals(size, pos.size)
-    }
-
-
 }

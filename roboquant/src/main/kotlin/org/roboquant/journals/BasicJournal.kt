@@ -59,6 +59,7 @@ class BasicJournal(private val printToConsole: Boolean = false) : Journal {
     /**
      * Provide a string representation of the current state of this journal
      */
-    override fun toString(): String = "time=$lastTime items=$nItems signals=$nSignals orders=$nOrders max-positions=$maxPositions"
+    override fun toString(): String = 
+        "time=$lastTime items=$nItems signals=$nSignals orders=$nOrders max-positions=$maxPositions"
 
 }
