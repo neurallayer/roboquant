@@ -10,6 +10,7 @@ import kotlin.math.max
 /**
  * Tracks basic progress metrics and optionally print them to the console. This journal has very low overhead and provides
  * basic insights into what is happening.
+ * @property printToConsole Boolean whether to print the current state to the console on each tracked event
  */
 class BasicJournal(private val printToConsole: Boolean = false) : Journal {
 
@@ -55,8 +56,9 @@ class BasicJournal(private val printToConsole: Boolean = false) : Journal {
             println(this)
     }
 
-    override fun toString(): String {
-        return "time=$lastTime items=$nItems signals=$nSignals orders=$nOrders max-positions=$maxPositions"
-    }
+    /**
+     * Provide a string representation of the current state of this journal
+     */
+    override fun toString(): String = "time=$lastTime items=$nItems signals=$nSignals orders=$nOrders max-positions=$maxPositions"
 
 }

@@ -38,6 +38,9 @@ class MemoryJournal(private vararg val metrics: Metric) : MetricsJournal {
 
     private val history = TreeMap<Instant, Map<String, Double>>()
 
+    /** 
+     * Track the provided [event], [account], [signals] and [orders]
+     */
     override fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) {
         history[event.time] = buildMap {
             for (metric in metrics) {

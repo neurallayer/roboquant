@@ -167,8 +167,6 @@ class Currency private constructor(val currencyCode: String) {
     }
 
     /** @suppress */
-    override fun toString(): String {
-        return displayName
-    }
+    override fun toString(): String = displayName
 
 }

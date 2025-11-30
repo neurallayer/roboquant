@@ -67,37 +67,45 @@ object Logging {
             if (isErrorEnabled) error(messageProducer(), throwable)
         }
 
-        override fun makeLoggingEventBuilder(level: Level?): LoggingEventBuilder? {
-            return slf4jLogger.makeLoggingEventBuilder(level)
-        }
+        /**
+         * @see org.slf4j.Logger.makeLoggingEventBuilder
+         */
+        override fun makeLoggingEventBuilder(level: Level?): LoggingEventBuilder? = slf4jLogger.makeLoggingEventBuilder(level)
 
-        override fun atLevel(level: Level?): LoggingEventBuilder? {
-            return slf4jLogger.atLevel(level)
-        }
+        /**
+         * @see org.slf4j.Logger.atLevel
+         */
+        override fun atLevel(level: Level?): LoggingEventBuilder? = slf4jLogger.atLevel(level)
 
-        override fun isEnabledForLevel(level: Level?): Boolean {
-            return slf4jLogger.isEnabledForLevel(level)
-        }
+        /**
+         * @see org.slf4j.Logger.isEnabledForLevel
+         */         
+        override fun isEnabledForLevel(level: Level?): Boolean = slf4jLogger.isEnabledForLevel(level)
 
-        override fun atTrace(): LoggingEventBuilder? {
-            return slf4jLogger.atTrace()
-        }
+        /**
+         * @see org.slf4j.Logger.atTrace
+         */
+        override fun atTrace(): LoggingEventBuilder? = slf4jLogger.atTrace()
 
-        override fun atDebug(): LoggingEventBuilder? {
-            return slf4jLogger.atDebug()
-        }
+        /**
+         * @see org.slf4j.Logger.atDebug
+         */
+        override fun atDebug(): LoggingEventBuilder? = slf4jLogger.atDebug()
 
-        override fun atInfo(): LoggingEventBuilder? {
-            return slf4jLogger.atInfo()
-        }
+        /**
+         * @see org.slf4j.Logger.atInfo
+         */
+        override fun atInfo(): LoggingEventBuilder? = slf4jLogger.atInfo()
 
-        override fun atWarn(): LoggingEventBuilder? {
-            return slf4jLogger.atWarn()
-        }
+        /**
+         * @see org.slf4j.Logger.atWarn
+         */
+        override fun atWarn(): LoggingEventBuilder? = slf4jLogger.atWarn()
 
-        override fun atError(): LoggingEventBuilder? {
-            return slf4jLogger.atError()
-        }
+        /**
+         * @see org.slf4j.Logger.atError
+         */
+        override fun atError(): LoggingEventBuilder? = slf4jLogger.atError()    
 
     }
 

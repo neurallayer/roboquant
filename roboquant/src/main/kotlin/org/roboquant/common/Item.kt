@@ -73,6 +73,13 @@ interface PriceItem : Item {
 
 }
 
+/**
+ * Different types of PriceItems supported out of the box
+ * - BAR: PriceBar
+ * - QUOTE: PriceQuote
+ * - TRADE: TradePrice
+ * - BOOK: OrderBook
+ */
 enum class PriceItemType {
     BAR, QUOTE, TRADE, BOOK
 }

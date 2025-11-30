@@ -40,6 +40,9 @@ interface Asset : Comparable<Asset> {
     val symbol: String
     val currency: Currency
 
+    /**
+     * Serialize the asset to a string
+     */
     fun serialize(): String
 
     /**
@@ -47,7 +50,7 @@ interface Asset : Comparable<Asset> {
      * generate the appropriate symbol name.
      */
     companion object {
-        val registry: MutableMap<String, (String) -> Asset> = mutableMapOf<String, (String) -> Asset>()
+        internal val registry: MutableMap<String, (String) -> Asset> = mutableMapOf<String, (String) -> Asset>()
 
         init {
             registry["Stock"] = ::deserializeStock
@@ -60,6 +63,9 @@ interface Asset : Comparable<Asset> {
 
         private val deserializedCache = ConcurrentHashMap<String, Asset>()
 
+        /**
+         * Deserialize an asset from its string representation
+         */
         fun deserialize(value: String): Asset {
             return deserializedCache.getOrPut(value) {
                 val (assetType, serString) = value.split(SEP, limit = 2)
@@ -78,10 +84,10 @@ interface Asset : Comparable<Asset> {
         return if (size.iszero) Amount(currency, 0.0) else Amount(currency, size.toDouble() * price)
     }
 
-
-    override fun compareTo(other: Asset): Int {
-        return this.symbol.compareTo(other.symbol)
-    }
+    /**
+     * Compare this asset to another based on their symbol names.
+     */
+    override fun compareTo(other: Asset): Int = this.symbol.compareTo(other.symbol)
 
 
 }
@@ -100,9 +106,7 @@ private fun deserializeOption(value: String): Asset {
  */
 data class Option(override val symbol: String, override val currency: Currency) : Asset {
 
-    override fun serialize(): String {
-        return "Option$SEP$symbol$SEP$currency"
-    }
+    override fun serialize(): String = "Option$SEP$symbol$SEP$currency"
 }
 
 private fun deserializeCrypto(value: String): Asset {
@@ -119,9 +123,7 @@ private fun deserializeCrypto(value: String): Asset {
  */
 data class Crypto(override val symbol: String, override val currency: Currency) : Asset {
 
-    override fun serialize(): String {
-        return "Crypto$SEP$symbol$SEP$currency"
-    }
+    override fun serialize(): String = "Crypto$SEP$symbol$SEP$currency"
 
     companion object {
 
@@ -147,9 +149,7 @@ private fun deserializeStock(value: String): Asset {
  */
 data class Stock(override val symbol: String, override val currency: Currency = Currency.USD) : Asset {
 
-    override fun serialize(): String {
-        return "Stock$SEP$symbol$SEP$currency"
-    }
+    override fun serialize(): String = "Stock$SEP$symbol$SEP$currency"
 
 }
 
@@ -169,12 +169,16 @@ private fun deserializeForex(value: String): Asset {
  */
 data class Forex(override val symbol: String, override val currency: Currency) : Asset {
 
-    override fun serialize(): String {
-        return "Forex$SEP$symbol$SEP$currency"
-    }
+    /**
+     * Serialize the Forex asset to a string
+     */
+    override fun serialize(): String = "Forex$SEP$symbol$SEP$currency"
 
     companion object {
 
+        /**
+         * Create a Forex asset from a currency pair symbol
+         */
         fun fromSymbol(symbol: String): Forex {
             val (_, currency) = symbol.toCurrencyPair()
             return Forex(symbol, currency)

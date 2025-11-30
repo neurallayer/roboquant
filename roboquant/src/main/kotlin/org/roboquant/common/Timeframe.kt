@@ -422,9 +422,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      *
      * [rate] is expected to be provided as a fraction — for example, 1% is 0.01
      */
-    fun annualize(rate: Double): Double {
-        return (1.0 + rate).pow(toYears()) - 1.0
-    }
+    fun annualize(rate: Double): Double = (1.0 + rate).pow(toYears()) - 1.0
 
     /**
      * Convert this timeframe to years (using 365 days in a year).
@@ -437,9 +435,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     /**
      * Compare timeframes based on their [duration]
      */
-    operator fun compareTo(other: TimeSpan): Int {
-        return duration.compareTo(other.duration)
-    }
+    operator fun compareTo(other: TimeSpan): Int = duration.compareTo(other.duration)
 
 
 }

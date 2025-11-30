@@ -43,7 +43,7 @@ class CombinedFeed(vararg val feeds: Feed, private val channelCapacity: Int = 1)
     }
 
     /**
-     * Return the total timeframe of all the feeds combined
+     * Return the overall timeframe of all the feeds combined
      */
     override val timeframe: Timeframe
         get() {

@@ -137,16 +137,14 @@ class CSVFeed(
 
 }
 
-class PriceEntry(val time: Instant, val price: PriceItem) : Comparable<PriceEntry> {
+internal class PriceEntry(val time: Instant, val price: PriceItem) : Comparable<PriceEntry> {
 
     /**
      * Compares this object with the specified object for order. Returns zero if this object is equal
      * to the specified [other] object, a negative number if it's less than [other], or a positive number
      * if it's greater than [other].
      */
-    override fun compareTo(other: PriceEntry): Int {
-        return time.compareTo(other.time)
-    }
+    override fun compareTo(other: PriceEntry): Int = time.compareTo(other.time)
 
 }
 

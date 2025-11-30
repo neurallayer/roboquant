@@ -12,13 +12,23 @@ class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
 
     private val journals = mutableMapOf<String, MetricsJournal>()
 
+    /**
+     * Companion object to generate run names
+     */
     companion object {
         private var cnt = 0
 
+        /**
+         * Generate the next run name in the format run-<n>
+         */
         @Synchronized
         fun nextRun(): String = "run-${cnt++}"
     }
 
+    /**
+     * Get the journal for a specific [run]. If no journal exists yet for the run, a new one will be created
+     * using the provided function at construction time.
+     */
     @Synchronized
     fun getJournal(run: String = nextRun()): MetricsJournal {
         if (run !in journals) {
@@ -42,14 +52,23 @@ class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
      */
     fun getRuns() : Set<String> = journals.keys
 
+    /**
+     * Get the metric with the given [name] for all runs
+     */
     fun getMetric(name: String) : Map<String, TimeSeries> {
         return journals.mapValues { it.value.getMetric(name) }
     }
 
+    /**
+     * Get the metric with the given [name] for a specific [run]
+     */
     fun getMetric(name: String, run: String) : TimeSeries {
         return journals[run]?.getMetric(name) ?: TimeSeries(listOf(), doubleArrayOf())
     }
 
+    /**
+     * Get the names of all available metrics across all runs
+     */
     fun getMetricNames() : Set<String> {
         return journals.values.map { it.getMetricNames() }.flatten().toSet()
     }

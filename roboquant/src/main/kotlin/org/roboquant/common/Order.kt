@@ -1,6 +1,10 @@
 package org.roboquant.common
 
-
+/**
+ * Time-in-Force policies for orders
+ * - DAY: valid for the trading day only
+ * - GTC: Good-Til-Cancelled, remains active until explicitly cancelled
+ */ 
 enum class TIF {
     DAY,
     GTC
