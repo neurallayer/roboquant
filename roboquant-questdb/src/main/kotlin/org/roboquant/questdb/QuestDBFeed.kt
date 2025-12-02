@@ -81,6 +81,9 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
         tf
     }
 
+    /**
+     * Companion object for partitioning options and engine management
+     */
     @Suppress("unused")
     companion object Partition {
 
@@ -114,6 +117,9 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
 
         private var engines = mutableMapOf<Path, CairoEngine>()
 
+        /**
+         * Get or create a CairoEngine for the provided database path
+         */
         @Synchronized
         fun getEngine(dbPath: Path): CairoEngine {
             if (dbPath !in  engines) {
@@ -134,11 +140,17 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
             return engines.getValue(dbPath)
         }
 
+        /**
+         * Get the available runs (tables) in the database located at [dbPath]
+         */
         fun getRuns(dbPath: Path): Set<String> {
             val engine = getEngine(dbPath)
             return engine.tables().toSet()
         }
 
+        /**
+         * Close the engine for the provided database path
+         */
         @Synchronized
         fun close(dbPath: Path) {
             engines[dbPath]?.close()

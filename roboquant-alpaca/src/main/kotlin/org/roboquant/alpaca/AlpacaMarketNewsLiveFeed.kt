@@ -36,6 +36,9 @@ import java.util.concurrent.TimeUnit
  *
  * This uses the same subscription mechanism as [AlpacaLiveFeed] (taking vararg symbols and converting to a Set),
  * and connects to the Alpaca News WebSocket to receive live news articles.
+ * @param configure optional configuration of the Alpaca connection via [AlpacaConfig]
+ * @param autoConnect if true (default) it will automatically connect to the Alpaca News WebSocket upon creation
+ * @constructor Creates a new instance of the AlpacaMarketNewsLiveFeed
  */
 class AlpacaMarketNewsLiveFeed(
     configure: AlpacaConfig.() -> Unit = {},
@@ -118,6 +121,9 @@ class AlpacaMarketNewsLiveFeed(
         }
     }
 
+    /**
+     * Close the connection to Alpaca News WebSocket
+     */
     override fun close() {
         try {
             val c = alpacaAPI?.newsMarketDataStream()
