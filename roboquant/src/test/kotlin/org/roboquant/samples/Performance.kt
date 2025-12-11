@@ -20,11 +20,9 @@ import org.roboquant.brokers.MarginAccountModel
 import org.roboquant.brokers.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.*
-import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.run
 import org.roboquant.runAsync
 import org.roboquant.strategies.CombinedStrategy
-import org.roboquant.strategies.EMACrossover
 import org.roboquant.common.Signal
 import org.roboquant.strategies.Strategy
 import org.roboquant.traders.FlexTrader
@@ -225,23 +223,10 @@ private object Performance {
     }
 }
 
-private object Memory {
-
-    fun test() {
-        Config.printInfo()
-        val feed = RandomWalk.lastYears(5, nAssets = 500)
-        run(feed, EMACrossover())
-        exitProcess(0)
-    }
-
-}
 
 /**
  * Run the performance test
  */
 fun main() {
-    if (Config.getProperty("memory") == "true")
-        Memory.test()
-    else
-        Performance.test()
+    Performance.test()
 }

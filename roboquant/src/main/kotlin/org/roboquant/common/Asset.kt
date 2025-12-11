@@ -50,7 +50,7 @@ interface Asset : Comparable<Asset> {
      * generate the appropriate symbol name.
      */
     companion object {
-        internal val registry: MutableMap<String, (String) -> Asset> = mutableMapOf<String, (String) -> Asset>()
+        internal val registry: MutableMap<String, (String) -> Asset> = mutableMapOf()
 
         init {
             registry["Stock"] = ::deserializeStock

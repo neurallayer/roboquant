@@ -24,7 +24,7 @@ import org.roboquant.common.Signal
 import kotlin.random.Random
 
 /**
- * Shuffle signals before processing them in the trader, avoiding favouring assets that appear always first in the
+ * Shuffle signals before processing them in the trader, avoiding favoring assets that appear always first in the
  * list of items in an event.
  *
  * @property trader

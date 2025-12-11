@@ -121,7 +121,7 @@ class Exchange private constructor(
          * Returns the Exchange instance for the given [exchangeCode]. If no exchange is found, a new exchange instance
          * is created with the provided [exchangeCode] and the [Exchange.DEFAULT] properties.
          *
-         * If this is not the desired behaviour, call [addInstance] first to have full control on teh added exchange.
+         * If this is not the desired behavior, call [addInstance] first to have full control on teh added exchange.
          */
         fun getInstance(exchangeCode: String): Exchange {
             val result = instances.getOrPut(exchangeCode) {

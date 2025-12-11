@@ -40,7 +40,7 @@ Just add `roboquant` as a dependency to your build tool, like Maven or Gradle.
 implementation group: 'org.roboquant', name: 'roboquant', version: 'VERSION'
 ```
 
-Next to `roboquant`, the following additional artefacts are available for inclusion in your application:
+Next to `roboquant`, the following additional artifacts are available for inclusion in your application:
 
 * **roboquant-jupyter** Adds support for running roboquant inside Jupyter Notebooks
 * **roboquant-ibkr** Adds support for Interactive Brokers
@@ -100,7 +100,7 @@ Then install the jar file in the local Maven repository on your machine using th
 ```
 
 **⚠️ WARNING**\
-If the artefact cannot be found in your local Maven repository during a build, the ibkr profile with the module `roboquant-ibkr` will be skipped.
+If the artifact cannot be found in your local Maven repository during a build, the ibkr profile with the module `roboquant-ibkr` will be skipped.
 
 ## Documentation
 
@@ -108,7 +108,7 @@ If the artefact cannot be found in your local Maven repository during a build, t
 ./mvnw dokka:dokka | grep "Undocumented"
 ```
 
-Please note the `release` profile has its own dokka task to generate a javadoc jar file.
+Please note the `release` profile has its own dokka task to generate a Javadoc jar file.
 
 ## Performance Test
 To see the built-in performance tests, run `roboquant/test/org/roboquant/samples/Performance.kt`:

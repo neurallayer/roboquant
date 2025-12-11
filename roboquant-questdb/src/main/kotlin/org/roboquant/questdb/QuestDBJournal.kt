@@ -63,6 +63,13 @@ class QuestDBJournal(
 
         private var engines = mutableMapOf<Path, CairoEngine>()
 
+        /**
+         * Get a [CairoEngine] for the given [dbPath]. If it does not exist yet, it will be created.
+         * This is a synchronized method to ensure thread safety.
+         *
+         * @param dbPath the path to the database directory
+         * @return a CairoEngine instance
+         */
         @Synchronized
         fun getEngine(dbPath: Path): CairoEngine {
             if (dbPath !in  engines) {
@@ -113,7 +120,10 @@ class QuestDBJournal(
         return TimeSeries(result)
     }
 
-
+    /**
+     * Remove a specific [run] from the database.
+     * This will drop the table with the name of the run.
+     */
     fun removeRun(run: String) {
         try {
             engine.dropTable(run)
@@ -122,7 +132,9 @@ class QuestDBJournal(
         }
     }
 
-
+    /**
+     * Get the names of all metrics in this database.
+     */
     override fun getMetricNames(): Set<String> {
         return engine.distictSymbol(table, "name").toSortedSet()
     }
@@ -160,7 +172,11 @@ class QuestDBJournal(
         ctx.close()
     }
 
-
+    /**
+     * Track an [event] and calculate the metrics for it.
+     * The [account] is used to provide context for the metrics.
+     * The [signals] and [orders] are optional and can be used to provide additional context.
+     */
     override fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) {
 
         val result = mutableMapOf<String, Double>()

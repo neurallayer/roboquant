@@ -3,7 +3,7 @@ package org.roboquant.common
 /**
  * Time-in-Force policies for orders
  * - DAY: valid for the trading day only
- * - GTC: Good-Til-Cancelled, remains active until explicitly cancelled
+ * - GTC: Good-Til-Canceled, remains active until explicitly canceled
  */ 
 enum class TIF {
     DAY,
@@ -77,7 +77,7 @@ data class Order(
     }
 
     /**
-     * Return true if an cancellation order, false otherwise.
+     * Return true if a cancellation order, false otherwise.
      */
     fun isCancellation(): Boolean {
         return size == Size.ZERO && id != ""

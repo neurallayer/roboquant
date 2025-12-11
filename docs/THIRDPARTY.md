@@ -1,6 +1,6 @@
 # Third Party Open Source
 
-_Roboquant_ couldn’t have been developed without the use of free and open source third party software. This document lists some great open software libraries and other artefacts used in roboquant.
+_Roboquant_ couldn’t have been developed without the use of free and open source third party software. This document lists some great open software libraries and other artifacts used in roboquant.
 
 ## Software
 * [Kotlin](https://kotlinlang.org): modern, concise and safe programming language that makes writing code a joy.
@@ -11,6 +11,6 @@ _Roboquant_ couldn’t have been developed without the use of free and open sour
 * [Jupyter](https://www.jupyter.org): the standard for interactive development and perhaps best known in combination with Python and R. But it also works like a charm with Kotlin.
 * [FastCSV](https://github.com/osiegmar/FastCSV): an ultra-fast and easy to use CSV parser.
 
-## Other artefacts
+## Other artifacts
 * `Comfortaa` font created by Johan Aakerlund. I really like how _roboquant_ looks like using `Comfortaa` font.
 * Modified robot image from Free Vector Characters, as also seen on the README page and [roboquant.org](https://roboquant.org) website.

@@ -25,7 +25,6 @@ import org.roboquant.common.Currency.Companion.USD
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 internal class SimBrokerTest {

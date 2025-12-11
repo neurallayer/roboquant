@@ -134,7 +134,7 @@ internal fun getPriceBar(item: Item, timeSpan: TimeSpan?): PriceBar? {
 
         is PriceBar -> {
             with(item) {
-                PriceBar(item.asset, open, high, low, close, volume, timeSpan)
+                PriceBar(asset, open, high, low, close, volume, timeSpan)
             }
         }
 

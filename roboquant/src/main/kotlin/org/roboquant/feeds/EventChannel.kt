@@ -39,7 +39,7 @@ import java.time.Instant
  *
  * @property timeframe Limit the events to this timeframe, default is INFINITE, so no limit
  * @property capacity The capacity of the channel in the number of events it can store before blocking the sender
- * @property onBufferOverflow define behaviour when buffer is full, default is [BufferOverflow.SUSPEND]
+ * @property onBufferOverflow define behavior when buffer is full, default is [BufferOverflow.SUSPEND]
  * @constructor create a new EventChannel
  */
 class EventChannel(
