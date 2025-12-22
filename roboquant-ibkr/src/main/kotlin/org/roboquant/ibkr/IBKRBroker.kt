@@ -57,7 +57,10 @@ class IBKRBroker(
     private val accountId: String?
     private var client: EClientSocket
     private var account = InternalAccount(Currency.USD)
-    private var accountUpdateLock = Object()
+
+    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+    private var accountUpdateLock = Any() as Object
+
     private var orderIds = mutableSetOf<Int>()
     private var nextOrderId = 0
 
