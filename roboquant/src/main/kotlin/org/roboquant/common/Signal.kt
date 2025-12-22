@@ -76,6 +76,9 @@ class Signal(
     val tag: String = ""
 ) {
 
+    /**
+     * Companion object to create common signals like BUY and SELL
+     */
     companion object {
 
         /**

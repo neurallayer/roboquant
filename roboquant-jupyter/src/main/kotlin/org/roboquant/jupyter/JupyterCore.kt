@@ -32,6 +32,9 @@ import java.io.StringWriter
  */
 class RoboquantThrowableRenderer : ThrowableRenderer {
 
+    /**
+     * Is this renderer applicable for the given [throwable]?
+     */
     override fun accepts(throwable: Throwable): Boolean {
         return true
     }
@@ -53,6 +56,9 @@ class RoboquantThrowableRenderer : ThrowableRenderer {
         }
     }
 
+    /**
+     * Render the given [throwable] into an object that can be displayed in a notebook cell.
+     */
     override fun render(throwable: Throwable): Any {
         val output = StringWriter()
         PrintWriter(output).use { throwable.printStackTrace(it) }
@@ -102,11 +108,17 @@ class JupyterCore(
         logger.debug { notebook.toString() }
     }
 
+    /**
+     * @suppress
+     */
     companion object {
         private val logger = Logging.getLogger(JupyterCore::class)
         internal var host: KotlinKernelHost? = null
     }
 
+    /**
+     * @suppress
+     */
     @Suppress("LongMethod")
     override fun Builder.onLoaded() {
         val version = options["version"] ?: Config.info.version

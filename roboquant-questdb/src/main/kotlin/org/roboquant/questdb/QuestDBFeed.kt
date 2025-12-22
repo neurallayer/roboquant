@@ -205,6 +205,18 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
         engine.close()
     }
 
+    /**
+     * Generate a new QuestDB table based on the event in the feed and optional limited to the provided timeframe
+     * Supported price-actions: [org.roboquant.common.PriceBar], [org.roboquant.common.PriceQuote] and [org.roboquant.common.TradePrice]
+     *
+     * @param feed the feed you want to record
+     * @param type the type of PriceItem you want to record
+     * @param timeframe the timeframe
+     * @param append do you want to append to an existing table, default is false
+     * @param partition partition the table using the specified value.
+     * This is required when wanting to append timestamps out of order and might result in better overall performance.
+     * The default value is [NONE]
+     */
     fun record(
         feed: Feed,
         type: KClass<*>,

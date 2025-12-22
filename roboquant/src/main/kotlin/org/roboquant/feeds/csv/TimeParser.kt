@@ -84,6 +84,7 @@ private class LocalDateParser(pattern: String, val exchange: Exchange = Exchange
  * Auto-detect the appropriate time parser to use based on the first sample it receives.
  *
  * @constructor Create new AutoDetect time parser
+ * @property exchange the exchange to use for time zone and open/close times
  */
 class AutoDetectTimeParser(private var timeColumn: Int = -1, val exchange: Exchange = Exchange.US) : TimeParser {
 

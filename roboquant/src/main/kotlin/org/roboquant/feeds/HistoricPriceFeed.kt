@@ -95,6 +95,9 @@ open class HistoricPriceFeed : HistoricFeed {
         for (event in feed.events) addAll(event.key, event.value)
     }
 
+    /**
+     * Provide a string representation of this feed
+     */
     override fun toString(): String {
         return if (events.isEmpty())
             "events=0 assets=0"

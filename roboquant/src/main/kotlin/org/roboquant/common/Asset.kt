@@ -125,8 +125,14 @@ data class Crypto(override val symbol: String, override val currency: Currency) 
 
     override fun serialize(): String = "Crypto$SEP$symbol$SEP$currency"
 
+    /**
+     * @suppress
+     */
     companion object {
 
+        /**
+         * Create a Crypto asset from a currency pair symbol
+         */
         fun fromSymbol(symbol: String): Crypto {
             val (_, currency) = symbol.toCurrencyPair()
             return Crypto(symbol, currency)
@@ -174,6 +180,9 @@ data class Forex(override val symbol: String, override val currency: Currency) :
      */
     override fun serialize(): String = "Forex$SEP$symbol$SEP$currency"
 
+    /**
+     * @suppress
+     */
     companion object {
 
         /**

@@ -41,6 +41,7 @@ typealias DataType = MarketDataWebsocketSourceType
  * @property accountType account type, either PAPER or LIVE, default is PAPER
  * @property dataType type of data to use, IEX or SIP, default is IEX
  * @property extendedHours enable extended hours for trading, default is false
+ * @property stockFeed the stock feed to use, default is IEX
  *
  * @constructor Create a new instance of AlpacaConfig
  */

@@ -65,6 +65,9 @@ abstract class HistoricPriceStrategy(
     open fun generateRating(data: DoubleArray): Double? =
         throw RoboquantException("Should override generateSignal or generateRating")
 
+    /**
+     * Reset the state
+     */
     fun reset() {
         history.clear()
     }

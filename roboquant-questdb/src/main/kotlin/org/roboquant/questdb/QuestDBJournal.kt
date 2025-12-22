@@ -59,6 +59,9 @@ class QuestDBJournal(
         logger.info { "db=$dbPath table=$table" }
     }
 
+    /**
+     * Get or create a CairoEngine for the given database path
+     */
     companion object {
 
         private var engines = mutableMapOf<Path, CairoEngine>()
@@ -83,11 +86,17 @@ class QuestDBJournal(
             return engines.getValue(dbPath)
         }
 
+        /**
+         * Get the available runs (tables) in the database located at [dbPath]
+         */
         fun getRuns(dbPath: Path): Set<String> {
             val engine = getEngine(dbPath)
             return engine.tables().toSet()
         }
 
+        /**
+         * Close the engine for the given [dbPath]
+         */
         @Synchronized
         fun close(dbPath: Path) {
             engines[dbPath]?.close()

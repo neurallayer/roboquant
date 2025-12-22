@@ -126,6 +126,12 @@ class IBKRBroker(
         account.orders.add(order)
     }
 
+    /**
+     * Synchronize the internal account state with the broker.
+     *
+     * @param event optional event that triggered the sync. If te event is provided, its time cannot be in the past
+     * more than 1 hour ago. This prevents placing orders in a back test using this broker.
+     */
     override fun sync(event: Event?): Account {
         if (event != null) {
             if (event.time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")

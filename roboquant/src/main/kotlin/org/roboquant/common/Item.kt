@@ -408,8 +408,12 @@ data class NewsItems(val items: List<NewsItem>) : Item {
      * News item contains a single news item (text) with optionally extra metadata like
      * the author or symbol.
      *
-     * @property content
-     * @property meta
+     * @property id unique identifier of the news item
+     * @property assets list of assets related to this news item
+     * @property content the actual content of the news item
+     * @property headline optional headline of the news item
+     * @property url optional url pointing to the original news item
+     * @property meta optional map of additional metadata
      * @constructor Create new News item
      */
     data class NewsItem(
