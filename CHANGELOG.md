@@ -42,5 +42,6 @@ A non-exhaustive list of the major changes:
 * Use the new Alpaca library that is based on published OpenAPI specification.
 * Simplified AvroFeed (have to see if this is not too simple). Had to drop the `feed.assets` method to make this possible.
 * Updated most of the dependencies. Only not yet moved to Kotlin 2.0 since Jupyter Notebooks are not yet supported.
+* Upgraded to atest version of Maven 3. Unfortunately a bit too early for Maven 4 or Amper.
 * Removed the `Summary` functionality. This required relative a lot of code and maintenance and now replaced by a much simpler toString() implementation.
 * Several bug fixes and contributions from the community, see also https://github.com/neurallayer/roboquant/pulls
