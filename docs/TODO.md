@@ -62,7 +62,7 @@ The topics mentioned here are some of the ideas for the future releases:
 * [X] Improve overall test coverage
 * [X] Hardening code base
 
-## Version 3 and later (2025 and beyond)
+## Version 3.0 and later (Q4 2025)
 
 The topics mentioned here are some of the ideas for the future releases:
 
@@ -70,3 +70,12 @@ The topics mentioned here are some of the ideas for the future releases:
 * [x] Harmonize API with the Python version
 * [x] Simplify ways to extend the various components
 * [x] Remove unused integrations
+
+
+## Version 3.x and later (2026 and beyond)
+
+* [ ] Move to Maven 4 or Amper once stable
+* [ ] Improve ML integration with popular ML libraries
+* [ ] Re-assess which 3rd party data providers to support
+* [ ] Improve live trading capabilities (especially around visualizations and monitoring)
+* [ ] Improve code documentation and examples
