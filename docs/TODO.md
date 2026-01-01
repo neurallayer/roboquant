@@ -62,13 +62,13 @@ The topics mentioned here are some of the ideas for the future releases:
 * [X] Improve overall test coverage
 * [X] Hardening code base
 
-## Version 3.0 and later (Q4 2025)
+## Version 3.0 (Q1 2026)
 
 The topics mentioned here are some of the ideas for the future releases:
 
 * [x] Move to Kotlin 2.x
 * [x] Harmonize API with the Python version
-* [x] Simplify ways to extend the various components
+* [x] Simplified way to extend the various components
 * [x] Remove unused integrations
 
 
