@@ -108,8 +108,6 @@ If the artifact cannot be found in your local Maven repository during a build, t
 ./mvnw dokka:dokka | grep "Undocumented"
 ```
 
-Please note the `release` profile has its own dokka task to generate a Javadoc jar file.
-
 ## Performance Test
 To see the built-in performance tests, run `roboquant/test/org/roboquant/samples/Performance.kt`:
 
