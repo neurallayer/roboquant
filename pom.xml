@@ -23,7 +23,7 @@
 
     <artifactId>roboquant-parent</artifactId>
     <groupId>org.roboquant</groupId>
-    <version>3.0.0</version>
+    <version>3.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>roboquant parent</name>
     <description>Algorithmic trading platform written in Kotlin</description>
@@ -240,11 +240,11 @@
                     </configuration>
                 </plugin>
 
-                <plugin>
+                <!-- plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>3.0.0</version>
-                </plugin>
+                </plugin -->
             </plugins>
         </pluginManagement>
 
@@ -313,10 +313,6 @@
                     <includes>
                         <include>${dokka.includes}/roboquant.md</include>
                         <include>${dokka.includes}/roboquant-alpaca.md</include>
-                        <include>${dokka.includes}/roboquant-polygon.md</include>
-                        <include>${dokka.includes}/roboquant-binance.md</include>
-                        <include>${dokka.includes}/roboquant-xchange.md</include>
-                        <include>${dokka.includes}/roboquant-server.md</include>
                         <include>${dokka.includes}/roboquant-questdb.md</include>
                         <include>${dokka.includes}/roboquant-avro.md</include>
                         <include>${dokka.includes}/roboquant-ibkr.md</include>
