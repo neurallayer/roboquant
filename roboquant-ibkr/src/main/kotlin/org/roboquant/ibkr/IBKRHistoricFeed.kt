@@ -25,6 +25,7 @@ import org.roboquant.ibkr.IBKR.toContract
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import kotlin.collections.set
@@ -128,9 +129,11 @@ class IBKRHistoricFeed(
             )
             val timeStr = bar.time()
             val time = if (timeStr.length > 10) {
-                // IBKR may append a timezone name (e.g. "20260320 09:30:00 US/Eastern"); strip it before parsing
-                val cleanTime = timeStr.split(" ").take(2).joinToString(" ")
-                LocalDateTime.parse(cleanTime, dtf).toInstant(ZoneOffset.UTC)
+                val parts = timeStr.split(" ")
+                val ldt = LocalDateTime.parse("${parts[0]} ${parts[1]}", dtf)
+                // IBKR may append a timezone name (e.g. "20260320 09:30:00 US/Eastern"); use it if present
+                if (parts.size >= 3) ldt.atZone(ZoneId.of(parts[2])).toInstant()
+                else ldt.toInstant(ZoneOffset.UTC)
             } else
                 Exchange.US.getClosingTime(LocalDate.parse(timeStr, df))
             add(time, action)
