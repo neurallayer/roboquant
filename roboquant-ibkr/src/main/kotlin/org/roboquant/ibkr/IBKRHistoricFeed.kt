@@ -118,7 +118,7 @@ class IBKRHistoricFeed(
 
     private inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 
-        private val dtf = DateTimeFormatter.ofPattern("yyyyMMdd  HH:mm:ss")
+        private val dtf = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss")
         private val df = DateTimeFormatter.ofPattern("yyyyMMdd")
 
         override fun historicalData(reqId: Int, bar: Bar) {
@@ -127,9 +127,11 @@ class IBKRHistoricFeed(
                 asset, bar.open(), bar.high(), bar.low(), bar.close(), bar.volume().value().toDouble()
             )
             val timeStr = bar.time()
-            val time = if (timeStr.length > 10)
-                LocalDateTime.parse(timeStr, dtf).toInstant(ZoneOffset.UTC)
-            else
+            val time = if (timeStr.length > 10) {
+                // IBKR may append a timezone name (e.g. "20260320 09:30:00 US/Eastern"); strip it before parsing
+                val cleanTime = timeStr.split(" ").take(2).joinToString(" ")
+                LocalDateTime.parse(cleanTime, dtf).toInstant(ZoneOffset.UTC)
+            } else
                 Exchange.US.getClosingTime(LocalDate.parse(timeStr, df))
             add(time, action)
             logger.trace { "bar at $timeStr tranlated into $time and $action" }
