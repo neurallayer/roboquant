@@ -119,23 +119,13 @@ class IBKRHistoricFeed(
 
     private inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 
-        private val dtf = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss")
-        private val df = DateTimeFormatter.ofPattern("yyyyMMdd")
-
         override fun historicalData(reqId: Int, bar: Bar) {
             val asset = subscriptions.getValue(reqId)
             val action = PriceBar(
                 asset, bar.open(), bar.high(), bar.low(), bar.close(), bar.volume().value().toDouble()
             )
             val timeStr = bar.time()
-            val time = if (timeStr.length > 10) {
-                val parts = timeStr.split(" ")
-                val ldt = LocalDateTime.parse("${parts[0]} ${parts[1]}", dtf)
-                // IBKR may append a timezone name (e.g. "20260320 09:30:00 US/Eastern"); use it if present
-                if (parts.size >= 3) ldt.atZone(ZoneId.of(parts[2])).toInstant()
-                else ldt.toInstant(ZoneOffset.UTC)
-            } else
-                Exchange.US.getClosingTime(LocalDate.parse(timeStr, df))
+            val time = parseIBKRBarTime(timeStr)
             add(time, action)
             logger.trace { "bar at $timeStr tranlated into $time and $action" }
         }
@@ -148,3 +138,21 @@ class IBKRHistoricFeed(
     }
 
 }
+
+private val intradayDtf = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss")
+private val dailyDf = DateTimeFormatter.ofPattern("yyyyMMdd")
+
+/**
+ * Parse an IBKR bar timestamp string into an [Instant].
+ *
+ * IBKR returns intraday bars as "yyyyMMdd HH:mm:ss [TZ]" where the timezone name is
+ * optional (e.g. "20260320 09:30:00 US/Eastern"). Daily bars use "yyyyMMdd".
+ */
+internal fun parseIBKRBarTime(timeStr: String): Instant =
+    if (timeStr.length > 10) {
+        val parts = timeStr.split(" ")
+        val ldt = LocalDateTime.parse("${parts[0]} ${parts[1]}", intradayDtf)
+        if (parts.size >= 3) ldt.atZone(ZoneId.of(parts[2])).toInstant()
+        else ldt.toInstant(ZoneOffset.UTC)
+    } else
+        Exchange.US.getClosingTime(LocalDate.parse(timeStr, dailyDf))
