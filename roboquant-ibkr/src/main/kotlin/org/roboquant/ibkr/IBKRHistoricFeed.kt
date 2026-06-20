@@ -145,7 +145,7 @@ private val dailyDf = DateTimeFormatter.ofPattern("yyyyMMdd")
 /**
  * Parse an IBKR bar timestamp string into an [Instant].
  *
- * IBKR returns intraday bars as "yyyyMMdd HH:mm:ss [TZ]" where the timezone name is
+ * IBKR returns intraday bars as "yyyyMMdd HH:mm:ss" + TimeZone, where the timezone name is
  * optional (e.g. "20260320 09:30:00 US/Eastern"). Daily bars use "yyyyMMdd".
  */
 internal fun parseIBKRBarTime(timeStr: String): Instant =
