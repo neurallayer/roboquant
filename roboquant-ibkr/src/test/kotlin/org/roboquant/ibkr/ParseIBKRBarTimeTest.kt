@@ -35,6 +35,14 @@ class ParseIBKRBarTimeTest {
         assertEquals(Instant.parse("2026-03-20T14:30:00Z"), result)
     }
 
+
+    @Test
+    fun `intraday with double spaces`() {
+        val result = parseIBKRBarTime("20260320  14:30:00")
+        assertEquals(Instant.parse("2026-03-20T14:30:00Z"), result)
+    }
+
+
     @Test
     fun `intraday with standard timezone offset suffix`() {
         // 09:30 US/Eastern in winter (EST, UTC-5) = 14:30 UTC

@@ -150,7 +150,8 @@ private val dailyDf = DateTimeFormatter.ofPattern("yyyyMMdd")
  */
 internal fun parseIBKRBarTime(timeStr: String): Instant =
     if (timeStr.length > 10) {
-        val parts = timeStr.split(" ")
+        // The order of delimeters is important to also support double spaces
+        val parts = timeStr.split("  ", " ")
         val ldt = LocalDateTime.parse("${parts[0]} ${parts[1]}", intradayDtf)
         if (parts.size >= 3) ldt.atZone(ZoneId.of(parts[2])).toInstant()
         else ldt.toInstant(ZoneOffset.UTC)
