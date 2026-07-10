@@ -1,16 +1,12 @@
 product: jvm/lib
 
+description: roboquant
+
 apply:
   - ../project.module-template.yaml
 
-settings:
-  publishing:
-    artifactId: roboquant
-
 dependencies:
-  - org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2: exported
+  - org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0: exported
   - de.siegmar:fastcsv:3.2.0: exported
   - org.hipparchus:hipparchus-stat:3.0: exported
   - com.tictactec:ta-lib:0.4.0: exported
-  - org.jetbrains.kotlin:kotlin-stdlib:2.2.0: exported
-  - org.slf4j:slf4j-api:2.0.17: exported

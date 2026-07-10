@@ -1,23 +1,10 @@
 product: jvm/lib
 
-layout: maven-like
+description: roboquant questdb support
 
-settings:
-  publishing:
-    enabled: true
-    artifactId: roboquant-questdb
-    group: org.roboquant
-    version: 3.1.0-SNAPSHOT
-  kotlin:
-    version: 2.2.0
+apply:
+  - ../project.module-template.yaml
 
 dependencies:
   - ../roboquant: exported
   - org.questdb:questdb:9.0.3: exported
-  - org.jetbrains.kotlin:kotlin-stdlib:2.2.0: exported
-  - org.slf4j:slf4j-api:2.0.17: exported
-
-
-test-dependencies:
-  - $kotlin.test.junit5
-  - org.slf4j:slf4j-simple:2.0.17

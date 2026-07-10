@@ -1,20 +1,14 @@
 product: jvm/lib
 
+description: roboquant chart support
+
 apply:
   - ../project.module-template.yaml
-
-settings:
-  publishing:
-    artifactId: roboquant-charts
 
 dependencies:
   - ../roboquant: exported
   - com.google.code.gson:gson:2.11.0: exported
   - org.icepear.echarts:echarts-java:1.0.7: exported
-  - org.jetbrains.kotlin:kotlin-stdlib:2.2.0: exported
-  - org.slf4j:slf4j-api:2.0.17: exported
 
-test-dependencies:
-  - ../roboquant: all
 
 

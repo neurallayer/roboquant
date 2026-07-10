@@ -1,14 +1,11 @@
 product: jvm/lib
 
+description: roboquant alpaca
+
 apply:
   - ../project.module-template.yaml
-
-settings:
-  publishing:
-    artifactId: roboquant-alpaca
 
 dependencies:
   - ../roboquant: exported
   - net.jacobpeterson.alpaca:alpaca-java:10.0.1: exported
-  - org.jetbrains.kotlin:kotlin-stdlib:2.2.0: exported
 
