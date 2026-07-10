@@ -24,13 +24,15 @@ import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.journals.Journal
 import org.roboquant.journals.MultiRunJournal
 import org.roboquant.journals.metrics.AccountMetric
+import org.roboquant.run
+import org.roboquant.runAsync
 import org.roboquant.strategies.EMACrossover
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class QuestDBJournalTestIT {
+internal class QuestDBJournalTest {
 
     @TempDir
     lateinit var folder: File
@@ -40,7 +42,7 @@ internal class QuestDBJournalTestIT {
 
     private fun simpleRun(journal: Journal) {
         val feed = RandomWalk.lastYears()
-        org.roboquant.run(feed, EMACrossover(), journal = journal)
+        run(feed, EMACrossover(), journal = journal)
     }
 
     @Test
@@ -68,7 +70,7 @@ internal class QuestDBJournalTestIT {
         for (tf in tfs) {
             jobs.add {
                 val journal = mrj.getJournal()
-                org.roboquant.runAsync(feed, EMACrossover(), journal = journal, timeframe = tf)
+                runAsync(feed, EMACrossover(), journal = journal, timeframe = tf)
             }
         }
         jobs.joinAll()

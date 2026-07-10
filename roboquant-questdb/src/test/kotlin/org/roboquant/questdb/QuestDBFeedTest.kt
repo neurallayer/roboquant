@@ -27,7 +27,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-internal class QuestDBFeedTestIT {
+internal class QuestDBFeedTest {
 
     @TempDir
     lateinit var folder: File

@@ -1,0 +1,17 @@
+product: jvm/lib
+
+apply:
+  - ../project.module-template.yaml
+
+settings:
+  publishing:
+    artifactId: roboquant-avro
+
+dependencies:
+  - ../roboquant: exported
+  - org.xerial.snappy:snappy-java:1.1.10.5: exported
+  - org.apache.avro:avro:1.12.1: exported
+  - com.fasterxml.jackson.core:jackson-core:2.22.1: exported
+  - org.jetbrains.kotlin:kotlin-stdlib:2.2.0: exported
+  - org.slf4j:slf4j-api:2.0.17: exported
+

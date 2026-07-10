@@ -20,7 +20,7 @@ import org.roboquant.common.Account
 import org.roboquant.common.Position
 import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.*
-import org.roboquant.feeds.util.HistoricTestFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.journals.metrics.AccountMetric
 import org.roboquant.run
@@ -53,7 +53,7 @@ object TestData {
 
 
     val data by lazy {
-        val feed = HistoricTestFeed(50..150)
+        val feed = RandomWalk(Timeframe.fromYears(2020, 2021))
         val journal = MemoryJournal(AccountMetric())
         run(feed, EMACrossover(), journal = journal)
         journal.getMetric("account.equity")

@@ -1,8 +1,0 @@
-{
-  "definitions": [],
-  "producers": [
-    {
-      "fqn": "org.roboquant.jupyter.JupyterCore"
-    }
-  ]
-}

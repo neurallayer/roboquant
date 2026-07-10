@@ -1,0 +1,16 @@
+product: jvm/lib
+
+apply:
+  - ../project.module-template.yaml
+
+settings:
+  publishing:
+    artifactId: roboquant-ibkr
+
+repositories:
+  - mavenLocal
+
+dependencies:
+  - ../roboquant: exported
+  - org.jetbrains.kotlin:kotlin-stdlib:2.2.0: exported
+  - com.interactivebrokers:tws-api:10.19: compile-only

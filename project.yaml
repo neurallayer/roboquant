@@ -1,0 +1,13 @@
+modules:
+  - roboquant
+  - roboquant-alpaca
+  - roboquant-avro
+  - roboquant-charts
+  - roboquant-ibkr
+  - roboquant-questdb
+
+mavenPlugins:
+  - org.apache.maven.plugins:maven-gpg-plugin:3.0.1
+  - org.sonatype.central:central-publishing-maven-plugin:0.9.0
+  - org.jetbrains.dokka:dokka-maven-plugin:2.1.0
+  - com.github.ozsie:detekt-maven-plugin:1.23.8
