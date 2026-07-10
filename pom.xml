@@ -19,7 +19,7 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.1.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 https://maven.apache.org/xsd/maven-4.1.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.1.0</modelVersion>
 
     <artifactId>roboquant-parent</artifactId>
     <groupId>org.roboquant</groupId>
@@ -52,16 +52,16 @@
     </scm>
     <!-- end extra info -->
 
-    <modules>
-        <module>roboquant</module>
-        <module>roboquant-avro</module>
-        <module>roboquant-charts</module>
-        <module>roboquant-jupyter</module>
-        <module>roboquant-alpaca</module>
-        <module>roboquant-questdb</module>
-        <module>roboquant-ssr</module>
-        <module>roboquant-ibkr</module>
-    </modules>
+    <subprojects>
+        <subproject>roboquant</subproject>
+        <subproject>roboquant-avro</subproject>
+        <subproject>roboquant-charts</subproject>
+        <subproject>roboquant-jupyter</subproject>
+        <subproject>roboquant-alpaca</subproject>
+        <subproject>roboquant-questdb</subproject>
+        <subproject>roboquant-ssr</subproject>
+        <subproject>roboquant-ibkr</subproject>
+    </subprojects>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -403,11 +403,7 @@
                 <version>${project.version}</version>
             </dependency>
             <!-- end standard versions -->
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.22.1</version>
-            </dependency>
+
             <dependency>
                 <artifactId>roboquant</artifactId>
                 <groupId>org.roboquant</groupId>
