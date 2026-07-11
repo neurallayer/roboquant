@@ -170,7 +170,7 @@ open class SimBroker(
                 deleteOrder(order)
                 continue
             }
-            val priceItem = event.prices.get(order.asset)
+            val priceItem = event.prices[order.asset]
 
             // Only execute if there is a known market price for the asset
             if (priceItem != null) {

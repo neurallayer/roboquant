@@ -84,8 +84,6 @@ class AlpacaLiveFeed(
         connect()
     }
 
-
-
     /**
      * Connect to streaming data for the stock market and crypto market
      */
@@ -139,7 +137,7 @@ class AlpacaLiveFeed(
             logger.info(exception.message)
         }
     }
-    
+
     /**
      * Subscribe to stock market data based on the passed [symbols] and [type]
      */

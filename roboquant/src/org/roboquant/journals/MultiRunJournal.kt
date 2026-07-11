@@ -70,7 +70,7 @@ class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
      * Get the names of all available metrics across all runs
      */
     fun getMetricNames() : Set<String> {
-        return journals.values.map { it.getMetricNames() }.flatten().toSet()
+        return journals.values.flatMap { it.getMetricNames() }.toSet()
     }
 
     /**

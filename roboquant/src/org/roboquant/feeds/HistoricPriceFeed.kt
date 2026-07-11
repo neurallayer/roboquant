@@ -38,7 +38,7 @@ open class HistoricPriceFeed : HistoricFeed {
         get() = if (events.isEmpty()) Timeframe.INFINITE else Timeframe(events.firstKey(), events.lastKey(), true)
 
     override val assets: Set<Asset>
-        get() = events.values.map { it.map { a -> a.asset } }.flatten().toSet()
+        get() = events.values.flatMap { it.map { a -> a.asset } }.toSet()
 
     /**
      * Return the first event in this feed

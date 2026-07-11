@@ -58,7 +58,7 @@ internal class FeedTest {
         val feed = TestData.feed()
         val l = feed.toList()
         assertEquals(98, l.size)
-        val actions = l.map { it.items }.flatten()
+        val actions = l.flatMap { it.items }
         assertEquals(98, actions.filterIsInstance<PriceBar>().size)
     }
 

@@ -43,7 +43,7 @@ class FeedExchangeRates(
      * Get the currencies that are part of these exchange rates
      */
     val currencies
-        get() = exchangeRates.keys.map { listOf(it.first, it.second) }.flatten().toSet()
+        get() = exchangeRates.keys.flatMap { listOf(it.first, it.second) }.toSet()
 
     init {
         setRates(feed)

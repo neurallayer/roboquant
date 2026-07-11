@@ -71,8 +71,8 @@ internal class PriceItemSerializer {
 
     private fun orderBookToValues(action: OrderBook): List<Double> {
         return listOf(action.asks.size.toDouble()) +
-                action.asks.map { listOf(it.size, it.limit) }.flatten() +
-                action.bids.map { listOf(it.size, it.limit) }.flatten()
+                action.asks.flatMap { listOf(it.size, it.limit) } +
+                action.bids.flatMap { listOf(it.size, it.limit) }
     }
 
 

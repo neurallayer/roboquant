@@ -50,7 +50,7 @@ class MemoryJournal(private vararg val metrics: Metric) : MetricsJournal {
     }
 
     override fun getMetricNames() : Set<String> {
-        return history.values.map { it.keys }.flatten().toSet()
+        return history.values.flatMap { it.keys }.toSet()
     }
 
     /**

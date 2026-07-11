@@ -82,9 +82,7 @@ class LazyCSVFeed(
         filesMap = path.toFile()
             .walk()
             .filter { config.shouldInclude(it) }
-            .map { it.absoluteFile }
-            .map { config.assetBuilder.build(it.name) to it }
-            .toMap()
+            .map { it.absoluteFile }.associate { config.assetBuilder.build(it.name) to it }
 
         logger.info { "Scanned $path found ${filesMap.size} files" }
         if (filesMap.isEmpty()) logger.warn { "No files to process" }
