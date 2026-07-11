@@ -92,10 +92,11 @@ open class SimBroker(
     }
 
     /**
-     * Calculate the fee (commision) for the order fill and return the monetary value
+     * Calculate the fee (commission) for the order fill and return the monetary value
      * denoted in the currency of the underlying asset. You can overwrite this method
-     * if your broker uses commisions, since the default implementation returns 0.0
+     * if your broker uses commissions, since the default implementation returns 0.0
      */
+    @Suppress("SameReturnValue")
     open fun getFee(order: Order, fill: Size, price: Double) : Double {
         return 0.0
     }

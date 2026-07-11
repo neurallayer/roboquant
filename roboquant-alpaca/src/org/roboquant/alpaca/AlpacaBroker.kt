@@ -51,7 +51,7 @@ class AlpacaBroker(
 
     private val alpacaAPI: AlpacaAPI
     private val logger = Logging.getLogger(AlpacaBroker::class)
-    private val orderPlacer: AlpaceOrderPlacer
+    private val orderPlacer: AlpacaOrderPlacer
 
     init {
         config.configure()
@@ -61,7 +61,7 @@ class AlpacaBroker(
         }
 
         alpacaAPI = Alpaca.getAPI(config)
-        orderPlacer = AlpaceOrderPlacer(alpacaAPI, config.extendedHours)
+        orderPlacer = AlpacaOrderPlacer(alpacaAPI, config.extendedHours)
         syncAccount()
         syncPositions()
         if (loadExistingOrders) loadExistingOrders()

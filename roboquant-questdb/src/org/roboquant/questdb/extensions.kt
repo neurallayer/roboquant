@@ -50,7 +50,7 @@ internal inline fun SqlExecutionContext.query(query: String, block: RecordCursor
         }
 }
 
-internal fun CairoEngine.distictSymbol(tableName: String, column: String): Set<String> {
+internal fun CairoEngine.distinctSymbol(tableName: String, column: String): Set<String> {
     SqlExecutionContextImpl(this, 1).use { ctx ->
         sqlCompiler.use {
             val sql = "SELECT DISTINCT $column from '$tableName"
@@ -122,7 +122,7 @@ internal fun CairoEngine.update(query: String) {
 }
 
 /**
- * Convert an Instant to mirco seconds
+ * Convert an Instant to Mirco seconds
  */
 val Instant.epochMicro
     get() : Long = epochSecond * 1_000_000L + nano / 1_000L

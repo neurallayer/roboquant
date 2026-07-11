@@ -105,7 +105,7 @@ class EventChannel(
                 channel.receive()
             }
         } catch (err: TimeoutCancellationException) {
-            logger.debug("timeout occured", err)
+            logger.debug("timeout occurred", err)
             val now = Instant.now()
             if (now > timeframe) {
                 close()

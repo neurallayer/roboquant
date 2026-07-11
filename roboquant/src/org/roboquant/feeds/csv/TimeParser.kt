@@ -43,7 +43,7 @@ fun interface TimeParser {
 }
 
 
-private fun interface AuteDetectParser {
+private fun interface AutoDetectParser {
 
     fun parse(text: String): Instant
 }
@@ -51,7 +51,7 @@ private fun interface AuteDetectParser {
 /**
  * Datetime parser that parses local date-time
  */
-private class LocalTimeParser(pattern: String, val exchange: Exchange = Exchange.US) : AuteDetectParser {
+private class LocalTimeParser(pattern: String, val exchange: Exchange = Exchange.US) : AutoDetectParser {
 
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
 
@@ -66,7 +66,7 @@ private class LocalTimeParser(pattern: String, val exchange: Exchange = Exchange
  * Parser that parses local dates and uses the exchange closing time to determine the time.
  * @param pattern
  */
-private class LocalDateParser(pattern: String, val exchange: Exchange = Exchange.US) : AuteDetectParser {
+private class LocalDateParser(pattern: String, val exchange: Exchange = Exchange.US) : AutoDetectParser {
 
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
 
@@ -88,7 +88,7 @@ private class LocalDateParser(pattern: String, val exchange: Exchange = Exchange
  */
 class AutoDetectTimeParser(private var timeColumn: Int = -1, val exchange: Exchange = Exchange.US) : TimeParser {
 
-    private lateinit var parser: AuteDetectParser
+    private lateinit var parser: AutoDetectParser
 
     override fun init(header: List<String>) {
         if (timeColumn != -1) return
@@ -124,13 +124,13 @@ class AutoDetectTimeParser(private var timeColumn: Int = -1, val exchange: Excha
             """19\d{6}""".toRegex() to LocalDateParser("yyyyMMdd"),
             """20\d{6}""".toRegex() to LocalDateParser("yyyyMMdd"),
             """\d{8} \d{6}""".toRegex() to LocalTimeParser("yyyyMMdd HHmmss"),
-            """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z""".toRegex() to AuteDetectParser { text -> Instant.parse(text) },
+            """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z""".toRegex() to AutoDetectParser { text -> Instant.parse(text) },
             """\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd HH:mm:ss"),
             """\d{4}-\d{2}-\d{2} \d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd HH:mm"),
             """\d{4}-\d{2}-\d{2}""".toRegex() to LocalDateParser("yyyy-MM-dd"),
             """\d{8} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd HH:mm:ss"),
             """\d{8}  \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd  HH:mm:ss"),
-            """-?\d{1,19}""".toRegex() to AuteDetectParser { text -> Instant.ofEpochMilli(text.toLong()) }
+            """-?\d{1,19}""".toRegex() to AutoDetectParser { text -> Instant.ofEpochMilli(text.toLong()) }
         )
     }
 

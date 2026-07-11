@@ -25,7 +25,7 @@ import java.util.*
 
 /**
  * Wraps another [trader] and based on the configured settings throttle the propagation of orders to the broker.
- * The logic enforces that all orders send at the same time will be trottled or not.
+ * The logic enforces that all orders send at the same time will be throttled or not.
  *
  * @property trader the underlying trader
  * @constructor Create new Circuit Breaker

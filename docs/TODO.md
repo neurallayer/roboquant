@@ -57,7 +57,7 @@ The topics mentioned here are some of the ideas for the future releases:
 * [X] More consistent naming of API’s
 * [X] Support more CSV file formats out of the box
 * [X] Improved usability of TaLib with auto sizing
-* [X] Sunset no longer suported 3rd party data providers
+* [X] Sunset no longer supported 3rd party data providers
 * [X] Optimize memory usage for large back tests
 * [X] Improve overall test coverage
 * [X] Hardening code base

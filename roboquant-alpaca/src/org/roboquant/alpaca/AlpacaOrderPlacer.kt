@@ -26,7 +26,7 @@ import org.roboquant.common.*
 /**
  * Utility class that translates roboquant orders to alpaca orders
  */
-internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val extendedHours: Boolean = false) {
+internal class AlpacaOrderPlacer(private val alpacaAPI: AlpacaAPI, private val extendedHours: Boolean = false) {
 
     private fun getOrderRequest(order: Order): PostOrderRequest? {
 

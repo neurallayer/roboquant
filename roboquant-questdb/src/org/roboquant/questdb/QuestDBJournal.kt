@@ -145,7 +145,7 @@ class QuestDBJournal(
      * Get the names of all metrics in this database.
      */
     override fun getMetricNames(): Set<String> {
-        return engine.distictSymbol(table, "name").toSortedSet()
+        return engine.distinctSymbol(table, "name").toSortedSet()
     }
 
     /**

@@ -5,7 +5,7 @@ import java.time.Instant
 /**
  * Represents a trade that happened as a consequence of the (partial) execution of an order.
  *
- * @property asset the underluying asset
+ * @property asset the underlying asset
  * @property time the time of the trade
  * @property size the size of the trade
  * @property price the average price paid

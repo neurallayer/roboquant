@@ -62,7 +62,7 @@ class IBKRBroker(
     private var nextOrderId = 0
 
     /**
-     * ExchangeRates as provided during intialization of the account.
+     * ExchangeRates as provided during initialization of the account.
      */
     val exchangeRates = FixedExchangeRates(Currency.USD)
 
@@ -216,7 +216,7 @@ class IBKRBroker(
          * What is the next valid IBKR orderID we can use
          */
         override fun nextValidId(orderId: Int) {
-            logger.info("settting next valid orderId=$orderId")
+            logger.info("setting next valid orderId=$orderId")
             nextOrderId = orderId
         }
 
