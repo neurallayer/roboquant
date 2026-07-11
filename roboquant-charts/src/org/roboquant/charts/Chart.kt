@@ -137,16 +137,6 @@ abstract class Chart {
      */
     companion object {
 
-        // Which commit of echarts.min.js to use
-        private const val COMMIT = "fddcad9e93c1c15495c70f358f1ccbb595f0964f"
-
-        /**
-         * The URL of the ECHARTS JavaScript library to use.
-         * This script includes some roboquant specific functions and is hosted on GitHub
-         */
-        const val JSURL: String =
-            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant-jupyter-js@$COMMIT/echarts.min.js?version=$COMMIT"
-
         /**
          * Maximum number of samples to plot in a chart. Certain types of charts can become large and as
          * a result make your browser unresponsive. By lowering this value (default is [Int.MAX_VALUE])
@@ -186,13 +176,6 @@ abstract class Chart {
                 positiveColor = "#C00" // Red
                 negativeColor = "#0C0" // Green
             }
-        }
-
-        /**
-         * Get the HTML script tag to include the required JavaScript.
-         */
-        fun getScript(): String {
-            return """<script type='text/javascript' src='$JSURL'></script>"""
         }
 
     }
