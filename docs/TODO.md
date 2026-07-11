@@ -72,8 +72,10 @@ The topics mentioned here are some of the ideas for the future releases:
 * [x] Remove unused integrations
 
 
-## Version 3.x and later (2026 and beyond)
+## Version 3.1 and later (2026 and beyond)
 
+* [x] Remove Jupyter support since JetBrains also dropped it
+* [x] Move to Kotlin 2.4 or higher
 * [x] Move to Maven 4 or Amper once stable
 * [ ] Re-assess which 3rd party data providers to support
 * [ ] Improve live trading capabilities (especially around visualizations and monitoring)

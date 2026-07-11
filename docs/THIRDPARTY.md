@@ -1,6 +1,7 @@
 # Third Party Open Source
 
-_Roboquant_ couldn’t have been developed without the use of free and open source third party software. This document lists some great open software libraries and other artifacts used in roboquant.
+_Roboquant_ couldn’t have been developed without the use of free and open source third party software.
+This document lists some great open software libraries and other artifacts used in roboquant.
 
 ## Software
 * [Kotlin](https://kotlinlang.org): modern, concise and safe programming language that makes writing code a joy.

@@ -64,7 +64,6 @@ dependencies:
     - org.roboquant:roboquant:VERSION
 ```
 
-
 The latest available version is ![Maven Central](https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&)
 
 ## Features
