@@ -23,7 +23,7 @@ import java.util.*
 
 /**
  * Record events that can then be used to later display them in a graph or perform another post-run analysis.
- * This metric also implements the [Feed] API, so recorded events can be replayed afterwards as a normal feed.
+ * This metric also implements the [Feed] API, so recorded events can be replayed afterward as a normal feed.
  *
  * This metric works differently from most other metrics. It stores the events internally in memory and does not
  * return them to a MetricsLogger. However, just like other metrics, it will reset its state when `reset()` is invoked.

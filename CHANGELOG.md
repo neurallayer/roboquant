@@ -35,7 +35,7 @@ A non-exhaustive list of the major changes:
   * The `Order` class now covers initial and in progress orders
   * `Policy` is renamed to `Trader`, functionality stays the same
 * For the time being removed the machine learning module. Rethinking what frameworks to use for future ML algo trading.
-* Different asset types (f.e FOREX, STOCKS, FUTURES), are now their own sub-class.
+* Different asset types (f.e FOREX, STOCKS, FUTURES), are now their own subclass.
 * Removed the `roboquant-binance` module. It was using an old unsupported Binance API. And since Binance no longer operates in my country, it is difficult to move to the newer API without being able to test it.
 * Removed the `roboquant-xchange` module, but might bring it back once the new approach is fully done,
 * Removed the `roboquant-polygon` and `roboquant-server` modules, wasn’t using them anymore (easy to bring back if someone wants to maintain them)

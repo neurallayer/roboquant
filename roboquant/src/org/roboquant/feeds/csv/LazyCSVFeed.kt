@@ -33,7 +33,7 @@ import kotlin.io.path.isRegularFile
 
 /**
  * Feed that can handle large CSV files. The difference compared to the regular [CSVFeed] is that this feed only loads
- * data from disk when required and disposes of it afterwards. So it has lower memory consumption, at the cost of
+ * data from disk when required and disposes of it afterward. So it has lower memory consumption, at the cost of
  * lower overall throughput. This feed doesn't implement the HistoricFeed interface since it doesn't know upfront
  * what the timeline will be.
  *

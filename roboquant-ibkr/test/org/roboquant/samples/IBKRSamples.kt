@@ -78,7 +78,7 @@ internal class IBKRSamples {
 
     @Test
     internal fun simplePaperTrade() {
-        // Lets trade these 3 tech stock
+        // Let's trade these 3 tech stock
         val tsla = Stock("TSLA")
         val msft = Stock("MSFT")
         val googl = Stock("GOOGL")

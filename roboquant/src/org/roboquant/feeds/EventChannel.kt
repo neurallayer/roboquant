@@ -91,7 +91,7 @@ class EventChannel(
 
     /**
      * Receive an event from the channel with an optional timeout. If the timeout occurs within or before the timeframe,
-     * a heartbeat (empty event) will be send.
+     * a heartbeat (empty event) will be sent.
      *
      * This will throw a [ClosedReceiveChannelException] if the channel is [closed].
      *

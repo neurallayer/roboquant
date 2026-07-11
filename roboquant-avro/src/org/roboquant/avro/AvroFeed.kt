@@ -55,7 +55,7 @@ internal const val SCHEMA = """{
         }"""
 
 /**
- * Read price data from a single file in Avro format. This feed loads data lazy and disposes of it afterwards, so
+ * Read price data from a single file in Avro format. This feed loads data lazy and disposes of it afterward, so
  * memory footprint is low. Compared to CSV files, Avro files are parsed more efficient, making it a good fit for large
  * back tests. Additionally, an Avro file can be compressed, reducing the overall disk space required.
  *

@@ -107,14 +107,14 @@ abstract class Chart {
 
     /**
      * Does the generated option JSON string contain JavaScript.
-     * If true, additional client-side code might be generated to parse the JSON part into a Javascript function.
+     * If true, additional client-side code might be generated to parse the JSON part into a JavaScript function.
      */
     var containsJavaScript: Boolean = false
         protected set
 
     /**
      * Allow for customization of the chart.
-     * This is invoked by [renderJson] before the json is rendered.
+     * This is invoked by [renderJson] before the JSON is rendered.
      * Default is no customization.
      *
      * Please note, the [getOption] method returns the non-customized option.
@@ -141,7 +141,7 @@ abstract class Chart {
         private const val COMMIT = "fddcad9e93c1c15495c70f358f1ccbb595f0964f"
 
         /**
-         * The URL of the ECHARTS javascript library to use.
+         * The URL of the ECHARTS JavaScript library to use.
          * This script includes some roboquant specific functions and is hosted on GitHub
          */
         const val JSURL: String =
@@ -270,7 +270,7 @@ abstract class Chart {
 
     /**
      * Convert the option of this chart to a JSON string.
-     * Is there is [customize] defined, this will be invoked before the json rendering happens.
+     * Is there is [customize] defined, this will be invoked before the JSON rendering happens.
      */
     fun renderJson(): String {
         val option = getOption()
