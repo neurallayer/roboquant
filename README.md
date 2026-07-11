@@ -8,7 +8,6 @@
 ![Enhancements](https://img.shields.io/github/issues/neurallayer/roboquant/enhancement?color=yellow&label=enhancements)
 ![GitHub last commit](https://img.shields.io/github/last-commit/neurallayer/roboquant)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/neurallayer/roboquant)
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/neurallayer/roboquant)
 ![Maven Central](https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&)
 ![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboquant&metric=alert_status)
 ![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboquant&metric=security_rating)
@@ -43,10 +42,9 @@ You can develop our own trading application in your favourite IDE using _roboqua
 
 ![IntelliJ IDEA](/docs/idea_screenshot.png)
 
-Just add roboquant and optional any of the additional modules as a dependency to your build tool, like Maven or Gradle.
+Just add roboquant and optional any of the additional modules as a dependency to your build tool, like Maven or Gradle or Kotlin Toolchain.
 
 #### Maven
-Add the following dependency to your `pom.xml` file:
 ```xml
 <dependency>
     <groupId>org.roboquant</groupId>
@@ -56,15 +54,18 @@ Add the following dependency to your `pom.xml` file:
 ```
 
 #### Gradle
-Add the following line to your Gradle script:
 ```groovy
 implementation group: 'org.roboquant', name: 'roboquant', version: 'VERSION'
 ```
 
-Latest available versions:
+#### Kotlin Toolchain
+```yaml
+dependencies:
+    - org.roboquant:roboquant:VERSION
+```
 
-* Regular version: ![Maven Central](https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&)
-* Snapshot version: ![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/org.roboquant/roboquant?server=https%3A%2F%2Fs01.oss.sonatype.org)
+
+The latest available version is ![Maven Central](https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&)
 
 ## Features
 Some key features of _roboquant_ are:
