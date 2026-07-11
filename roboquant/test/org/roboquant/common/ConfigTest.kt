@@ -24,10 +24,6 @@ internal class ConfigTest {
 
     @Test
     fun test() {
-        val version = Config.info.version
-        assertTrue(version.isNotBlank())
-        Config.printInfo()
-
         val p = Config.getProperty("NON_EXISTING", "DUMMY")
         assertEquals("DUMMY", p)
 

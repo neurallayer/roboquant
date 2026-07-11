@@ -177,7 +177,6 @@ private object Performance {
 
     @Suppress("ImplicitDefaultLocale")
     fun test() {
-        Config.printInfo()
         data class Combination(val events: Int, val assets: Int, val backTests: Int)
 
         val combinations = listOf(

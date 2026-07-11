@@ -35,51 +35,10 @@ object Config {
 
     private val logger = Logging.getLogger(Config::class)
     private val properties = mutableMapOf<String, String>()
-    private const val ONE_MB = 1024 * 1024
     private const val DEFAULT_SEED = 42L
 
     // Used to handle Double imprecision
     internal const val EPS = 1e-10
-
-    /**
-     * @property jvm the JVM name and version
-     * @property os the OS name and version
-     * @property memory the max amount of memory in MB
-     * @property cores the number of cpu cores
-     * @property version the version of roboquant
-     * @property build the build time of roboquant
-     */
-    class EnvInfo internal constructor(
-        val jvm: String,
-        val os: String,
-        val memory: Long,
-        val cores: Int,
-        val version: String,
-        val build: String
-    )
-
-    /**
-     * MetadataProvider about the build en environment
-     */
-    val info: EnvInfo by lazy {
-        val prop = Properties()
-        val stream = Config::class.java.getResourceAsStream("/roboquant.properties")
-            ?: throw ConfigurationException("couldn't load roboquant.properties from class path")
-
-        stream.use {
-            prop.load(stream)
-        }
-
-        EnvInfo(
-            System.getProperty("java.vm.name") + " " + System.getProperty("java.version"),
-            System.getProperty("os.name") + " " + System.getProperty("os.version"),
-            Runtime.getRuntime().maxMemory() / ONE_MB,
-            Runtime.getRuntime().availableProcessors(),
-            prop.getProperty("version"),
-            prop.getProperty("build")
-        )
-
-    }
 
     /**
      * Set a property. This takes precedence over properties found in files.
@@ -93,31 +52,6 @@ object Config {
      * number generator is provided
      */
     var random: Random = Random(DEFAULT_SEED)
-
-    /**
-     * ASCII art welcome greeting including runtime info
-     */
-    fun printInfo() {
-        val msg = """             _______
-            | $   $ |             roboquant
-            |   o   |             version: ${info.version}
-            |_[___]_|             build: ${info.build}
-        ___ ___|_|___ ___         os: ${info.os}
-       ()___)       ()___)        home: $home
-      /  / |         | \  \       jvm: ${info.jvm}
-     (___) |_________| (___)      kotlin: ${KotlinVersion.CURRENT}
-      | |   __/___\__   | |       memory: ${info.memory}MB
-      /_\  |_________|  /_\       cpu cores: ${info.cores}
-     // \\  |||   |||  // \\
-     \\ //  |||   |||  \\ //
-           ()__) ()__)
-           ///     \\\
-        __///_     _\\\__
-       |______|   |______|"""
-
-        println(msg)
-        System.out.flush()
-    }
 
     /**
      * Returns the roboquant home directory, by default <USER_HOME>/.roboquant
