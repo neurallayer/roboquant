@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
       - name: Verify
         run: ./kotlin check -m 'roboquant' -m 'roboquant-avro' -m 'roboquant-charts' -m 'roboquant-questdb' -m 'roboquant-alpaca'
 
