@@ -4,10 +4,12 @@ settings:
   publishing:
     enabled: true
     group: org.roboquant
-    version: 3.1.0-SNAPSHOT
+    version: 3.1.0
     publishSources: true
-    # signArtifacts: true
-    # mavenCentral: enabled
+    signArtifacts: true
+    mavenCentral:
+      publishingMode: manual
+      enabled: true
     pom:
       url: https://roboquant.org
       scm: https://github.com/neurallayer/roboquant.git
