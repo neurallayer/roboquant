@@ -1,6 +1,6 @@
 ![roboquant Logo](/docs/roboquant_header.png)
 
-![Kotlin](https://img.shields.io/badge/kotlin-2.2-blue.svg?logo=kotlin)
+![Kotlin](https://img.shields.io/badge/kotlin-2.4-blue.svg?logo=kotlin)
 ![Automated Build](https://github.com/neurallayer/roboquant/actions/workflows/verify.yml/badge.svg)
 ![GitHub code size](https://img.shields.io/github/languages/code-size/neurallayer/roboquant)
 ![APL v2](https://img.shields.io/badge/license-Apache%202-blue.svg)
@@ -10,7 +10,6 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/neurallayer/roboquant)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/neurallayer/roboquant)
 ![Maven Central](https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&)
-![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/org.roboquant/roboquant?server=https%3A%2F%2Fs01.oss.sonatype.org)
 ![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboquant&metric=alert_status)
 ![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboquant&metric=security_rating)
 ![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboquant&metric=sqale_rating)
