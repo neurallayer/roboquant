@@ -39,6 +39,7 @@ internal class FxMacroDataCalendarSample {
         println(account)
     }
 
+
     internal fun fetchCalendar(currency: String, startDate: String, endDate: String): String {
         val uri = URI.create(
             "https://fxmacrodata.com/api/v1/calendar/$currency" +
