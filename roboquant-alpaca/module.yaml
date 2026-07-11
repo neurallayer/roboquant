@@ -6,6 +6,6 @@ apply:
   - ../project.module-template.yaml
 
 dependencies:
-  - ../roboquant: exported
+  - ../roboquant
   - net.jacobpeterson.alpaca:alpaca-java:10.0.1: exported
 

@@ -6,9 +6,9 @@ apply:
   - ../project.module-template.yaml
 
 dependencies:
-  - ../roboquant: exported
-  - com.google.code.gson:gson:2.11.0: exported
-  - org.icepear.echarts:echarts-java:1.0.7: exported
+  - ../roboquant
+  - com.google.code.gson:gson:2.11.0
+  - org.icepear.echarts:echarts-java:1.0.7
 
 
 

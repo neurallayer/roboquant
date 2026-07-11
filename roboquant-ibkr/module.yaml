@@ -9,5 +9,5 @@ repositories:
   - mavenLocal
 
 dependencies:
-  - ../roboquant: exported
+  - ../roboquant
   - com.interactivebrokers:tws-api:10.19: compile-only

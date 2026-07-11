@@ -7,6 +7,6 @@ apply:
 
 dependencies:
   - org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0: exported
-  - de.siegmar:fastcsv:3.2.0: exported
+  - de.siegmar:fastcsv:3.2.0
   - org.hipparchus:hipparchus-stat:3.0: exported
   - com.tictactec:ta-lib:0.4.0: exported

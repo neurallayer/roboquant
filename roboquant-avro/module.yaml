@@ -6,8 +6,8 @@ apply:
   - ../project.module-template.yaml
 
 dependencies:
-  - ../roboquant: exported
-  - org.xerial.snappy:snappy-java:1.1.10.5: exported
+  - ../roboquant
+  - org.xerial.snappy:snappy-java:1.1.10.5
   - org.apache.avro:avro:1.12.1: exported
-  - com.fasterxml.jackson.core:jackson-core:2.22.1: exported
+  - com.fasterxml.jackson.core:jackson-core:2.22.1
 
