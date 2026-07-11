@@ -20,7 +20,6 @@ mv_merge() {
     fi
 }
 
-
 root="${1:-.}"
 for module in $(find_modules "$root"); do
     echo "Processing: $module"
