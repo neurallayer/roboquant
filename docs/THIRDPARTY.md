@@ -8,7 +8,6 @@ _Roboquant_ couldn’t have been developed without the use of free and open sour
 * [ECharts-Java](https://github.com/ECharts-Java/ECharts-Java): a Java library that makes it easy to create [ECharts](https://echarts.apache.org) visualizations.
 * [Avro](https://avro.apache.org): data serialization system for fast and efficient storage of data.
 * [Hipparchus](https://www.hipparchus.org/index.html): a library of lightweight, self-contained mathematics and statistics components.
-* [Jupyter](https://www.jupyter.org): the standard for interactive development and perhaps best known in combination with Python and R. But it also works like a charm with Kotlin.
 * [FastCSV](https://github.com/osiegmar/FastCSV): an ultra-fast and easy to use CSV parser.
 
 ## Other artifacts

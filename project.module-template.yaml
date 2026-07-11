@@ -25,10 +25,10 @@ repositories:
   - id: snapshots
     url: https://central.sonatype.com/repository/maven-snapshots/
     publish: true
-    credentials:
-      file: creds.properties
-      usernameKey: username
-      passwordKey: password
+    # credentials:
+    #  file: creds.properties
+    #  usernameKey: username
+    #  passwordKey: password
 
 dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.4.0

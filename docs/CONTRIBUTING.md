@@ -44,8 +44,7 @@ so do familiarize yourself with the following guidelines.
 
 ## PR workflow
 
-1. Contributor builds roboquant locally and runs all unit tests via maven `mvn clean test`
- and integration tests (if it’s possible on contributor machine) via `mvn clean integration`.
+1. Contributor builds roboquant locally and runs all unit tests via Kotlin toolchain `./kotlin test`
 2. Contributor submits the PR if the local build is successful and tests are green.
 3. Reviewer marks the PR with the "Review" label at the start of the review process.
 4. Reviewer leaves the comments or marks the PR with the label "LGTM."
@@ -74,9 +73,9 @@ so do familiarize yourself with the following guidelines.
 
 Roboquant is built with Maven.
 
-* Run `mvn clean test` to build. It also runs all the tests.
+* Run `./kotlin test` to build. It also runs all the tests.
 
-You can import this project into _IntelliJ IDEA_ and use the Maven plugin to build and test the project.
+You can import this project into _IntelliJ IDEA_ and use the Kotlin Toolchain plugin to build and test the project.
 
 ## Contacting maintainers
 

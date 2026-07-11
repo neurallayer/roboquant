@@ -62,8 +62,6 @@ Add the following line to your Gradle script:
 implementation group: 'org.roboquant', name: 'roboquant', version: 'VERSION'
 ```
 
-See also [installation guide](/docs/INSTALL.md) for more ways to install and use _roboquant_.
-
 Latest available versions:
 
 * Regular version: ![Maven Central](https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&)
