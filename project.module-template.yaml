@@ -23,6 +23,7 @@ repositories:
   - id: snapshots
     url: https://central.sonatype.com/repository/maven-snapshots/
     publish: true
+    # have to comment out below otherwise GitHub action fails
     # credentials:
     #  file: creds.properties
     #  usernameKey: username

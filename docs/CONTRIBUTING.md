@@ -25,8 +25,8 @@ We love PRs. Submit PRs [here](https://github.com/neurallayer/roboquant/pulls).
 However, please keep in mind that maintainers will have to support the resulting code of the project,
 so do familiarize yourself with the following guidelines.
 
-* All development (both new features and bug fixes) is performed in the `master` branch.
-  * Base PRs against the `master` branch.
+* All development (both new features and bug fixes) is performed in the `main` branch.
+  * Base PRs against the `main` branch.
   * PR should be linked with the issue, excluding minor documentation changes, the addition of unit tests, and fixing typos.
 * If you make any code changes:
   * Follow the [Kotlin Coding Conventions](https://kotlinlang.org/docs/reference/coding-conventions.html).
@@ -44,7 +44,7 @@ so do familiarize yourself with the following guidelines.
 
 ## PR workflow
 
-1. Contributor builds roboquant locally and runs all unit tests via Kotlin toolchain `./kotlin test`
+1. Contributor builds roboquant locally and runs the unit tests via Kotlin toolchain `./kotlin test`
 2. Contributor submits the PR if the local build is successful and tests are green.
 3. Reviewer marks the PR with the "Review" label at the start of the review process.
 4. Reviewer leaves the comments or marks the PR with the label "LGTM."
@@ -71,9 +71,9 @@ so do familiarize yourself with the following guidelines.
 
 ## Building
 
-Roboquant is built with Maven.
+Roboquant is built with Kotlin Toolchain.
 
-* Run `./kotlin test` to build. It also runs all the tests.
+* Run `./kotlin test` to build and test.
 
 You can import this project into _IntelliJ IDEA_ and use the Kotlin Toolchain plugin to build and test the project.
 
