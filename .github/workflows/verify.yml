@@ -18,5 +18,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-      - name: Build with Maven
-        run: ./mvnw clean test -pl '!roboquant-ibkr'
+      - name: Verify
+        run: ./kotlin check -m 'roboquant' -m 'roboquant-avro' -m 'roboquant-charts' -m 'roboquant-questdb' -m 'roboquant-alpaca'
+

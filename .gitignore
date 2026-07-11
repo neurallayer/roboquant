@@ -6,6 +6,5 @@ build/
 target/
 *.jfr
 *.log
-pom.xml.versionsBackup
 creds.properties
 

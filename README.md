@@ -1,7 +1,7 @@
 ![roboquant Logo](/docs/roboquant_header.png)
 
 ![Kotlin](https://img.shields.io/badge/kotlin-2.2-blue.svg?logo=kotlin)
-![Automated Build](https://github.com/neurallayer/roboquant/actions/workflows/maven.yml/badge.svg)
+![Automated Build](https://github.com/neurallayer/roboquant/actions/workflows/verify.yml/badge.svg)
 ![GitHub code size](https://img.shields.io/github/languages/code-size/neurallayer/roboquant)
 ![APL v2](https://img.shields.io/badge/license-Apache%202-blue.svg)
 ![Bugs](https://img.shields.io/github/issues/neurallayer/roboquant/bug?color=red&label=bugs)
@@ -56,20 +56,8 @@ Add the following dependency to your `pom.xml` file:
 </dependency>
 ```
 
-Or if you want to create your own new algo-trading project from scratch, you can run the Maven Archetype:
-
-```shell
-mvn archetype:generate                          \
--DarchetypeGroupId=org.roboquant                \
--DarchetypeArtifactId=roboquant-quickstart      \
--DarchetypeVersion=2.0.0                        \
--DgroupId=org.mydomain                          \
--DartifactId=myapp                              \
--Dversion=1.0-SNAPSHOT
-```
-
 #### Gradle
-Add the following line to your gradle script:
+Add the following line to your Gradle script:
 ```groovy
 implementation group: 'org.roboquant', name: 'roboquant', version: 'VERSION'
 ```
@@ -81,19 +69,6 @@ Latest available versions:
 * Regular version: ![Maven Central](https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&)
 * Snapshot version: ![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/org.roboquant/roboquant?server=https%3A%2F%2Fs01.oss.sonatype.org)
 
-### Jupyter Notebooks
-You can interactively develop your own strategies using a Jupyter Notebook.
-
-![Jupyter Lab](/docs/jupyter_screenshot.png)
-
-If you just want to try it out without any installation, go to ![Binder](https://mybinder.org/badge_logo.svg)
-
-If you already have Docker installed, all it takes is a single command to have a fully functional Jupyter Notebook environment available on your local machine. This image also comes with several example notebooks included.
-
-```shell
-docker run -p 8888:8888 roboquant/jupyter
-```
-
 ## Features
 Some key features of _roboquant_ are:
 
@@ -104,7 +79,6 @@ Some key features of _roboquant_ are:
 * [x] Transition from back-testing to live trading with minimal changes
 * [x] Trade on multi-markets with multi-currencies
 * [x] Developed under open source with a permissive Apache license
-* [x] Use Jupyter Notebooks with insightful charts if you prefer interactive development
 * [x] Batteries included, for example, 150+ technical indicators and ready to use datasets
 * [x] Out of the box integration with Alpaca, Interactive Brokers and the ECB, and many CSV data providers.
 
@@ -112,13 +86,6 @@ See also [Features](https://roboquant.org/background/features.html) for a more e
 
 ## License
 Roboquant is distributed under the [Apache 2.0 License](/LICENSE). The Apache 2.0 license is a permissive license, meaning there are few restrictions on the use of the code.
-
-## Related projects
-The following list includes projects that extend the behavior of roboquant in some ways:
-
-* Support for trading using the Bybit broker and feeds: https://github.com/alleyway/roboquant-bybit
-* Support for a Maven archetype: https://github.com/neurallayer/roboquant-quickstart
-* Several sample notebooks and a docker container: https://github.com/neurallayer/roboquant-notebook
 
 ## Thanks
 Thanks to all the [great opensource software](docs/THIRDPARTY.md) that is powering _roboquant_.
