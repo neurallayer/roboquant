@@ -139,14 +139,7 @@ class AlpacaLiveFeed(
             logger.info(exception.message)
         }
     }
-
-    /**
-     * Just cleanup any used connection
-     */
-    fun finalize() {
-        close()
-    }
-
+    
     /**
      * Subscribe to stock market data based on the passed [symbols] and [type]
      */

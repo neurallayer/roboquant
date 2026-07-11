@@ -30,6 +30,7 @@ import kotlin.collections.set
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.reflect.KClass
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Aggregate prices in a live [feed] to a [org.roboquant.common.PriceBar].
@@ -115,7 +116,7 @@ class AggregatorLiveFeed(
                 send(channel, expiration, history)
                 expiration += aggregationPeriod
                 val intervalMillis = Instant.now().until(expiration, ChronoUnit.MILLIS)
-                delay(intervalMillis)
+                delay(intervalMillis.milliseconds)
             }
         }
 

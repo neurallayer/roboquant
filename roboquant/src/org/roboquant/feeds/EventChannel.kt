@@ -28,6 +28,7 @@ import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.common.compareTo
 import java.time.Instant
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Wrapper around a [Channel] for communicating the [events][org.roboquant.common.Event] of a [Feed].
@@ -100,7 +101,7 @@ class EventChannel(
         if (timeOutMillis <= 0) return channel.receive()
 
         try {
-            return withTimeout(timeOutMillis) {
+            return withTimeout(timeOutMillis.milliseconds) {
                 channel.receive()
             }
         } catch (err: TimeoutCancellationException) {

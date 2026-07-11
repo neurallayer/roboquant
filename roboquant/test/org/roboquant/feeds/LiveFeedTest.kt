@@ -27,6 +27,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.milliseconds
 
 internal class LiveFeedTest {
 
@@ -67,7 +68,7 @@ internal class LiveFeedTest {
                     while (true) {
                         try {
                             sendAsync(event = Event(Instant.now(), items))
-                            delay(delayInMillis)
+                            delay(delayInMillis.milliseconds)
                             if (stop) break
                         } catch (e: Exception) {
                             println(e)

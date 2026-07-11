@@ -20,11 +20,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.milliseconds
 
 internal class ParallelJobsTest {
 
     private suspend fun test() {
-        delay(1)
+        delay(1.milliseconds)
     }
 
     @Test

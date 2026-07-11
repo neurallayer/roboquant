@@ -83,7 +83,7 @@ class AlpacaHistoricFeed(
             }
             nextPageToken = resp.nextPageToken
         } while (nextPageToken != null)
-        logger.debug { "retrieved prices type=quotes symbol=$symbols timeframe=$timeframe" }
+        logger.debug { "retrieved prices type=quotes symbol=${symbols.contentToString()} timeframe=$timeframe" }
     }
 
     /**
@@ -108,7 +108,7 @@ class AlpacaHistoricFeed(
             }
             nextPageToken = resp.nextPageToken
         } while (nextPageToken != null)
-        logger.debug { "retrieved prices type=trades symbols=$symbols timeframe=$timeframe" }
+        logger.debug { "retrieved prices type=trades symbols=${symbols.contentToString()} timeframe=$timeframe" }
 
     }
 
@@ -161,7 +161,7 @@ class AlpacaHistoricFeed(
             }
             nextPageToken = resp.nextPageToken
         } while (nextPageToken != null)
-        logger.debug { "retrieved prices type=bars symbol=$symbols timeframe=$timeframe" }
+        logger.debug { "retrieved prices type=bars symbol=${symbols.contentToString()} timeframe=$timeframe" }
     }
 }
 

@@ -26,6 +26,7 @@ import org.roboquant.common.TradePrice
 import org.roboquant.feeds.*
 import java.time.Instant
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Feed that will generate events for a series of prices using the system time. It can be used to validate if a
@@ -88,7 +89,7 @@ class LiveTestFeed(
                 val item = getAction(price.toDouble())
                 val event = Event(Instant.now(), listOf(item))
                 channel.send(event)
-                delay(delayInMillis.toLong())
+                delay(delayInMillis.milliseconds)
             }
         }
     }
