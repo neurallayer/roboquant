@@ -9,47 +9,33 @@ find_modules() {
     find "$1" -name "module.yaml" -exec dirname {} \;
 }
 
+# Merge src into dest: merge contents, then remove src.
+mv_merge() {
+    local src="$1"
+    local dest="$2"
+    if [ -d "$src" ] && [ -n "$(ls -A "$src" 2>/dev/null)" ]; then
+        mkdir -p "$dest"
+        cp -r "$src/." "$dest/"
+        rm -rf "$src"
+    fi
+}
+
+
 root="${1:-.}"
 for module in $(find_modules "$root"); do
     echo "Processing: $module"
     ( cd "$module"
 
-        # Main sources
-        if [ -d src/main/java ] && [ -n "$(ls -A src/main/java 2>/dev/null)" ]; then
-            mkdir -p src
-            mv src/main/java/* src/
-        fi
-        if [ -d src/main/kotlin ] && [ -n "$(ls -A src/main/kotlin 2>/dev/null)" ]; then
-            mkdir -p src
-            mv src/main/kotlin/* src/
-        fi
+      # main
+      mv_merge "src/main/java"   "src"
+      mv_merge "src/main/kotlin" "src"
+      mv_merge "src/main/resources" "resources"
 
-        # Main resources
-        if [ -d src/main/resources ] && [ -n "$(ls -A src/main/resources 2>/dev/null)" ]; then
-            mkdir -p resources
-            mv src/main/resources/* resources/
-        fi
+      # Test
+      mv_merge "src/test/java"   "test"
+      mv_merge "src/test/kotlin" "test"
+      mv_merge "src/test/resources" "testResources"
 
-        # Test sources
-        if [ -d src/test/java ] && [ -n "$(ls -A src/test/java 2>/dev/null)" ]; then
-            mkdir -p test
-            mv src/test/java/* test/
-        fi
-        if [ -d src/test/kotlin ] && [ -n "$(ls -A src/test/kotlin 2>/dev/null)" ]; then
-            mkdir -p test
-            mv src/test/kotlin/* test/
-        fi
-
-        # Test resources
-        if [ -d src/test/resources ] && [ -n "$(ls -A src/test/resources 2>/dev/null)" ]; then
-            mkdir -p testResources
-            mv src/test/resources/* testResources/
-        fi
-
-        # Remove now‑empty Maven directories (ignore failures)
-        rmdir src/main/java src/main/kotlin src/main/resources 2>/dev/null || true
-        rmdir src/test/java src/test/kotlin src/test/resources 2>/dev/null || true
-        rmdir src/main src/test 2>/dev/null || true
     )
 done
 
