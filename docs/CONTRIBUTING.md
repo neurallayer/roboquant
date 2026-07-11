@@ -71,9 +71,10 @@ so do familiarize yourself with the following guidelines.
 
 ## Building
 
-Roboquant is built with Kotlin Toolchain.
+Roboquant can be built using Kotlin Toolchain. This is a new and easy way to build
+any type of Kotlin projects.
 
-* Run `./kotlin test` to build and test.
+* Simply run `./kotlin test` to build roboquant and kick off the unit tests.
 
 You can import this project into _IntelliJ IDEA_ and use the Kotlin Toolchain plugin to build and test the project.
 
