@@ -71,10 +71,10 @@ internal object TestData {
     }
 
     fun dataDir(): String {
-        if (File("./roboquant/src/test/resources/data/").isDirectory)
-            return "./roboquant/src/test/resources/data/"
-        else if (File("../roboquant/src/test/resources/data/").isDirectory)
-            return "../roboquant/src/test/resources/data/"
+        if (File("./roboquant/testResources/data/").isDirectory)
+            return "./roboquant/testResources/data/"
+        else if (File("../roboquant/testResources/data/").isDirectory)
+            return "../roboquant/testResources/data/"
         throw ConfigurationException("cannot find data directory for testing")
     }
 

@@ -1,10 +1,8 @@
-layout: maven-like
-
 settings:
   publishing:
     enabled: true
     group: org.roboquant
-    version: 3.1.0
+    version: 3.2.0-SNAPSHOT
     publishSources: true
     signArtifacts: true
     mavenCentral:
