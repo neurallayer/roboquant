@@ -30,9 +30,8 @@ repositories:
     #  passwordKey: password
 
 dependencies:
-  - org.jetbrains.kotlin:kotlin-stdlib:2.4.0
   - org.slf4j:slf4j-api:2.1.0-alpha1
 
 test-dependencies:
   - $kotlin.test.junit5
-  - org.slf4j:slf4j-simple:2.0.17
+  - org.slf4j:slf4j-simple:2.0.18

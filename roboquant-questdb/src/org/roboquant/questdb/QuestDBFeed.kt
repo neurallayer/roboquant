@@ -133,7 +133,7 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
 
                 // Add hook to close engine before JVM shutdown
                 Runtime.getRuntime().addShutdownHook(Thread {
-                    logger.info { "Closing QuestDB engine path=$dbPath" }
+                    logger.debug { "Closing QuestDB engine path=$dbPath" }
                     engine.close()
                 })
             }

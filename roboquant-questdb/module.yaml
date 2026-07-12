@@ -1,6 +1,6 @@
 product: jvm/lib
 
-description: roboquant questdb support
+description: roboquant support for QuestDB feeds and journals
 
 apply:
   - ../project.module-template.yaml

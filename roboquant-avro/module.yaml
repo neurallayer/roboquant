@@ -1,6 +1,6 @@
 product: jvm/lib
 
-description: roboquant avro support
+description: roboquant support for AVRO feeds
 
 apply:
   - ../project.module-template.yaml
@@ -8,6 +8,6 @@ apply:
 dependencies:
   - ../roboquant
   - org.xerial.snappy:snappy-java:1.1.10.5
-  - org.apache.avro:avro:1.12.1: exported
+  - org.apache.avro:avro:1.12.1
   - com.fasterxml.jackson.core:jackson-core:2.22.1
 

@@ -1,13 +1,13 @@
 product: jvm/lib
 
-description: roboquant chart support
+description: roboquant support for charting
 
 apply:
   - ../project.module-template.yaml
 
 dependencies:
   - ../roboquant
-  - com.google.code.gson:gson:2.11.0
+  - com.google.code.gson:gson:2.14.0
   - org.icepear.echarts:echarts-java:1.0.7
 
 

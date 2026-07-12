@@ -56,7 +56,7 @@ class QuestDBJournal(
         engine = getEngine(dbPath)
         ctx = SqlExecutionContextImpl(engine, workers)
         createTable(table)
-        logger.info { "db=$dbPath table=$table" }
+        logger.debug { "db=$dbPath table=$table" }
     }
 
     /**
@@ -154,7 +154,7 @@ class QuestDBJournal(
      */
     fun removeAllRuns() {
         engine.dropAllTables()
-        logger.info { "removed all runs from ${engine.configuration.confRoot}" }
+        logger.trace { "removed all runs from ${engine.configuration.confRoot}" }
     }
 
     /**

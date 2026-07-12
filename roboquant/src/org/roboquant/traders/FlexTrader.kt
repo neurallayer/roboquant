@@ -167,7 +167,7 @@ open class FlexTrader(
 
 
     protected fun log(signal: Signal, price: PriceItem?, position:Position, reason: String) {
-        logger.info { "signal=$signal price=$price, position=$position, reason=$reason" }
+        logger.debug { "signal=$signal price=$price, position=$position, reason=$reason" }
     }
 
     /**

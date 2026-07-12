@@ -63,7 +63,7 @@ class CSVFeed(
             readFiles(path)
         }
 
-        logger.info { "events=${timeline.size} assets=${assets.size} timeframe=$timeframe" }
+        logger.debug { "events=${timeline.size} assets=${assets.size} timeframe=$timeframe" }
     }
 
     /**

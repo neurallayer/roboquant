@@ -1,6 +1,6 @@
 product: jvm/lib
 
-description: roboquant
+description: roboquant algotrading platform
 
 apply:
   - ../project.module-template.yaml
@@ -8,5 +8,5 @@ apply:
 dependencies:
   - org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0: exported
   - de.siegmar:fastcsv:3.2.0
-  - org.hipparchus:hipparchus-stat:3.0: exported
+  - org.hipparchus:hipparchus-stat:4.0.3: exported
   - com.tictactec:ta-lib:0.4.0: exported

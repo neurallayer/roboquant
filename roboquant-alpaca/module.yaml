@@ -1,11 +1,11 @@
 product: jvm/lib
 
-description: roboquant alpaca
+description: roboquant support for Alpaca broker and feeds
 
 apply:
   - ../project.module-template.yaml
 
 dependencies:
   - ../roboquant
-  - net.jacobpeterson.alpaca:alpaca-java:10.0.1: exported
+  - net.jacobpeterson.alpaca:alpaca-java:10.0.1
 

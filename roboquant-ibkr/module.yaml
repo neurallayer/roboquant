@@ -1,6 +1,6 @@
 product: jvm/lib
 
-description: roboquant ibkr support
+description: roboquant support for Interactive Brokers
 
 apply:
   - ../project.module-template.yaml

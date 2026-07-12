@@ -81,7 +81,6 @@ internal class QuestDBFeedTest {
     }
 
 
-
     @Test
     fun record() {
 
