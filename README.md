@@ -39,9 +39,6 @@ You can find out more at the online [tutorial](https://roboquant.org/tutorial/in
 
 ### Library
 You can develop our own trading application in your favourite IDE using _roboquant_ as a library.
-
-![IntelliJ IDEA](/docs/idea_screenshot.png)
-
 Just add roboquant and optional any of the additional modules as a dependency to your build tool, like Maven or Gradle or Kotlin Toolchain.
 
 #### Maven
