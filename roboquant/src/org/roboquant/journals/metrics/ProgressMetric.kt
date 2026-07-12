@@ -35,15 +35,20 @@ class ProgressMetric : Metric {
     private var startTime = Instant.now().toEpochMilli()
     private var items = 0L
     private var events = 0L
-
+    private var cntSignals = 0L
+    private var cntOrders = 0L
 
     override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>): Map<String, Double> {
         items += event.items.size
+        cntSignals += signals.size
+        cntOrders += orders.size
 
         return metricResultsOf(
             "progress.items" to items,
             "progress.events" to ++events,
             "progress.walltime" to (Instant.now().toEpochMilli() - startTime),
+            "progress.signals" to cntSignals,
+            "progress.orders" to cntOrders,
         )
     }
 

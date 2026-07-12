@@ -1,7 +1,16 @@
 # Changelog
 
+## Major changes in 3.1
+* Moved to the Kotlin Toolchain build system
+* Removed Jupyter Notebook support
+* Upgraded to Kotlin 2.4
+* Improved codebase using new language features
+
 ## Major changes in 3.0
-Roboquant version 3.0 has many changes, several of them are breaking changes. The key reason was to clean-up and simplify areas that were a hard to maintain and/or extend. This makes it easier for people to contiue to try new trading ideas and hack their way _roboquant_ if required.
+Roboquant version 3.0 has many changes, several of them are breaking changes.
+The key reason was to clean-up and simplify areas that were a hard to maintain and/or extend.
+
+This makes it easier for people to continue to try new trading ideas and hack their way _roboquant_ if required.
 
 Also removed some modules that didn’t get the attention they deserved in the last few years. If people want to bring them back (and maintain them), that can always be discussed.
 

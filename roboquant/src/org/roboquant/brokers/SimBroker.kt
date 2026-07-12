@@ -103,7 +103,7 @@ open class SimBroker(
 
     /**
      * Return the fill size for the order to be used. Default implementation to
-     * fill the complete remaining order size, so thre are no partial fills.
+     * fill the complete remaining order size, so there are no partial fills.
      */
     open fun getFill(order: Order, price: Double) : Size {
         return order.remaining
