@@ -36,6 +36,17 @@ class HtmlPageTest {
     @Ignore
     fun testRender2() {
         val page = HtmlPage()
+        page.theme = "dark"
+        page.style = """
+            body {
+                background-color: #555;
+            }
+            .chart {
+                background-color: black;
+                margin: 30px 10px;
+            }
+        """.trimIndent()
+
         val feed = RandomWalk(Timeframe.fromYears(2020, 2021))
         val journal = MemoryJournal(AccountMetric())
         val account = run(feed, EMACrossover(), journal = journal)

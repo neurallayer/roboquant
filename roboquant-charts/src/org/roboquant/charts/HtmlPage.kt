@@ -6,9 +6,12 @@ import java.io.File
  * Create an HTML page with one or more charts. If you run one or more back tests and
  * want some visualization saved at the end, this is a good option.
  */
-class HtmlPage(val theme: String = "light") {
+class HtmlPage {
 
     private val charts = mutableListOf<Chart>()
+
+    var theme = "light"
+    var style = ""
 
     /**
      * Add a chart to this page.
@@ -52,6 +55,9 @@ class HtmlPage(val theme: String = "light") {
                     <meta charset="utf-8" />
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"></script>
                 </head>
+                <style>
+                $style
+                </style>
                 <body>
         """.trimIndent()
 
