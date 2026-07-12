@@ -3,7 +3,8 @@ package org.roboquant.charts
 import java.io.File
 
 /**
- * Make an HTML page with one or more charts
+ * Create an HTML page with one or more charts. If you run one or more back tests and
+ * want some visualization saved at the end, this is a good option.
  */
 class HtmlPage {
 
@@ -26,6 +27,8 @@ class HtmlPage {
                 var option = ${chart.renderJson()};${convertor};
                 var chart = echarts.init(document.getElementById('$id'));
                 chart.setOption(option);
+                var resizeObserver = new ResizeObserver(() => chart.resize());
+                resizeObserver.observe(elem);
             </script>
             """.trimMargin()
     }
