@@ -38,7 +38,7 @@ import java.time.Instant
  * The tooltip provides additional details, like the symbol of the underlying asset.
  *
  * @param feed the feed to use as input to the strategy
- * @param strategy the strategy to use to genrate the signals
+ * @param strategy the strategy to use to generate the signals
  * @param timeframe limit the data to the provided timeframe, default is [Timeframe.INFINITE]
  */
 class SignalChart(

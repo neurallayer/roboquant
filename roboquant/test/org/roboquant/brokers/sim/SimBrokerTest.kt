@@ -59,7 +59,7 @@ internal class SimBrokerTest {
     }
 
 
-    private fun getFilledSimbroker(): SimBroker {
+    private fun getFilledSimBroker(): SimBroker {
         val broker = SimBroker()
         val asset = Stock("TEST")
         val order = Order(asset, Size(10), 100.0)
@@ -74,7 +74,7 @@ internal class SimBrokerTest {
 
     @Test
     fun logic() {
-        val broker = getFilledSimbroker()
+        val broker = getFilledSimBroker()
         val account1 = broker.sync()
         val account2 = broker.sync()
         assertEquals(account1.equity(), account2.equity())

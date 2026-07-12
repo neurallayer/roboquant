@@ -112,7 +112,7 @@ class AvroFeed(private val file: File) : Feed {
         val serializer = PriceItemSerializer()
         getReader().use {
             val name = it.schema.fullName
-            assert(name == "org.roboquant.avro.schema.PriceItemV2") { "invalid avro schema $name" }
+            assert(name == "org.roboquant.avro.schema.PriceItemV2") { "invalid Avro schema $name" }
             if (timeframe.isFinite()) position(it, timeframe.start)
             while (it.hasNext()) {
                 val rec = it.next()

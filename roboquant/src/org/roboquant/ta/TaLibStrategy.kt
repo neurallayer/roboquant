@@ -198,12 +198,12 @@ class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
         for (priceBar in event.items.filterIsInstance<PriceBar>()) {
             if (assetPriceBarSeries.add(priceBar, time)) {
                 val asset = priceBar.asset
-                val priceSerie = assetPriceBarSeries.getValue(asset)
+                val series = assetPriceBarSeries.getValue(asset)
                 try {
-                    if (buyFn.invoke(taLib, priceSerie)) results.add(Signal.buy(asset))
-                    if (sellFn.invoke(taLib, priceSerie)) results.add(Signal.sell(asset))
+                    if (buyFn.invoke(taLib, series)) results.add(Signal.buy(asset))
+                    if (sellFn.invoke(taLib, series)) results.add(Signal.sell(asset))
                 } catch (ex: InsufficientData) {
-                    priceSerie.increaseCapacity(ex.minSize)
+                    series.increaseCapacity(ex.minSize)
                 }
             }
         }

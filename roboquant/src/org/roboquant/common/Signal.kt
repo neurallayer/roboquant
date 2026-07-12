@@ -89,7 +89,7 @@ class Signal(
         }
 
         /**
-         * Creae a sell signal.
+         * Create a sell signal.
          */
         fun sell(asset: Asset, type: SignalType = BOTH, tag: String = "") : Signal {
             return Signal(asset, SELL, type, tag)

@@ -48,7 +48,7 @@ class TimeSpan internal constructor(internal val period: Period, internal val du
     companion object {
 
         /**
-         * TImeSpan of 0
+         * TimeSpan of 0
          */
         val ZERO = TimeSpan()
 

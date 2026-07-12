@@ -31,9 +31,9 @@ import java.time.ZoneId
  * @property initialDeposit initial deposit, default is 1 million USD
  * @param baseCurrency the base currency to use for reporting amounts, default is the (first) currency found in the
  * initial deposit
- * @param slippage the price slippage (0.001 = 0.1%). Default is 0.0, so no splippage
+ * @param slippage the price slippage (0.001 = 0.1%). Default is 0.0, so no slippage
  * @property accountModel the account model (like cash or margin) to use, default is [CashAccountModel]
- * @property exchangeZoneId the tiemzone of the exchange, used for GTD time in force calculations. Default is UTC
+ * @property exchangeZoneId the timezone of the exchange, used for GTD time in force calculations. Default is UTC
  * @constructor Create a new instance of SimBroker
  */
 open class SimBroker(
@@ -200,7 +200,7 @@ open class SimBroker(
         for (order in pendingOrders) {
             when {
                 order.size.iszero -> {
-                    // Cancelation Order
+                    // Cancellation Order
                     assert(order.id.isNotEmpty())
                     val removed = account.orders.removeAll { it.id == order.id }
                     if (! removed) logger.warn("Skipping cancellation $order")

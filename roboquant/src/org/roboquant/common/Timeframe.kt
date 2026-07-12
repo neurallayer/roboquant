@@ -150,7 +150,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
             get() = parse("2020-02-17T00:00:00Z", "2020-03-17T00:00:00Z")
 
         /**
-         * Create a timeframe starting from 1 january of the [first] year until 1 january of
+         * Create a timeframe starting from 1 January of the [first] year until 1 January of
          * the [last] year (excluding).
          */
         fun fromYears(first: Int, last: Int, zoneId: ZoneId = ZoneOffset.UTC): Timeframe {
@@ -248,7 +248,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
-     * Convert this timeframe to a [Timeline] where each time seperated by a [step] amount.
+     * Convert this timeframe to a [Timeline] where each time separated by a [step] amount.
      * If the temporalAmount is defined as a [Period], UTC will be used as the ZoneId.
      * Usage:
      * ```

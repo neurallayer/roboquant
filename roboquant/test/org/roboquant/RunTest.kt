@@ -55,7 +55,7 @@ internal class RunTest {
 
 
     @Test
-    fun walkforward()  {
+    fun walkForward()  {
         val feed = RandomWalk.lastYears(10, 2)
         val tfs = feed.timeframe.split(2.years)
         for (tf in tfs) {
