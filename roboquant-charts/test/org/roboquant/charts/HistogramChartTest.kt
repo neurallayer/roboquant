@@ -23,7 +23,7 @@ internal class HistogramChartTest {
 
     @Test
     fun test() {
-        val data = TestData.data
+        val data = TestData.timeSeriesData
         val chart = HistogramChart(data)
         assertTrue(chart.renderJson().isNotBlank())
     }

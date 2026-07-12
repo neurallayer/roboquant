@@ -52,34 +52,11 @@ object TestData {
     }
 
 
-    val data by lazy {
+    val timeSeriesData by lazy {
         val feed = RandomWalk(Timeframe.fromYears(2020, 2021))
         val journal = MemoryJournal(AccountMetric())
         run(feed, EMACrossover(), journal = journal)
         journal.getMetric("account.equity")
     }
-
-    /*
-    private fun loadFile(name: String): String {
-        val classloader = Thread.currentThread().contextClassLoader
-        val bytes = classloader.getResourceAsStream(name)!!.readAllBytes()
-        return String(bytes)
-    }
-
-
-    fun testFile(chart: Chart, baseName: String) {
-        val classloader = Thread.currentThread().contextClassLoader
-        val fileName = "$baseName.json"
-        val url = classloader.getResource(fileName)
-        if (url === null) {
-            val fullName = "src/test/resources/$fileName"
-            val json = chart.renderJson()
-            File(fullName).writeText(json)
-        }
-
-        val str = loadFile(fileName)
-        assertEquals(str.removeEOL(), chart.renderJson().removeEOL())
-    }
-    */
 
 }

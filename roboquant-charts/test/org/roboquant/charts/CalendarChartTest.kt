@@ -19,11 +19,11 @@ package org.roboquant.charts
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-internal class CalendarChartTestIT {
+internal class CalendarChartTest {
 
     @Test
     fun test() {
-        val data = TestData.data
+        val data = TestData.timeSeriesData
         val chart = CalendarChart(data)
         assertTrue(chart.renderJson().isNotBlank())
     }

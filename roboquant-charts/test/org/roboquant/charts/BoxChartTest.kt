@@ -23,7 +23,7 @@ internal class BoxChartTest {
 
     @Test
     fun test() {
-        val data = TestData.data
+        val data = TestData.timeSeriesData
         val chart = BoxChart(data)
         assertTrue(chart.renderJson().isNotBlank())
     }
