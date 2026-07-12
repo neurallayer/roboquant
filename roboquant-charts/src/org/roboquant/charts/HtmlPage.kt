@@ -29,7 +29,7 @@ class HtmlPage {
 
         val id = "chart-${chart.hashCode()}"
         return """
-            <div id="$id" class="chart" style="width: 100%;height:${chart.height}px;"></div>
+            <div id="$id" class="chart" style="height:${chart.height}px;"></div>
             <script type="text/javascript">
             {
                 let option = ${chart.renderJson()};

@@ -58,6 +58,10 @@ class HtmlPageTest {
         page.addChart(PriceChart(feed, asset))
         page.addChart(SignalChart(feed, EMACrossover()))
         page.addChart(TradeChart(account.trades))
+        page.addChart(PerformanceChart(feed))
+        page.addChart(TimeSeriesChart(ts))
+        page.addChart(CorrelationChart(feed, feed.assets))
+        page.addChart(HistogramChart(ts))
         assertDoesNotThrow {
             page.render("/tmp/test.html")
         }
