@@ -28,10 +28,6 @@ internal class ChartTest {
 
     private class MyChart : Chart() {
 
-        init {
-            javascriptFunction("return p;")
-        }
-
         fun reduced(size: Int): List<Int> {
             val data = (1..size).toList()
             return reduce(data).toList()

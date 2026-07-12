@@ -15,16 +15,18 @@ class HtmlPage {
     }
 
     fun renderFragment(chart: Chart) : String {
-        val convertor = if (chart.containsJavaScript)
+        val convertor = if (chart.containsJavaScript) {
             "option.tooltip.formatter = new Function('p', option.tooltip.formatter);"
-        else
+        } else {
             ""
+        }
 
         val id = "chart-${chart.hashCode()}"
         return """
             <div id="$id" class="chart" style="width: 100%;height:${chart.height}px;"></div>
             <script type="text/javascript">
-                var option = ${chart.renderJson()};${convertor};
+                var option = ${chart.renderJson()};
+                ${convertor};
                 var chart = echarts.init(document.getElementById('$id'));
                 chart.setOption(option);
                 var resizeObserver = new ResizeObserver(() => chart.resize());

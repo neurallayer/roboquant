@@ -45,7 +45,7 @@ class SignalChart(
     private val feed: Feed,
     private val strategy: Strategy,
     private val timeframe: Timeframe = Timeframe.INFINITE,
-) : Chart() {
+) : Chart(containsJavaScript = true) {
 
     /**
      * @see Chart.getOption
@@ -58,7 +58,7 @@ class SignalChart(
             .setSymbolSize(10)
 
         val tooltip = Tooltip()
-            .setFormatter(javascriptFunction("return p.value[2];"))
+            .setFormatter("return p.value[2];")
 
         val chart = Scatter()
             .setTitle(title ?: "")

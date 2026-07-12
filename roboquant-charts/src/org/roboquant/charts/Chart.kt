@@ -103,14 +103,7 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 /**
  * Base class all roboquant charts. Subclasses should implement at least the [getOption] method.
  */
-abstract class Chart {
-
-    /**
-     * Does the generated option JSON string contain JavaScript.
-     * If true, additional client-side code might be generated to parse the JSON part into a JavaScript function.
-     */
-    var containsJavaScript: Boolean = false
-        protected set
+abstract class Chart(val containsJavaScript: Boolean = false) {
 
     /**
      * Allow for customization of the chart.
@@ -230,19 +223,6 @@ abstract class Chart {
             .setTop("top")
             .setLeft("center")
             .setColor(arrayOf(positiveColor, neutralColor, negativeColor))
-    }
-
-    /**
-     * Calling this function will ensure that a JavaScript function used in the tooltip formatter will work.
-     * The provided function should only contain the body and the input parameter is `p`, for example:
-     *
-     * ```
-     *      javascriptFunction("return p.param[0] + p.param[1]")
-     * ```
-     */
-    protected fun javascriptFunction(function: String): String {
-        containsJavaScript = true
-        return function
     }
 
     /**

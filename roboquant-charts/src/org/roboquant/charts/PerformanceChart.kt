@@ -48,7 +48,7 @@ class PerformanceChart(
     private val compensateVolume: Boolean = true,
     private val currency: Currency? = null,
     private val assetFilter: AssetFilter = AssetFilter.all()
-) : Chart() {
+) : Chart(containsJavaScript = true) {
 
     private class AssetReturns(
         val initialPrice: Double,
@@ -106,12 +106,10 @@ class PerformanceChart(
 
         val tooltip = Tooltip()
             .setFormatter(
-                javascriptFunction(
                     """return 
                         |'symbol: '+p.name+
                         |'<br>trading amount: '+p.value[0].toPrecision(4)+ 
                         |'<br>returns: '+p.value[1]  + '%';""".trimMargin().replace("\n", "")
-                )
             )
 
         val vm = getVisualMap(-max, max)

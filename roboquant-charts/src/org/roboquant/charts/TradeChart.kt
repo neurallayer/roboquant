@@ -38,7 +38,6 @@ internal fun Trade.getTooltip(): String {
     val pnl = pnl.toBigDecimal()
     return """
             |symbol: ${asset.symbol}<br>
-            |currency: ${asset.currency}<br>
             |time: $time<br>
             |size: $size<br>
             |pnl: $pnl<br>""".trimMargin()
@@ -52,7 +51,7 @@ class TradeChart(
     private val trades: List<Trade>,
     private val currency: Currency? = null,
     private val perAsset: Boolean = false
-) : Chart() {
+) : Chart(containsJavaScript = true) {
 
 
     private fun tradesToSeriesData(): List<Triple<Instant, BigDecimal, String>> {
@@ -80,7 +79,8 @@ class TradeChart(
         val vm = getVisualMap(min, max).setDimension(1)
 
         val tooltip = Tooltip()
-            .setFormatter(javascriptFunction("return p.value[2];"))
+            .setFormatter("{c}")
+            .setFormatter("return p.value[2];")
 
         val chart = Scatter()
             .setTitle(title ?: "Trade Chart")
@@ -122,7 +122,7 @@ class TradeChart(
         val yAxisData = assets.map { it.symbol }.toTypedArray()
 
         val tooltip = Tooltip()
-            .setFormatter(javascriptFunction("return p.value[3];"))
+            .setFormatter("return p.value[3];")
 
         val valueDim = 2
         val min = d.minOfOrNull { it[valueDim] as BigDecimal }

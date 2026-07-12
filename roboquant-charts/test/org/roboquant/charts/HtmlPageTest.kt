@@ -2,7 +2,14 @@ package org.roboquant.charts
 
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
+import org.roboquant.common.Timeframe
+import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.journals.MemoryJournal
+import org.roboquant.journals.metrics.AccountMetric
+import org.roboquant.run
+import org.roboquant.strategies.EMACrossover
 import java.io.File
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -23,6 +30,25 @@ class HtmlPageTest {
         }
         assertTrue { file.exists() }
         assertTrue { file.isFile }
+    }
+
+    @Test
+    fun testRender2() {
+        val page = HtmlPage()
+        val feed = RandomWalk(Timeframe.fromYears(2020, 2021))
+        val journal = MemoryJournal(AccountMetric())
+        val account = run(feed, EMACrossover(), journal = journal)
+        val ts = journal.getMetric("account.equity")
+        val asset = feed.assets.first()
+
+        page.addChart(BoxChart(ts))
+        page.addChart(CalendarChart(ts))
+        page.addChart(PriceChart(feed, asset))
+        page.addChart(SignalChart(feed, EMACrossover()))
+        page.addChart(TradeChart(account.trades))
+        assertDoesNotThrow {
+            page.render("/tmp/test.html")
+        }
     }
 
 }

@@ -39,7 +39,7 @@ class CalendarChart(
     timeSeries: TimeSeries,
     private val fractionDigits: Int = 2,
     private val zoneId: ZoneId = ZoneId.of("UTC")
-) : Chart() {
+) : Chart(containsJavaScript = true) {
 
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(zoneId)
     private val metricsData = timeSeries.filter { it.value.isFinite() }
@@ -91,9 +91,7 @@ class CalendarChart(
         return Tooltip()
             .setPosition("top")
             .setFormatter(
-                javascriptFunction(
                     "var f = echarts.format.formatTime('yyyy-MM-dd', p.data[0]);return f + ': ' + p.data[1];"
-                )
             )
     }
 
