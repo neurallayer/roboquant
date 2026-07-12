@@ -8,7 +8,7 @@ apply:
 dependencies:
   - ../roboquant
   - com.google.code.gson:gson:2.14.0
-  - org.icepear.echarts:echarts-java:1.0.7
+  - org.icepear.echarts:echarts-java:1.1.1
 
 
 

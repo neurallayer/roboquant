@@ -80,7 +80,7 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
 
     init {
         load(url, compressed, useCache)
-        logger.info {
+        logger.debug {
             "loaded conversion rates for ${exchangeRates.size} currencies"
         }
     }

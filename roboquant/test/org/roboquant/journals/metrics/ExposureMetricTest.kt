@@ -33,7 +33,6 @@ internal class ExposureMetricTest {
         assertContains(result, "exposure.gross")
         assertContains(result, "exposure.long")
         assertContains(result, "exposure.short")
-        println(result)
     }
 
 }

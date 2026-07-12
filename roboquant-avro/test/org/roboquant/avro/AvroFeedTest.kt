@@ -98,7 +98,6 @@ internal class AvroFeedTest {
     private fun playback() {
         val feed3 = AvroFeed(fileName)
         assertTrue(feed3.exists())
-        println(feed3.timeframe)
         assertTrue(feed3.timeframe.inclusive)
         val tf = feed3.timeframe
         runBlocking {

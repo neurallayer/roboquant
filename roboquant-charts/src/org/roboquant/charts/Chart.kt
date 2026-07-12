@@ -203,14 +203,14 @@ abstract class Chart {
             "restore" to ToolboxRestoreFeature()
         )
         if (!includeMagicType) features.remove("magicType")
-        return Toolbox().setFeature(features)
+        return Toolbox().setFeature(features.toMap())
     }
 
     /**
      * Return a basic toolbox hat can be included in a chart
      */
     protected fun getBasicToolbox(): Toolbox {
-        val features = mutableMapOf(
+        val features = mapOf(
             "saveAsImage" to ToolboxSaveAsImageFeature(),
             "restore" to ToolboxRestoreFeature(),
             "dataView" to ToolboxDataViewFeature().setReadOnly(true),

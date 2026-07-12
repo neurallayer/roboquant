@@ -106,7 +106,6 @@ internal class QuestDBFeedTest {
         }
 
         assertEquals(1, feed.assets.size)
-        println(feed.timeframe)
         assertEquals(99, feed.timeframe.duration.toMillisPart())
         feed.close()
     }
@@ -135,7 +134,6 @@ internal class QuestDBFeedTest {
         }
 
         assertEquals(1, feed.assets.size)
-        println(feed.timeframe)
         assertEquals(99, feed.timeframe.duration.toMillisPart())
         feed.close()
     }

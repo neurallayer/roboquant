@@ -87,7 +87,7 @@ class AvroFeed(private val file: File) : Feed {
     override val timeframe: Timeframe by lazy { calcTimeframe() }
 
     init {
-        logger.info { "New AvroFeed file=$file exist=${exists()}" }
+        logger.debug { "New AvroFeed file=$file exist=${exists()}" }
     }
 
     /**
@@ -161,7 +161,7 @@ class AvroFeed(private val file: File) : Feed {
                 }
             }
         }
-        logger.info { "Index created" }
+        logger.debug { "Index created" }
         return index
     }
 
@@ -174,7 +174,7 @@ class AvroFeed(private val file: File) : Feed {
             while (it.hasNext()) {
                 timestamp = Instant.parse(it.next().get(0) as Utf8)
             }
-            logger.info { "Timeframe calculated" }
+            logger.debug { "Timeframe calculated" }
             return Timeframe(start, timestamp, true)
         }
     }
@@ -207,7 +207,7 @@ class AvroFeed(private val file: File) : Feed {
             require(exists()) { "File $file doesn't exist yet, cannot append" }
             dataFileWriter.appendTo(file)
         } else {
-            if (exists()) logger.info { "Overwriting existing Avro file $file" }
+            if (exists()) logger.debug { "Overwriting existing Avro file $file" }
             if (compress) dataFileWriter.setCodec(CodecFactory.snappyCodec())
             dataFileWriter.setSyncInterval(syncInterval)
             dataFileWriter.create(schema, file)
@@ -256,7 +256,7 @@ class AvroFeed(private val file: File) : Feed {
             if (job.isActive) job.cancel()
             dataFileWriter.sync()
             dataFileWriter.close()
-            logger.info { "wrote $count records to file $file" }
+            logger.debug { "wrote $count records to file $file" }
         }
     }
 

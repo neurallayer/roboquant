@@ -113,8 +113,6 @@ internal class RunTest {
         feed.timeframe.sample(3.months).forEach {
             jobs.add {
                 val acc = runAsync(feed, EMACrossover(), timeframe = it)
-                println(acc.lastUpdate)
-                println(it)
                 assertTrue(acc.lastUpdate in it)
             }
         }
