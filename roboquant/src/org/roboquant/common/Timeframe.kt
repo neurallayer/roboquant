@@ -77,7 +77,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      */
     companion object {
 
-        @Suppress("ConstPropertyName")
+        @Suppress("unused")
         private const val serialVersionUID: Long = 129021321L
 
         /**
