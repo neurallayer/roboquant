@@ -1,6 +1,6 @@
 product: jvm/lib
 
-description: roboquant algotrading platform
+description: roboquant is an algotrading platform written in Kotlin
 
 apply:
   - ../project.module-template.yaml

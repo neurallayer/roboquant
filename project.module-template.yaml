@@ -25,7 +25,7 @@ repositories:
     publish: true
     # have to comment out below otherwise GitHub action fails
     # credentials:
-    #  file: creds.properties
+    #  file: ../creds.properties
     #  usernameKey: username
     #  passwordKey: password
 
