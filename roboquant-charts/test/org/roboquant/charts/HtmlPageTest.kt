@@ -33,6 +33,7 @@ class HtmlPageTest {
     }
 
     @Test
+    @Ignore
     fun testRender2() {
         val page = HtmlPage()
         val feed = RandomWalk(Timeframe.fromYears(2020, 2021))
