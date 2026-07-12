@@ -24,7 +24,7 @@ import io.questdb.griffin.SqlExecutionContext
 import io.questdb.griffin.SqlExecutionContextImpl
 import java.time.Instant
 
-
+@Suppress("unused")
 internal inline fun CairoEngine.query(query: String, block: RecordCursor.() -> Unit) {
     SqlExecutionContextImpl(this, 1).use { ctx ->
         sqlCompiler.use {
@@ -70,7 +70,7 @@ internal fun CairoEngine.distinctSymbol(tableName: String, column: String): Set<
     }
 }
 
-@Suppress("UNUSED")
+@Suppress("unused")
 internal fun CairoEngine.insert(tableName: String, block: TableWriter.() -> Unit) {
     SqlExecutionContextImpl(this, 1).use { ctx ->
         getWriter(ctx.getTableToken(tableName), tableName).use {
