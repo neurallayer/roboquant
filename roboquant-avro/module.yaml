@@ -1,6 +1,6 @@
 product: jvm/lib
 
-description: roboquant support for AVRO feeds
+description: roboquant support for Apache Avro feeds
 
 apply:
   - ../project.module-template.yaml
