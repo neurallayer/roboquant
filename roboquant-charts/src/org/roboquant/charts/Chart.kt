@@ -102,6 +102,8 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 
 /**
  * Base class all roboquant charts. Subclasses should implement at least the [getOption] method.
+ *
+ * @param containsJavaScript indicated if the chart (tool-option) contains JavaScript.
  */
 abstract class Chart(val containsJavaScript: Boolean = false) {
 

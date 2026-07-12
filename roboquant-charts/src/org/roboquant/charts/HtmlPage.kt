@@ -6,15 +6,18 @@ import java.io.File
  * Create an HTML page with one or more charts. If you run one or more back tests and
  * want some visualization saved at the end, this is a good option.
  */
-class HtmlPage {
+class HtmlPage(val theme: String = "light") {
 
     private val charts = mutableListOf<Chart>()
 
-    fun addChart(chart : Chart) {
+    /**
+     * Add a chart to this page.
+     */
+    fun addChart(chart: Chart) {
         charts.add(chart)
     }
 
-    fun renderFragment(chart: Chart) : String {
+    private fun renderFragment(chart: Chart): String {
         val convertor = if (chart.containsJavaScript) {
             "option.tooltip.formatter = new Function('p', option.tooltip.formatter);"
         } else {
@@ -25,16 +28,23 @@ class HtmlPage {
         return """
             <div id="$id" class="chart" style="width: 100%;height:${chart.height}px;"></div>
             <script type="text/javascript">
-                var option = ${chart.renderJson()};
+            {
+                let option = ${chart.renderJson()};
                 ${convertor};
-                var chart = echarts.init(document.getElementById('$id'));
+                let elem = document.getElementById('$id')
+                let chart = echarts.init(elem, "$theme");
                 chart.setOption(option);
-                var resizeObserver = new ResizeObserver(() => chart.resize());
+                let resizeObserver = new ResizeObserver(() => chart.resize());
                 resizeObserver.observe(elem);
+            }
             </script>
             """.trimMargin()
     }
 
+    /**
+     * Render all the charts into a single HTML file. The resulting file is self-contained
+     * except for the ECharts JavaScript library that is referenced from a CDN.
+     */
     fun render(fileName: String) {
         var result = """
             <html>
@@ -53,7 +63,7 @@ class HtmlPage {
             </body>
         </html>
         """.trimIndent()
-        File(fileName).writeText(result.trimIndent())
+        File(fileName).writeText(result)
     }
 
 }
