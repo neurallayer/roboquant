@@ -9,6 +9,7 @@ import org.roboquant.journals.metrics.AccountMetric
 import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
 import java.io.File
+import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -50,9 +51,13 @@ class HtmlPageTest {
         page.addChart(TimeSeriesChart(ts))
         page.addChart(CorrelationChart(feed, assets))
         page.addChart(HistogramChart(ts))
+
+        val tmpdir = System.getProperty("java.io.tmpdir")
+        val fileName = Paths.get(tmpdir, "test.html").toString()
         assertDoesNotThrow {
-            page.render("/tmp/test.html")
+            page.render(fileName)
         }
+        println("***** generated HTML file at: $fileName")
     }
 
 }
