@@ -33,18 +33,7 @@ class HtmlPageTest {
 
     @Test
     fun testRender2() {
-        val page = HtmlPage()
-        page.theme = "dark"
-        page.style = """
-            body {
-                background-color: #555;
-            }
-            .chart {
-                background-color: black;
-                margin: 30px 10px;
-            }
-        """.trimIndent()
-
+        val page = HtmlPage(darkTheme = true)
         val feed = AvroFeed.sp25()
         val assets = feed.assets()
         val journal = MemoryJournal(AccountMetric())

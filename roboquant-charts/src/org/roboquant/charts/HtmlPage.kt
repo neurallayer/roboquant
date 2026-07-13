@@ -10,8 +10,48 @@ class HtmlPage {
 
     private val charts = mutableListOf<Chart>()
 
-    var theme = "light"
+    var theme = ""
     var style = ""
+
+    constructor(darkTheme: Boolean = false) {
+        if (darkTheme) {
+            setDarkTheme()
+        } else {
+            setLightTheme()
+        }
+    }
+
+    /**
+     * Default preset light theme
+     */
+    fun setLightTheme() {
+        theme = "light"
+        style = """
+            body {
+                background-color: #eee;
+            }
+            .chart {
+                background-color: #fff;
+                margin: 30px 10px;
+            }
+        """.trimIndent()
+    }
+
+    /**
+     * Preset dark theme
+     */
+    fun setDarkTheme() {
+        theme = "dark"
+        style = """
+           body {
+                background-color: #555;
+            }
+            .chart {
+                background-color: black;
+                margin: 30px 10px;
+            }
+        """.trimIndent()
+    }
 
     /**
      * Add a chart to this page.
