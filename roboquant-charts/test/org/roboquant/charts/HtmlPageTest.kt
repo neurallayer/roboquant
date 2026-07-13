@@ -2,8 +2,10 @@ package org.roboquant.charts
 
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
-import org.roboquant.common.Timeframe
-import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.avro.AvroFeed
+import org.roboquant.common.Stock
+import org.roboquant.feeds.assets
+import org.roboquant.feeds.filter
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.journals.metrics.AccountMetric
 import org.roboquant.run
@@ -33,7 +35,6 @@ class HtmlPageTest {
     }
 
     @Test
-    @Ignore
     fun testRender2() {
         val page = HtmlPage()
         page.theme = "dark"
@@ -47,20 +48,21 @@ class HtmlPageTest {
             }
         """.trimIndent()
 
-        val feed = RandomWalk(Timeframe.fromYears(2020, 2021))
+        val feed = AvroFeed.sp25()
+        val assets = feed.assets()
         val journal = MemoryJournal(AccountMetric())
         val account = run(feed, EMACrossover(), journal = journal)
         val ts = journal.getMetric("account.equity")
-        val asset = feed.assets.first()
 
         page.addChart(BoxChart(ts))
-        page.addChart(CalendarChart(ts))
-        page.addChart(PriceChart(feed, asset))
+        page.addChart(CalendarChart(ts, height = 900))
+        page.addChart(PriceChart(feed, assets[0]))
+        page.addChart(PriceChart(feed, assets[1]))
         page.addChart(SignalChart(feed, EMACrossover()))
         page.addChart(TradeChart(account.trades))
         page.addChart(PerformanceChart(feed))
         page.addChart(TimeSeriesChart(ts))
-        page.addChart(CorrelationChart(feed, feed.assets))
+        page.addChart(CorrelationChart(feed, assets))
         page.addChart(HistogramChart(ts))
         assertDoesNotThrow {
             page.render("/tmp/test.html")

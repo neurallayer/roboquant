@@ -105,7 +105,11 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
  *
  * @param containsJavaScript indicated if the chart (tool-option) contains JavaScript.
  */
-abstract class Chart(val containsJavaScript: Boolean = false) {
+abstract class Chart(
+    var title: String? = null,
+    var height: Int = 500,
+    val containsJavaScript: Boolean = false
+) {
 
     /**
      * Allow for customization of the chart.
@@ -115,17 +119,6 @@ abstract class Chart(val containsJavaScript: Boolean = false) {
      * Please note, the [getOption] method returns the non-customized option.
      */
     var customize: Option.() -> Unit = {}
-
-    /**
-     * Height for charts, default being 500 pixels. Subclasses can override this value
-     */
-    var height: Int = 500
-
-    /**
-     * Set a custom title for the chart. If not set, a default title will be generated. If you don't want a title, set
-     * this property to an empty string.
-     */
-    var title: String? = null
 
     /**
      * Settings that apply to all charts

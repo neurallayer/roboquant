@@ -152,6 +152,36 @@ inline fun <reified T : Item> Feed.apply(
 }
 
 /**
+ * For feeds that don't support returning their assets, this will play the
+ * whole feed and return the unique assets
+ */
+fun Feed.assets(
+    timeframe: Timeframe = Timeframe.INFINITE
+): List<Asset> = runBlocking {
+
+    val channel = EventChannel(timeframe = timeframe)
+    val job = playBackground(channel)
+    val assets = mutableSetOf<Asset>()
+
+    try {
+        while (true) {
+            val o = channel.receive()
+            o.items.filterIsInstance<PriceItem>().forEach { assets.add(it.asset) }
+        }
+
+    } catch (_: ClosedReceiveChannelException) {
+        // Intentionally left empty
+    } finally {
+        if (job.isActive) job.cancel()
+    }
+    return@runBlocking assets.toList()
+
+}
+
+
+
+
+/**
  * Convenience method to apply some logic to a feed
  */
 inline fun Feed.applyEvents(

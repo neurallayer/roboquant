@@ -37,9 +37,10 @@ import kotlin.collections.*
  */
 class CalendarChart(
     timeSeries: TimeSeries,
+    height: Int = 800,
     private val fractionDigits: Int = 2,
     private val zoneId: ZoneId = ZoneId.of("UTC")
-) : Chart(containsJavaScript = true) {
+) : Chart(height = height, containsJavaScript = true) {
 
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(zoneId)
     private val metricsData = timeSeries.filter { it.value.isFinite() }

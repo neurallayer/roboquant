@@ -126,7 +126,7 @@ class QuestDBJournal(
             }
         }
 
-        return TimeSeries(result)
+        return TimeSeries(result, name)
     }
 
     /**

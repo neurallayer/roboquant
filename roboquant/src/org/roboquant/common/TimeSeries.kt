@@ -47,12 +47,13 @@ data class Observation(val time: Instant, val value: Double) : Comparable<Observ
  *
  * @property timeline the timeline
  * @property values the array of values
+ * @property name the name of the timeseries
  */
 @Suppress("TooManyFunctions")
-class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Observation> {
+class TimeSeries(val timeline: Timeline, val values: DoubleArray, val name: String) : Iterable<Observation> {
 
-    constructor(values: List<Observation>) : this(
-        values.map { it.time }, values.map { it.value }.toDoubleArray()
+    constructor(values: List<Observation>, name: String) : this(
+        values.map { it.time }, values.map { it.value }.toDoubleArray(), name
     )
 
     init {
@@ -101,37 +102,37 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     /**
      * Add a number to all values in this timeseries
      */
-    operator fun plus(other: Number) = TimeSeries(timeline, values + other)
+    operator fun plus(other: Number) = TimeSeries(timeline, values + other, name)
 
     /**
      * Subtract a number to all values in this timeseries
      */
-    operator fun minus(other: Number) = TimeSeries(timeline, values - other)
+    operator fun minus(other: Number) = TimeSeries(timeline, values - other, name)
 
     /**
      * Multiply a number to all values in this timeseries
      */
-    operator fun times(other: Number) = TimeSeries(timeline, values * other)
+    operator fun times(other: Number) = TimeSeries(timeline, values * other, name)
 
     /**
      * Divide a number to all values in this timeseries
      */
-    operator fun div(other: Number) = TimeSeries(timeline, values / other)
+    operator fun div(other: Number) = TimeSeries(timeline, values / other, name)
 
     /**
      * Create the [n] returns for all values
      */
-    fun returns(n:Int = 1) = TimeSeries(timeline.drop(n), values.returns(n))
+    fun returns(n:Int = 1) = TimeSeries(timeline.drop(n), values.returns(n), name)
 
     /**
      * Index the values by dividing all the values by the first value that is finite
      */
-    fun index(start: Double = 1.0) = TimeSeries(timeline, values.index(start))
+    fun index(start: Double = 1.0) = TimeSeries(timeline, values.index(start), name)
 
     /**
      * Normalize the values
      */
-    fun normalize() = TimeSeries(timeline, values.normalize())
+    fun normalize() = TimeSeries(timeline, values.normalize(), name)
 
     /**
      * Return the observation that contains the maximum value.
@@ -162,7 +163,7 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
                 y.add(value)
             }
         }
-        return TimeSeries(x, y.toDoubleArray())
+        return TimeSeries(x, y.toDoubleArray(), name)
     }
 
     /**
@@ -173,7 +174,7 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     /**
      * Return the difference for all values
      */
-    fun diff(n: Int = 1) = TimeSeries(timeline.drop(n), values.diff(n))
+    fun diff(n: Int = 1) = TimeSeries(timeline.drop(n), values.diff(n), name)
 
     /**
      * Return the sum over all values
@@ -204,7 +205,7 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
         return toList().groupBy {
             val date = Date.from(it.time)
             formatter.format(date)
-        }.mapValues { TimeSeries(it.value) }
+        }.mapValues { TimeSeries(it.value, name) }
     }
 
     /**

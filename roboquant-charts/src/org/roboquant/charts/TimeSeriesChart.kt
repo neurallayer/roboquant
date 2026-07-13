@@ -45,7 +45,7 @@ class TimeSeriesChart(
      * Plot a single time-series
      */
     constructor(timeSeries: TimeSeries, useTime: Boolean = true, fractionDigits: Int = 2) :
-            this(mapOf("" to timeSeries), useTime, fractionDigits)
+            this(mapOf(timeSeries.name to timeSeries), useTime, fractionDigits)
 
 
     /**

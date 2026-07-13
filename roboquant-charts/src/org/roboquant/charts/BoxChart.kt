@@ -48,8 +48,7 @@ class BoxChart(
     private val midPercentile: Double = 50.0,
     private val highPercentile: Double = 75.0,
     private val precision: Int = 8
-) : Chart() {
-
+) : Chart(title = timeSeries.name) {
 
     private fun toSeriesData(): List<Pair<String, Any>> {
         val result = mutableListOf<Pair<String, Any>>()

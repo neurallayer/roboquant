@@ -72,5 +72,5 @@ fun Feed.apply(
             }
         }
     }
-    return result.mapValues { TimeSeries(it.value) }
+    return result.mapValues { TimeSeries(it.value, "") }
 }

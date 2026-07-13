@@ -42,10 +42,11 @@ import java.math.RoundingMode
  */
 class HistogramChart(
     private val data: DoubleArray,
+    title: String? = null,
     private val binCount: Int = 20,
     private val scale: Int = 2,
     private val minBinSize: Int = 0,
-) : Chart() {
+) : Chart(title = title) {
 
     /**
      * Chart that takes [timeSeries] and creates a histogram of it.
@@ -55,7 +56,7 @@ class HistogramChart(
         binCount: Int = 20,
         scale: Int = 2,
         minBinSize: Int = 0,
-        ) : this(timeSeries.toDoubleArray().clean(), binCount, scale, minBinSize)
+        ) : this(timeSeries.toDoubleArray().clean(), timeSeries.name, binCount, scale, minBinSize)
 
     private fun toSeriesData(): List<Pair<String, Long>> {
         val f = EmpiricalDistribution(binCount)

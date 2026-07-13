@@ -68,7 +68,7 @@ class MemoryJournal(private vararg val metrics: Metric) : MetricsJournal {
             }
 
         }
-        return TimeSeries(timeline, values.toDoubleArray())
+        return TimeSeries(timeline, values.toDoubleArray(), name)
     }
 
 

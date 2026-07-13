@@ -63,7 +63,7 @@ class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
      * Get the metric with the given [name] for a specific [run]
      */
     fun getMetric(name: String, run: String) : TimeSeries {
-        return journals[run]?.getMetric(name) ?: TimeSeries(listOf(), doubleArrayOf())
+        return journals[run]?.getMetric(name) ?: TimeSeries(listOf(), doubleArrayOf(), name)
     }
 
     /**
