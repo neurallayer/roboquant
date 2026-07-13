@@ -1,10 +1,18 @@
 # Changelog
 
+## Major changes in 3.2
+* Further improved the new build system
+* Easy way to generate HTML pages with charts (`HtmlPage` class)
+* Improved TimeSeries class to also contain the name
+* Improved several of the charts
+* Included new sample on how to use trading days (thanks to Robert Tidball)
+* Fixed several typing mistakes in doc
+
 ## Major changes in 3.1
 * Moved to the Kotlin Toolchain build system
 * Removed Jupyter Notebook support
 * Upgraded to Kotlin 2.4
-* Improved codebase using new language features
+* Improved codebase using new Kotlin 2.4 language features
 
 ## Major changes in 3.0
 Roboquant version 3.0 has many changes, several of them are breaking changes.

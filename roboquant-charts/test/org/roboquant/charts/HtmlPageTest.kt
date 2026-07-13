@@ -23,8 +23,8 @@ class HtmlPageTest {
     fun testRender() {
         val page = HtmlPage()
         val data = TestData.timeSeriesData
-        page.addChart(BoxChart(data))
-        page.addChart(CalendarChart(data))
+        page.add(BoxChart(data))
+        page.add(CalendarChart(data))
         val file = File(folder, "test.html")
         assertDoesNotThrow {
             page.render(file.path)
@@ -42,16 +42,22 @@ class HtmlPageTest {
         val account = run(feed, EMACrossover(), journal = journal)
         val ts = journal.getMetric("account.equity")
 
-        page.addChart(BoxChart(ts, ChronoUnit.YEARS))
-        page.addChart(CalendarChart(ts, height = 900))
-        page.addChart(PriceChart(feed, assets[0]))
-        page.addChart(PriceChart(feed, assets[1]))
-        page.addChart(SignalChart(feed, EMACrossover()))
-        page.addChart(TradeChart(account.trades, dropZeroPNL = true))
-        page.addChart(PerformanceChart(feed))
-        page.addChart(TimeSeriesChart(ts))
-        page.addChart(CorrelationChart(feed, assets))
-        page.addChart(HistogramChart(ts))
+        // Add all the available charts to the page
+        page.add(Header("Report Card", style = "color: #eee;text-align:center;"))
+        page.add(TimeSeriesChart(ts))
+        page.add(CalendarChart(ts, height = 900))
+        page.add(PriceChart(feed, assets[0]))
+        page.add(PriceChart(feed, assets[1]))
+        page.add(AllocationChart(account))
+        page.add(PerformanceChart(feed))
+        page.add(CorrelationChart(feed, assets))
+        page.add(TradeChart(account.trades, dropZeroPNL = true))
+        page.add(SignalChart(feed, EMACrossover()))
+        page.add(HistogramChart(ts))
+        page.add(BoxChart(ts, ChronoUnit.YEARS))
+        page.add(HtmlSnippet("""
+            <br><a style = "color: #eee" href="https://roboquant.org">visit roboquant for more details</a><br>
+        """))
 
         val tmpdir = System.getProperty("java.io.tmpdir")
         val fileName = Paths.get(tmpdir, "test.html").toString()

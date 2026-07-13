@@ -109,7 +109,7 @@ abstract class Chart(
     var title: String? = null,
     var height: Int = 500,
     val containsJavaScript: Boolean = false
-) {
+) : HtmlFragment{
 
     /**
      * Allow for customization of the chart.
@@ -245,6 +245,30 @@ abstract class Chart(
             option.setGrid(grid)
         }
         return gsonBuilder.create().toJson(option)
+    }
+
+    override fun render(theme: String): String {
+        val convertor = if (containsJavaScript) {
+            "option.tooltip.formatter = new Function('p', option.tooltip.formatter);"
+        } else {
+            ""
+        }
+
+        val id = "chart-${hashCode()}"
+        return """
+            <div id="$id" class="chart" style="height:${height}px;"></div>
+            <script type="text/javascript">
+            {
+                let option = ${renderJson()};
+                ${convertor};
+                let elem = document.getElementById('$id')
+                let chart = echarts.init(elem, "$theme");
+                chart.setOption(option);
+                let resizeObserver = new ResizeObserver(() => chart.resize());
+                resizeObserver.observe(elem);
+            }
+            </script>
+            """.trimMargin()
     }
 
 

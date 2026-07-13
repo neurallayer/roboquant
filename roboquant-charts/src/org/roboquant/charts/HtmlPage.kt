@@ -8,9 +8,16 @@ import java.io.File
  */
 class HtmlPage {
 
-    private val charts = mutableListOf<Chart>()
+    private val fragments = mutableListOf<HtmlFragment>()
 
+    /**
+     * Theme to use for ECharts
+     */
     var theme = ""
+
+    /**
+     * Any CSS style to include within the HTML page
+     */
     var style = ""
 
     constructor(darkTheme: Boolean = false) {
@@ -34,6 +41,10 @@ class HtmlPage {
                 background-color: #fff;
                 margin: 30px 10px;
             }
+            h1, h2, h3, h4, h5, h6 {
+                color: #222;
+                text-align: center;
+            }
         """.trimIndent()
     }
 
@@ -56,32 +67,8 @@ class HtmlPage {
     /**
      * Add a chart to this page.
      */
-    fun addChart(chart: Chart) {
-        charts.add(chart)
-    }
-
-    private fun renderFragment(chart: Chart): String {
-        val convertor = if (chart.containsJavaScript) {
-            "option.tooltip.formatter = new Function('p', option.tooltip.formatter);"
-        } else {
-            ""
-        }
-
-        val id = "chart-${chart.hashCode()}"
-        return """
-            <div id="$id" class="chart" style="height:${chart.height}px;"></div>
-            <script type="text/javascript">
-            {
-                let option = ${chart.renderJson()};
-                ${convertor};
-                let elem = document.getElementById('$id')
-                let chart = echarts.init(elem, "$theme");
-                chart.setOption(option);
-                let resizeObserver = new ResizeObserver(() => chart.resize());
-                resizeObserver.observe(elem);
-            }
-            </script>
-            """.trimMargin()
+    fun add(fragment: HtmlFragment) {
+        fragments.add(fragment)
     }
 
     /**
@@ -101,8 +88,8 @@ class HtmlPage {
                 <body>
         """.trimIndent()
 
-        for (chart in charts) {
-            result += renderFragment(chart)
+        for (fragment in fragments) {
+            result += fragment.render(theme)
         }
 
         result += """

@@ -56,7 +56,7 @@ class AccountMetric : Metric {
         val dd = (equity - peak) / peak
         if (dd < mdd) mdd = dd
 
-        put("account.orders", (account.orders.size).toDouble())
+        put("account.orders", account.orders.size.toDouble())
         put("account.positions", account.positions.size.toDouble())
         put("account.cash", account.convert(account.cash).value)
         put("account.buyingpower", account.buyingPower.value)
