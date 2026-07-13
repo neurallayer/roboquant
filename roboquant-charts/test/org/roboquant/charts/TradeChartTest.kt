@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
 internal class TradeChartTest {
 
     @Test
-    fun test() {
+    fun renderTradeChart() {
         val account = TestData.usAccount()
         val chart = TradeChart(account.trades)
         assertTrue(chart.renderJson().isNotBlank())

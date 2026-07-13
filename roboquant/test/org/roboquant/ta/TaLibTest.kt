@@ -37,7 +37,7 @@ internal class TaLibTest {
     }
 
     @Test
-    fun test() {
+    fun smaThrowsWithInsufficientData() {
         val lib = TaLib()
         val series = getSeries(10)
         assertDoesNotThrow {
@@ -57,7 +57,7 @@ internal class TaLibTest {
     }
 
     @Test
-    fun test2() {
+    fun smaSucceedsAfterCapacityIncrease() {
         val lib = TaLib()
         val series = getSeries(10)
         try {
@@ -81,7 +81,7 @@ internal class TaLibTest {
     }
 
     @Test
-    fun test3() {
+    fun smaWithShiftSucceedsAfterCapacityIncrease() {
         val lib = TaLib()
         val series = getSeries(10)
         try {

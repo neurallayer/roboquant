@@ -27,7 +27,7 @@ import kotlin.test.assertTrue
 internal class EventTest {
 
     @Test
-    fun basic() {
+    fun createEventWithEmptyItems() {
         val now = Instant.now()
         val event = Event(now, emptyList())
         assertTrue(event.prices.isEmpty())
@@ -37,7 +37,7 @@ internal class EventTest {
     }
 
     @Test
-    fun comparison() {
+    fun compareEventTimeOrdering() {
         val now = Instant.now()
         val event = Event(now, emptyList())
         val event2 = Event(now.plusMillis(1), emptyList())
@@ -52,7 +52,7 @@ internal class EventTest {
     }
 
     @Test
-    fun prices() {
+    fun eventContainsTradePrices() {
         val t = Instant.now()
         val event = Event(
             t,

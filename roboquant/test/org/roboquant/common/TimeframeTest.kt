@@ -43,7 +43,7 @@ internal class TimeframeTest {
     }
 
     @Test
-    fun split2() {
+    fun splitTimeframeExcludingRemaining() {
         val tf = Timeframe.parse("2020-01-01", "2020-08-01")
         val subFrames1 = tf.split(3.months)
         assertEquals(3, subFrames1.size)
@@ -55,7 +55,7 @@ internal class TimeframeTest {
     }
 
     @Test
-    fun split3() {
+    fun splitInclusiveTimeframe() {
         val tf = Timeframe.parse("2020-01-01", "2020-08-01", inclusive = true)
         val subFrames1 = tf.split(3.months)
         assertEquals(3, subFrames1.size)
@@ -86,7 +86,7 @@ internal class TimeframeTest {
     }
 
     @Test
-    fun sample2() {
+    fun sampleTimeframeWithInvalidParameters() {
         val tf = Timeframe.parse("2020-01-01T00:00:00", "2020-01-01T00:00:01")
         assertThrows<java.lang.IllegalArgumentException> {
             tf.sample(1.hours)
@@ -159,7 +159,7 @@ internal class TimeframeTest {
     }
 
     @Test
-    fun print() {
+    fun timeframeToString() {
         val tf2 = Timeframe.INFINITE
 
         val s2 = tf2.toString()
@@ -170,7 +170,7 @@ internal class TimeframeTest {
     }
 
     @Test
-    fun creation() {
+    fun createPastAndFutureTimeframe() {
         val tf = Timeframe.next(1.minutes)
         assertEquals(60, tf.end.epochSecond - tf.start.epochSecond)
 
@@ -197,14 +197,14 @@ internal class TimeframeTest {
     }
 
     @Test
-    fun contains() {
+    fun containsInstantInTimeframe() {
         val tf = Timeframe.fromYears(2019, 2020)
         assertFalse(tf.end in tf)
         assertTrue(tf.end in tf.toInclusive())
     }
 
     @Test
-    fun plusMinus() {
+    fun timeframeOffsetOperators() {
         val tf = Timeframe.fromYears(2019, 2020)
         val tf2 = tf + 2.years - 2.years
         assertEquals(tf, tf2)
@@ -220,7 +220,7 @@ internal class TimeframeTest {
     }
 
     @Test
-    fun testTrainTestSplit() {
+    fun splitTimeframeIntoTwoParts() {
         val tf = Timeframe.fromYears(2010, 2020)
         val (a, b) = tf.splitTwoWay(0.5)
         assertTrue(a.duration - b.duration < Duration.ofDays(2))

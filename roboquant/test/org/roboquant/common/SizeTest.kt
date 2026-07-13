@@ -27,7 +27,7 @@ import kotlin.test.assertTrue
 internal class SizeTest {
 
     @Test
-    fun test() {
+    fun sizeArithmeticOperations() {
         val size = Size(10)
         assertEquals(Size(5), size / 2)
         assertEquals(Size(20), size * 2)
@@ -41,7 +41,7 @@ internal class SizeTest {
     }
 
     @Test
-    fun testDerived() {
+    fun sizeSignAndComparison() {
         val size = Size(10)
         assertTrue(size.isPositive)
         assertEquals(1, size.sign)
@@ -58,7 +58,7 @@ internal class SizeTest {
     }
 
     @Test
-    fun testOverflow() {
+    fun sizeOverflowAndPrecision() {
         assertDoesNotThrow {
             Size("12345678.12345")
         }
@@ -76,7 +76,7 @@ internal class SizeTest {
     }
 
     @Test
-    fun testFractional() {
+    fun fractionalSize() {
         val size = Size("10.10")
         assertTrue(size.isFractional)
         assertEquals(BigDecimal("10.10"), size.toBigDecimal().setScale(2))

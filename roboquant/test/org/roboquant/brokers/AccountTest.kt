@@ -31,7 +31,7 @@ import kotlin.test.assertTrue
 internal class AccountTest {
 
     @Test
-    fun basis() {
+    fun initialAccountProperties() {
         val iAccount = InternalAccount(Currency.USD)
         val account = iAccount.toAccount()
         val amount = account.equityAmount().value
@@ -50,7 +50,7 @@ internal class AccountTest {
 
 
     @Test
-    fun extensions() {
+    fun positionLongShortPartitioning() {
         val account = TestData.usAccount()
         assertEquals(account.positions.size, account.positions.long.size + account.positions.short.size)
     }

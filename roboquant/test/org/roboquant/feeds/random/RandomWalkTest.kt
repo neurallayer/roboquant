@@ -29,7 +29,7 @@ internal class RandomWalkTest {
 
 
     @Test
-    fun historic() {
+    fun randomWalkTimeframeSplit() {
         val feed = RandomWalk.lastYears()
         val tf2 = feed.timeframe.split(50.days)
         assertTrue(tf2.isNotEmpty())
@@ -44,7 +44,7 @@ internal class RandomWalkTest {
     }
 
     @Test
-    fun reproducable() {
+    fun randomWalkIsReproducible() {
         val timeline = Timeframe.fromYears(2000, 2001)
         val feed = RandomWalk(timeline, seed = 10)
 

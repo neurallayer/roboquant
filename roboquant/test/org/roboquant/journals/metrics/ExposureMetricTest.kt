@@ -24,7 +24,7 @@ import kotlin.test.assertEquals
 internal class ExposureMetricTest {
 
     @Test
-    fun calc() {
+    fun calculateExposureMetric() {
         val metric = ExposureMetric()
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(event, account, listOf(), listOf())

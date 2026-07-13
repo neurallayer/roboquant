@@ -44,7 +44,7 @@ internal class PriceBarSeriesTest {
     }
 
     @Test
-    fun test() {
+    fun priceBarSeriesAddAndFullCheck() {
         val pbs = PriceBarSeries(10)
         var now =  Instant.now()
         repeat(5) { pbs.add(pb, now + it.millis) }
@@ -71,7 +71,7 @@ internal class PriceBarSeriesTest {
     }
 
     @Test
-    fun testTime() {
+    fun priceBarSeriesTimelineManagement() {
         val pbs = PriceBarSeries(10)
         val now =  Instant.now()
         repeat(20) { pbs.add(pb, now + it.millis) }
@@ -93,7 +93,7 @@ internal class PriceBarSeriesTest {
     }
 
     @Test
-    fun test2() {
+    fun assetPriceBarSeries() {
         val pbs = AssetPriceBarSeries(10)
         repeat(5) { pbs.add(pb) }
         assertEquals(1, pbs.size)
@@ -111,7 +111,7 @@ internal class PriceBarSeriesTest {
     }
 
     @Test
-    fun agg() {
+    fun aggregatePriceBarSeries() {
         val pbs = getPBS(93)
         assertTrue(pbs.isFull())
 
@@ -138,7 +138,7 @@ internal class PriceBarSeriesTest {
     }
 
     @Test
-    fun agg2() {
+    fun aggregatePriceBarSeriesExactMultiple() {
         val pbs = getPBS(100)
         assertTrue(pbs.isFull())
 

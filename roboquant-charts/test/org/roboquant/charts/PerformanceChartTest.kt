@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
 internal class PerformanceChartTest {
 
     @Test
-    fun test() {
+    fun renderPerformanceChart() {
         val feed = RandomWalk.lastYears()
         val chart = PerformanceChart(feed)
         assertTrue(chart.renderJson().isNotBlank())

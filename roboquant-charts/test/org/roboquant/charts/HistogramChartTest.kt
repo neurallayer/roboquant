@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
 internal class HistogramChartTest {
 
     @Test
-    fun test() {
+    fun renderHistogramChart() {
         val data = TestData.timeSeriesData
         val chart = HistogramChart(data)
         assertTrue(chart.renderJson().isNotBlank())

@@ -37,14 +37,14 @@ internal class CSVFeedTest {
 
 
     @Test
-    fun testIntra() {
+    fun loadIntradayCsvFeed() {
         val feed = CSVFeed(TestData.dataDir() + "INTRA")
         val assets = feed.assets
         assertEquals(2, assets.size)
     }
 
     @Test
-    fun getForexCSV() {
+    fun loadForexCsvFeed() {
         val feed = CSVFeed(TestData.dataDir() + "FX1") {
             assetBuilder = AssetBuilder {
               Forex.fromSymbol(it)
@@ -56,7 +56,7 @@ internal class CSVFeedTest {
     }
 
     @Test
-    fun getMinutesCSV() {
+    fun loadMinutesCsvFeed() {
         val feed = CSVFeed(TestData.dataDir() + "FX2") {
             assetBuilder = AssetBuilder {
                 Forex.fromSymbol(it)

@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
 internal class CombinedFeedTest {
 
     @Test
-    fun testCombinedFeed2() {
+    fun combineTwoRandomWalkFeeds() {
         val f1 = RandomWalk.lastYears()
         val f2 = RandomWalk.lastYears(2)
         val cf = CombinedFeed(f1, f2)
@@ -47,7 +47,7 @@ internal class CombinedFeedTest {
     }
 
     @Test
-    fun testCombinedFeed4(){
+    fun combineWithChannelCapacity(){
         val f1 = RandomWalk.lastYears()
         val f2 = RandomWalk.lastYears(2)
         val cf = CombinedFeed(f1, f2, channelCapacity = 10)
@@ -66,7 +66,7 @@ internal class CombinedFeedTest {
     }
 
     @Test
-    fun testCombinedFeed5() = runBlocking {
+    fun runCombinedFeedViaFeedTest() = runBlocking {
         val f1 = RandomWalk.lastYears()
         val f2 = RandomWalk.lastYears(2)
         val cf = CombinedFeed(f1, f2)

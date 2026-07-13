@@ -40,7 +40,7 @@ internal class ChartTest {
     }
 
     @Test
-    fun test() {
+    fun renderPriceBarChart() {
         val f = RandomWalk.lastYears(nAssets = 1)
         val asset = f.assets.first()
         val chart = PriceBarChart(f, asset)
@@ -56,7 +56,7 @@ internal class ChartTest {
     }
 
     @Test
-    fun testReduced() {
+    fun maxSamplesReducesDataPoints() {
         val chart = MyChart()
         Chart.maxSamples = 10
         assertEquals(10, chart.reduced(100).size)
@@ -65,7 +65,7 @@ internal class ChartTest {
     }
 
     @Test
-    fun testCodeGeneration() {
+    fun renderCustomChart() {
         val chart = MyChart()
         chart.height = 123
 

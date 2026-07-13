@@ -49,7 +49,7 @@ internal class FixedExchangeRatesTest {
     }
 
     @Test
-    fun exceptions() {
+    fun missingCurrencyThrowsException() {
         val currencyConverter = FixedExchangeRates(USD, EUR to 1.2, GBP to 1.2)
         val now = Instant.now()
 

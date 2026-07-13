@@ -25,14 +25,14 @@ import kotlin.test.assertTrue
 internal class CorrelationChartTest {
 
     @Test
-    fun test() {
+    fun renderCorrelationChart() {
         val feed = RandomWalk.lastYears(nAssets = 5)
         val chart = CorrelationChart(feed, feed.assets)
         assertTrue(chart.renderJson().isNotBlank())
     }
 
     @Test
-    fun option() {
+    fun correlationChartOptionHasHeatmapSeries() {
         val feed = RandomWalk.lastYears(nAssets = 5)
         val series = CorrelationChart(feed, feed.assets).getOption().series
         assertTrue(series is Array<*> && series.isArrayOf<SeriesOption>())

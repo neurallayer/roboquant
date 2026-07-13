@@ -61,7 +61,7 @@ internal class AvroFeedTest {
 
 
     @Test
-    fun combined() {
+    fun recordAppendAndPlayback() {
         record()
         append()
         playback()

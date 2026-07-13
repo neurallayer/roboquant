@@ -24,7 +24,7 @@ import kotlin.test.assertEquals
 internal class AccountMetricTest {
 
     @Test
-    fun calc() {
+    fun calculateAccountMetric() {
         val metric = AccountMetric()
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(event, account, listOf(), listOf())

@@ -31,7 +31,7 @@ internal class TaLibIndicatorTest {
     }
 
     @Test
-    fun basic() {
+    fun applyCustomTaLibIndicator() {
         val ind = TaLibIndicator {
             mapOf(
                 "rsi" to rsi(it),

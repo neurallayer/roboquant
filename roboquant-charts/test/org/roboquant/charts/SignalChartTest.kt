@@ -24,7 +24,7 @@ import kotlin.test.Test
 internal class SignalChartTest {
 
     @Test
-    fun test() {
+    fun renderSignalChart() {
         val feed = RandomWalk.lastYears()
         val strat = EMACrossover()
         val chart = SignalChart(feed, strat)

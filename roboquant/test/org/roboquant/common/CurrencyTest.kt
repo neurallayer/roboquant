@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
 internal class CurrencyTest {
 
     @Test
-    fun test() {
+    fun predefinedCurrencyConstants() {
         assertTrue {
             Currency.EUR
             Currency.USD
@@ -46,14 +46,14 @@ internal class CurrencyTest {
     }
 
     @Test
-    fun test2() {
+    fun currencyGetInstance() {
         val x = Currency.USD
         val y = Currency.getInstance("USD")
         assertEquals(x, y)
     }
 
     @Test
-    fun test3() {
+    fun increaseFractionDigits() {
         val c = Currency.getInstance("DUMMY")
         assertEquals(2, c.defaultFractionDigits)
         Currency.increaseDigits(2)

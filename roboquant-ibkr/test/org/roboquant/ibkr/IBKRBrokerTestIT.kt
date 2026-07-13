@@ -31,7 +31,7 @@ internal class IBKRBrokerTestIT {
     private val broker by lazy { IBKRBroker() }
 
     @Test
-    fun wrongConfig() {
+    fun connectWithWrongPortThrowsException() {
         Config.getProperty("test.ibkr") ?: return
         assertThrows<ConfigurationException> {
             IBKRBroker {
@@ -42,7 +42,7 @@ internal class IBKRBrokerTestIT {
     }
 
     @Test
-    fun test() {
+    fun syncBrokerAccount() {
         Config.getProperty("test.ibkr") ?: return
         val past = Instant.now()
         val account = broker.sync()
@@ -53,7 +53,7 @@ internal class IBKRBrokerTestIT {
     }
 
     @Test
-    fun exchangeRates() {
+    fun convertCurrencyWithBrokerRates() {
         Config.getProperty("test.ibkr") ?: return
         val er = broker.exchangeRates
         val amount = 1.EUR

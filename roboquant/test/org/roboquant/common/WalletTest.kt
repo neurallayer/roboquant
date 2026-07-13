@@ -91,7 +91,7 @@ internal class WalletTest {
     }
 
     @Test
-    fun plusMinus() {
+    fun walletPlusMinusOperators() {
         val wallet = Wallet(10.USD, 20.EUR)
         val wallet2 = wallet + wallet - wallet
         assertEquals(wallet, wallet2)
@@ -108,7 +108,7 @@ internal class WalletTest {
     }
 
     @Test
-    fun operators() {
+    fun walletMultiplicationAndDivision() {
         val wallet = Wallet(10.USD, 20.EUR)
         val wallet2 = wallet + wallet - wallet
         assertEquals(wallet, wallet2)

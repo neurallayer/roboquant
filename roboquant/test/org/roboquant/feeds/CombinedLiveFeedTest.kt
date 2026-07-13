@@ -26,7 +26,7 @@ import kotlin.test.assertTrue
 internal class CombinedLiveFeedTest {
 
     @Test
-    fun testCombinedFeed() = runBlocking {
+    fun combineTwoLiveFeeds() = runBlocking {
         val f1 = LiveTestFeed(10..19, delayInMillis = 1)
         val f2 = LiveTestFeed(60..69, delayInMillis = 1)
         val cf = CombinedLiveFeed(f1, f2)
@@ -39,7 +39,7 @@ internal class CombinedLiveFeedTest {
     }
 
     @Test
-    fun testCombinedFeed3() = runBlocking {
+    fun combineLiveFeedsViaCombinedFeed() = runBlocking {
         val f1 = LiveTestFeed(10..19, delayInMillis = 1)
         val f2 = LiveTestFeed(60..69, delayInMillis = 1)
         val cf = CombinedFeed(f1, f2)

@@ -27,7 +27,7 @@ internal class OrderTest {
 
 
     @Test
-    fun testMarketOrder() {
+    fun marketOrderProperties() {
         val asset = TestData.usStock()
         val order = Order(asset, Size(100), 100.0)
         assertTrue(order.size.nonzero)

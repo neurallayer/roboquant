@@ -43,7 +43,7 @@ internal class RunTest {
 
 
     @Test
-    fun runAsyncTest()  {
+    fun runAsyncWithoutErrors()  {
 
         assertDoesNotThrow {
             runBlocking {
@@ -55,7 +55,7 @@ internal class RunTest {
 
 
     @Test
-    fun walkForward()  {
+    fun walkForwardSplitTimeframes()  {
         val feed = RandomWalk.lastYears(10, 2)
         val tfs = feed.timeframe.split(2.years)
         for (tf in tfs) {
@@ -66,7 +66,7 @@ internal class RunTest {
     }
 
     @Test
-    fun run_with_pb()  {
+    fun runWithProgressBar()  {
         assertDoesNotThrow {
             val strategy = EMACrossover()
             val journal = BasicJournal()
@@ -77,7 +77,7 @@ internal class RunTest {
 
 
     @Test
-    fun run3()  {
+    fun multiRunJournalAcrossYears()  {
         val mrj = MultiRunJournal { MemoryJournal(PNLMetric()) }
         val feed = TestData.feed
         val timeframes  = feed.timeframe.split(1.years)
@@ -91,7 +91,7 @@ internal class RunTest {
     }
 
     @Test
-    fun massiveParallel() {
+    fun runFiftyParallelBacktests() {
         val feed = TestData.feed
         val jobs = ParallelJobs()
 
@@ -106,7 +106,7 @@ internal class RunTest {
 
 
     @Test
-    fun parallelTimeframes() {
+    fun runParallelTimeframes() {
         val feed = TestData.feed
         val jobs = ParallelJobs()
 

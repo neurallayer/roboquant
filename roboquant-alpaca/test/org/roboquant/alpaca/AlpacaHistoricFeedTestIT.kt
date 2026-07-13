@@ -47,28 +47,28 @@ internal class AlpacaHistoricFeedTestIT {
     }
 
     @Test
-    fun testHistoricQuotes() {
+    fun retrieveHistoricStockQuotes() {
         val feed = AlpacaHistoricFeed()
         feed.retrieveStockQuotes("A", timeframe = timeframe2)
         testResult<PriceQuote>(feed)
     }
 
     @Test
-    fun testHistoricTrades() {
+    fun retrieveHistoricStockTrades() {
         val feed = AlpacaHistoricFeed()
         feed.retrieveStockTrades("A", timeframe = timeframe2)
         testResult<TradePrice>(feed)
     }
 
     @Test
-    fun testHistoricBars() {
+    fun retrieveHistoricPriceBars() {
         val feed = AlpacaHistoricFeed()
         feed.retrieveStockPriceBars("A", timeframe = timeframe)
         testResult<PriceBar>(feed)
     }
 
     @Test
-    fun testHistoricBarsWithDuration() {
+    fun retrieveHistoricBarsChecksDuration() {
         val feed = AlpacaHistoricFeed()
         feed.retrieveStockPriceBars(
             "AAPL",

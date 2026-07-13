@@ -27,7 +27,7 @@ import kotlin.test.assertTrue
 internal class EventRecorderMetricTest {
 
     @Test
-    fun basic() {
+    fun recordEventAndFilterResults() {
         val (account, event) = TestData.metricInput()
         val metric = EventRecorderMetric()
 

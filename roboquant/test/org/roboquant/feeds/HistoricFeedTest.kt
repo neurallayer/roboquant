@@ -25,7 +25,7 @@ import kotlin.test.*
 internal class HistoricFeedTest {
 
     @Test
-    fun test() {
+    fun randomWalkFeedProperties() {
         val feed = RandomWalk.lastYears()
         val tfs = feed.timeframe.split(1.months)
         assertEquals(12, tfs.size)
@@ -35,7 +35,7 @@ internal class HistoricFeedTest {
     }
 
     @Test
-    fun custom() {
+    fun customHistoricFeedProperties() {
         val tf = Timeframe.fromYears(2020, 2021)
         val asset = Stock("ABC")
 

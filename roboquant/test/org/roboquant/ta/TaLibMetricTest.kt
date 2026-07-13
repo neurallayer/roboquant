@@ -32,7 +32,7 @@ import kotlin.test.assertTrue
 internal class TaLibMetricTest {
 
     @Test
-    fun test() {
+    fun calculateTaLibMetric() {
         val metric = TaLibMetric { series ->
             mapOf("ema10" to ema(series.close, 10))
         }

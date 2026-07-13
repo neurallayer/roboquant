@@ -27,7 +27,7 @@ import kotlin.test.*
 internal class ExchangeTest {
 
     @Test
-    fun test() {
+    fun customExchangeRegistration() {
         assertEquals(Exchange.DEFAULT.zoneId, Exchange.getInstance("DUMMY").zoneId)
 
         Exchange.addInstance("DUMMY", "Europe/Paris")
@@ -73,7 +73,7 @@ internal class ExchangeTest {
     }
 
     @Test
-    fun testIsTrading() {
+    fun isTradingDuringMarketHours() {
         val exchange = Exchange.getInstance("US")
         assertTrue(exchange.isTrading(Instant.parse("2022-01-03T20:00:00Z")))
         assertFalse(exchange.isTrading(Instant.parse("2022-01-03T08:00:00Z")))

@@ -24,7 +24,7 @@ import kotlin.test.assertEquals
 internal class ProgressMetricTest {
 
     @Test
-    fun calc() {
+    fun calculateProgressMetric() {
         val metric = ProgressMetric()
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(event, account, listOf(), listOf())

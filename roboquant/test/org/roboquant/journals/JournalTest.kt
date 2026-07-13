@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 internal class JournalTest {
 
     @Test
-    fun basic() {
+    fun basicJournal() {
         val feed = RandomWalk.lastYears(5)
         val journal = BasicJournal()
         run(feed, EMACrossover(), journal = journal)
@@ -29,7 +29,7 @@ internal class JournalTest {
     }
 
     @Test
-    fun multiRun() {
+    fun multiRunJournal() {
         val feed = RandomWalk.lastYears(5)
         val mrj = MultiRunJournal {
             MemoryJournal(AccountMetric())

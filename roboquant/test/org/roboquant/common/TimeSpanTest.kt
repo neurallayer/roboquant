@@ -27,7 +27,7 @@ import kotlin.test.assertTrue
 internal class TimeSpanTest {
 
     @Test
-    fun numbers() {
+    fun timeSpanFromNumbers() {
         val x = Instant.now()
         val y = x + 1.days + 2.months + 1.years + 100.millis + 10.seconds + 30.minutes + 1.hours
         assertTrue(y > x)
@@ -54,14 +54,14 @@ internal class TimeSpanTest {
     }
 
     @Test
-    fun calc() {
+    fun timeSpanArithmetic() {
         val t = 2.years - 1.hours + 1.hours
         assertEquals(2.years, t)
         assertEquals("P2YT0S", t.toString())
     }
 
     @Test
-    fun toStringTest() {
+    fun timeSpanToString() {
         val t = 2.years + 1.months + 1.days - 1.hours + 12.minutes - 30.seconds + 100.millis
         assertEquals("P2Y1M1DT-48M-29.9S", t.toString())
 
@@ -73,7 +73,7 @@ internal class TimeSpanTest {
     }
 
     @Test
-    fun parsing() {
+    fun parseTimeSpanFromString() {
         val t = 2.years + 1.months + 1.days - 1.hours + 12.minutes - 30.seconds + 100.millis
         val t2 = TimeSpan.parse(t.toString())
         assertEquals(t, t2)
@@ -88,7 +88,7 @@ internal class TimeSpanTest {
     }
 
     @Test
-    fun equal() {
+    fun timeSpanEqualityWithZonedDateTime() {
         val utc = ZoneId.of("UTC")
         val z = ZonedDateTime.now(utc)
         val i = z.toInstant()

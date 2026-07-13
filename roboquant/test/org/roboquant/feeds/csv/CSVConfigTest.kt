@@ -49,7 +49,7 @@ internal class CSVConfigTest {
     }
 
     @Test
-    fun stooq2() {
+    fun lazyStooqCsvFeed() {
         val config = CSVConfig.stooq()
         val feed = LazyCSVFeed(TestData.dataDir() / "STOOQ", config) {}
         assertEquals(1, feed.assets.size)
@@ -58,7 +58,7 @@ internal class CSVConfigTest {
     }
 
     @Test
-    fun histData() {
+    fun loadHistDataCsvFeed() {
         val config = CSVConfig.histData()
         val feed = CSVFeed(TestData.dataDir() / "HISTDATA", config) {}
         assertEquals(1, feed.assets.size)
@@ -114,7 +114,7 @@ internal class CSVConfigTest {
     }
 
     @Test
-    fun basic() {
+    fun defaultCsvConfigProperties() {
         val config = CSVConfig()
         assertEquals(Stock("ABN"), config.assetBuilder.build("ABN.csv"))
         assertFalse(config.shouldInclude(File("some_non_existing_file.csv")))

@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
 internal class ReturnsMetricTest {
 
     @Test
-    fun basic() {
+    fun returnsMetricEmptyOnFirstCall() {
         val metric = ReturnsMetric()
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(event, account, listOf(), listOf())
@@ -36,7 +36,7 @@ internal class ReturnsMetricTest {
     }
 
     @Test
-    fun basic2() {
+    fun returnsMetric2CalculatesSharpeRatio() {
         val metric = ReturnsMetric2(minSize = 250)
         val feed = RandomWalk.lastYears(2)
         val j = MemoryJournal(metric)

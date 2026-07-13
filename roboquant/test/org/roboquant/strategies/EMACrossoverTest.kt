@@ -24,13 +24,13 @@ import kotlin.test.assertNotEquals
 internal class EMACrossoverTest {
 
     @Test
-    fun simpleTest() {
+    fun runEMACrossoverOnFeed() {
         val strategy = EMACrossover()
         run(TestData.feed, strategy)
     }
 
     @Test
-    fun simple2() {
+    fun predefinedEMAPeriodsAreDistinct() {
         val strategy1 = EMACrossover.PERIODS_5_15
         val strategy2 = EMACrossover.PERIODS_12_26
         val strategy3 = EMACrossover.PERIODS_50_200

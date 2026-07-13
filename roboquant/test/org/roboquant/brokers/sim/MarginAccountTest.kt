@@ -35,7 +35,7 @@ import kotlin.test.assertTrue
 internal class MarginAccountTest {
 
     @Test
-    fun test3() {
+    fun marginAccountIncreasesBuyingPower() {
         val account = TestData.internalAccount()
         val cc = account.baseCurrency
         val uc = MarginAccountModel()
@@ -44,7 +44,7 @@ internal class MarginAccountTest {
     }
 
     @Test
-    fun test4() {
+    fun marginAccountWithCustomMultiplier() {
         val account = TestData.internalAccount()
         val cc = account.baseCurrency
         val uc = MarginAccountModel(20.0)

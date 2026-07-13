@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
 internal class BoxChartTest {
 
     @Test
-    fun test() {
+    fun renderBoxChart() {
         val data = TestData.timeSeriesData
         val chart = BoxChart(data)
         assertTrue(chart.renderJson().isNotBlank())

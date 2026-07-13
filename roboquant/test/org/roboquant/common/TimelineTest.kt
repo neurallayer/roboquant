@@ -28,7 +28,7 @@ internal class TimelineTest {
     private val timeline = Timeframe.fromYears(1995, 2000).toTimeline(1.days)
 
     @Test
-    fun beforeAfter() {
+    fun findNearestTimelineIndices() {
         val first = timeline.first()
         val last = timeline.last()
         assertEquals(timeline.lastIndex, timeline.latestNotAfter(last))
@@ -55,7 +55,7 @@ internal class TimelineTest {
     }
 
     @Test
-    fun doubleArray() {
+    fun filterPriceItemsToDoubleArray() {
         val feed = TestData.feed()
         val data = feed.filter<PriceItem>()
 

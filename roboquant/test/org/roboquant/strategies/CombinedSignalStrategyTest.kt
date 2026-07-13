@@ -35,7 +35,7 @@ internal class CombinedSignalStrategyTest {
     }
 
     @Test
-    fun test() {
+    fun combinedStrategyCombinesSignals() {
         val s1 = MyStrategy()
         val s2 = MyStrategy()
 
@@ -52,7 +52,7 @@ internal class CombinedSignalStrategyTest {
     }
 
     @Test
-    fun test2() {
+    fun parallelStrategyCombinesSignals() {
         val s1 = MyStrategy()
         val s2 = MyStrategy()
 

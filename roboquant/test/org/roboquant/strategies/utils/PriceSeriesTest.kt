@@ -25,7 +25,7 @@ import kotlin.test.assertTrue
 internal class PriceSeriesTest {
 
     @Test
-    fun test() {
+    fun priceSeriesAddAndFullCheck() {
         val series = PriceSeries(10)
         assertTrue { series.toDoubleArray().all { it.isNaN() } }
 
@@ -67,7 +67,7 @@ internal class PriceSeriesTest {
     }
 
     @Test
-    fun last() {
+    fun priceSeriesLastAndUpdate() {
         val series = PriceSeries(10)
         repeat(15) { series.add(it.toDouble()) }
         assertEquals(14.0, series.last())

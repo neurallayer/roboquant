@@ -36,7 +36,7 @@ internal class FeedTest {
     }
 
     @Test
-    fun basic() {
+    fun defaultFeedHasInfiniteTimeframe() {
         val feed = MyFeed()
         assertEquals(Timeframe.INFINITE, feed.timeframe)
         val errors = feed.validate()
@@ -44,7 +44,7 @@ internal class FeedTest {
     }
     
     @Test
-    fun filter() {
+    fun filterFeedItems() {
         val feed = TestData.feed()
         assertDoesNotThrow {
             feed.filter<PriceItem>(timeframe = Timeframe.fromYears(1901, 2000)).filter {
@@ -63,7 +63,7 @@ internal class FeedTest {
     }
 
     @Test
-    fun background()  {
+    fun playFeedInBackgroundChannel()  {
         val feed = TestData.feed()
         val size = feed.toList().size
         

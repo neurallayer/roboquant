@@ -30,7 +30,7 @@ import kotlin.test.assertTrue
 internal class FlexTraderTest {
 
     @Test
-    fun order() {
+    fun flexTraderWithNoSignals() {
         val policy = FlexTrader()
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
@@ -40,7 +40,7 @@ internal class FlexTraderTest {
     }
 
     @Test
-    fun order3() {
+    fun flexTraderWithBuySignal() {
         val policy = FlexTrader()
         val orders = run(policy)
         assertTrue(orders.isNotEmpty())
@@ -82,7 +82,7 @@ internal class FlexTraderTest {
 
 
     @Test
-    fun chaining() {
+    fun flexTraderChainedWithCircuitBreaker() {
         val policy = FlexTrader()
             .circuitBreaker(10, 1.days)
         val signals = mutableListOf<Signal>()

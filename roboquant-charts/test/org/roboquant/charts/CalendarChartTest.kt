@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
 internal class CalendarChartTest {
 
     @Test
-    fun test() {
+    fun renderCalendarChart() {
         val data = TestData.timeSeriesData
         val chart = CalendarChart(data)
         assertTrue(chart.renderJson().isNotBlank())

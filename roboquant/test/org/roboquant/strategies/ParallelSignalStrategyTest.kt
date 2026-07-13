@@ -22,7 +22,7 @@ import kotlin.test.Test
 internal class ParallelSignalStrategyTest {
 
     @Test
-    fun test() {
+    fun parallelStrategyRunsBothSubStrategies() {
         val s1 = EMACrossover.PERIODS_12_26
         val s2 = EMACrossover.PERIODS_5_15
         val s3 = ParallelStrategy(s1, s2)

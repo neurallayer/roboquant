@@ -24,7 +24,7 @@ import kotlin.test.assertEquals
 internal class PriceMetricTest {
 
     @Test
-    fun basic() {
+    fun calculatePriceMetric() {
         val metric = PriceMetric("OPEN")
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(event, account, listOf(), listOf())

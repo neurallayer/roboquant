@@ -26,7 +26,7 @@ import kotlin.test.assertTrue
 internal class AmountTest {
 
     @Test
-    fun testBasic() {
+    fun createAmountWithCurrency() {
         val a1 = 100.EUR
         val a2 = Amount(EUR, 100.0)
         assertEquals(a1, a2)
@@ -39,7 +39,7 @@ internal class AmountTest {
     }
 
     @Test
-    fun calc() {
+    fun amountArithmeticOperations() {
         var a = 100.EUR + 2
         assertEquals(102.0, a.value)
 
@@ -57,7 +57,7 @@ internal class AmountTest {
     }
 
     @Test
-    fun test() {
+    fun multiCurrencyWalletAddition() {
         val c1 = 100.EUR + 200.USD
         val c2 = 200.USD + 100.EUR
         val c3 = listOf(100.EUR, 200.USD).toWallet()
@@ -74,14 +74,14 @@ internal class AmountTest {
     }
 
     @Test
-    fun testPredefined() {
+    fun predefinedCurrencies() {
         val wallet = 1.EUR + 1.USD + 1.JPY + 1.GBP + 1.CHF + 1.AUD + 1.CAD +
                 1.CNY + 1.HKD + 1.NZD + 1.RUB + 1.INR + 1.BTC + 1.ETH + 1.USDT + 1.KRW
         assertEquals(16, wallet.currencies.size)
     }
 
     @Test
-    fun testFormat() {
+    fun formatAmountValue() {
         val c1 = 100.EUR
         val f = c1.formatValue(4)
         assertEquals("100.0000", f)

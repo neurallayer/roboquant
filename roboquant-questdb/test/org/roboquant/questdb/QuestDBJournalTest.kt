@@ -46,7 +46,7 @@ internal class QuestDBJournalTest {
     }
 
     @Test
-    fun basic() {
+    fun recordAndRetrieveMetrics() {
         val logger = QuestDBJournal(AccountMetric(), dbPath = folder.toPath(), table="test-run")
         simpleRun(logger)
         val equity = logger.getMetric("account.equity")
@@ -60,7 +60,7 @@ internal class QuestDBJournalTest {
     }
 
     @Test
-    fun parallel() = runBlocking{
+    fun parallelMultiRunRecording() = runBlocking{
         val mrj = MultiRunJournal {
             run -> QuestDBJournal(AccountMetric(), dbPath = folder2.toPath(), table=run)
         }

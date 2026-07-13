@@ -34,7 +34,7 @@ internal class AlpacaMarketNewsLiveFeedTestIT {
      * note this test may not receive news in that timeframe.
      */
     @Test
-    fun testReceiveNewsInTimeframe() {
+    fun receiveMarketNewsInTimeframe() {
         Config.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaMarketNewsLiveFeed()
         feed.subscribe(Stock("AAPL"))

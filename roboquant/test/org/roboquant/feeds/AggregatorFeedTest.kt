@@ -31,7 +31,7 @@ import kotlin.test.assertTrue
 internal class AggregatorFeedTest {
 
     @Test
-    fun basic() {
+    fun aggregateRandomWalkToPriceBars() {
         val feed = RandomWalk.lastDays()
         val items1 = feed.toList()
 
@@ -50,7 +50,7 @@ internal class AggregatorFeedTest {
     }
 
     @Test
-    fun aggregatorFeed2() {
+    fun aggregateWithCorrectTimeSpan() {
         val tf = Timeframe.parse("2022-01-01T12:00:00", "2022-01-01T15:00:00")
         val feed = RandomWalk(tf, 1.minutes, nAssets = 1)
         val ts = 15.minutes
@@ -71,7 +71,7 @@ internal class AggregatorFeedTest {
 
 
     @Test
-    fun basic2() {
+    fun aggregateTradeEventsWithSecondResolution() {
         // 5-seconds window with 1-millisecond resolution
         val timeframe = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z")
         val feed = RandomWalk(timeframe, 1.millis, priceType = PriceItemType.TRADE)
@@ -91,7 +91,7 @@ internal class AggregatorFeedTest {
     }
 
     @Test
-    fun parallel() {
+    fun runAggregatedFeedInParallel() {
         // 5-seconds window with 1-millisecond resolution
         val timeframe = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z")
         val feed = RandomWalk(timeframe, 1.millis, priceType = PriceItemType.TRADE)
@@ -111,7 +111,7 @@ internal class AggregatorFeedTest {
     }
 
     @Test
-    fun combined() {
+    fun combineMultipleAggregatorFeeds() {
         // 5-seconds window with 1-millisecond resolution
         val timeframe = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z")
         val rw = RandomWalk(timeframe, 1.millis, priceType = PriceItemType.TRADE)

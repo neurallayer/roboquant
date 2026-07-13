@@ -31,7 +31,7 @@ internal class AssetFilterTest {
     }
 
     @Test
-    fun testFilter() {
+    fun filterAssetsBySymbol() {
         val asset1 = Stock("abc")
         val assets = listOf(asset1, Stock("BCD"), Stock("CDE"))
         val time = Instant.now()

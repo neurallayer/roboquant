@@ -26,7 +26,7 @@ import kotlin.test.assertTrue
 internal class PositionMetricTest {
 
     @Test
-    fun calc() {
+    fun calculatePositionMetric() {
         val metric = PositionMetric()
         val account = TestData.usAccount()
         val result = metric.calculate(Event.empty(), account, listOf(), listOf())

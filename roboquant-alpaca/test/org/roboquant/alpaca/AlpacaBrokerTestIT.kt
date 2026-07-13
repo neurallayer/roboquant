@@ -24,7 +24,7 @@ import kotlin.test.assertTrue
 internal class AlpacaBrokerTestIT {
 
     @Test
-    fun test() {
+    fun syncAlpacaBrokerAccount() {
         val broker = AlpacaBroker()
         val account = broker.sync()
         val cash = account.cash

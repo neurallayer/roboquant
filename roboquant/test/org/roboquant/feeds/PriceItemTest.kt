@@ -31,7 +31,7 @@ import kotlin.test.assertTrue
 internal class PriceItemTest {
 
     @Test
-    fun testPriceQuote() {
+    fun createAndAccessPriceQuote() {
         val asset = Stock("DUMMY")
         val p = PriceQuote(asset, 10.0, 1.0, 9.0, 3.0)
         assertEquals(10.0, p.askPrice)
@@ -54,7 +54,7 @@ internal class PriceItemTest {
     }
 
     @Test
-    fun testOrderBookEmpty() {
+    fun createEmptyOrderBook() {
         val asset = TestData.euStock()
         val item = OrderBook(asset, emptyList(), emptyList())
         assertTrue(item.asks.isEmpty())
@@ -89,7 +89,7 @@ internal class PriceItemTest {
     }
 
     @Test
-    fun priceBarAdjustClose() {
+    fun adjustPriceBarCloseAndVolume() {
         val asset = TestData.euStock()
         val pb = PriceBar(asset, 2, 1, 1, 1, 100)
         pb.adjustClose(0.5)
@@ -119,7 +119,7 @@ internal class PriceItemTest {
     }
 
     @Test
-    fun testTradePrice() {
+    fun createTradePrice() {
         val asset = Stock("DUMMY")
         val p = TradePrice(asset, 10.0, 100.0)
         assertEquals(10.0, p.getPrice())
@@ -128,7 +128,7 @@ internal class PriceItemTest {
     }
 
     @Test
-    fun testOrderBook() {
+    fun createOrderBookWithWeightedPrice() {
         val asset = Stock("DUMMY")
         val p = OrderBook(
             asset,

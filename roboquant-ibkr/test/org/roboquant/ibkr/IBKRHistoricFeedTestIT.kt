@@ -25,7 +25,7 @@ import kotlin.test.assertTrue
 internal class IBKRHistoricFeedTestIT {
 
     @Test
-    fun ibkrEUFeed() {
+    fun retrieveEuStockPriceHistory() {
         Config.getProperty("test.ibkr") ?: return
 
         val feed = IBKRHistoricFeed()
@@ -40,7 +40,7 @@ internal class IBKRHistoricFeedTestIT {
 
 
     @Test
-    fun ibkrUSFeed() {
+    fun retrieveUsStockPriceHistory() {
         Config.getProperty("test.ibkr") ?: return
 
         val feed = IBKRHistoricFeed()

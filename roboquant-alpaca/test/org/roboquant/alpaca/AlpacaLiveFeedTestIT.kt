@@ -31,7 +31,7 @@ internal class AlpacaLiveFeedTestIT {
     private val liveTestTime = 30.seconds
 
     @Test
-    fun test() {
+    fun subscribeToLiveStocks() {
         Config.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed()
         feed.subscribeStocks("AAPL")
@@ -48,7 +48,7 @@ internal class AlpacaLiveFeedTestIT {
     }
 
     @Test
-    fun test2() {
+    fun subscribeToLiveStocksWithSystemProperty() {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed()
         feed.subscribeStocks("AAPL")

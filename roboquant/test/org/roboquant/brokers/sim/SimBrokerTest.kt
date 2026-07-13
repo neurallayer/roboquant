@@ -41,7 +41,7 @@ internal class SimBrokerTest {
     }
 
     @Test
-    fun basicSimBrokerTest() {
+    fun defaultSimBrokerProperties() {
         val broker = SimBroker()
 
         val event = TestData.event()
@@ -73,7 +73,7 @@ internal class SimBrokerTest {
     }
 
     @Test
-    fun logic() {
+    fun repeatedSyncReturnsSameEquity() {
         val broker = getFilledSimBroker()
         val account1 = broker.sync()
         val account2 = broker.sync()
@@ -83,7 +83,7 @@ internal class SimBrokerTest {
 
 
     @Test
-    fun placeOrdersSingleCurrencyOrder() {
+    fun fillSingleCurrencyOrder() {
         val broker = SimBroker()
 
         val asset = Stock("TEST")
@@ -102,7 +102,7 @@ internal class SimBrokerTest {
     }
 
     @Test
-    fun placeOrdersMultipleOrders() {
+    fun placeOrdersInMultipleCurrencies() {
         val er = FixedExchangeRates(USD, EUR to 0.8)
         Amount.registerConvertor(er)
         val broker = SimBroker()
@@ -119,7 +119,7 @@ internal class SimBrokerTest {
 
 
     @Test
-    fun updateOrder() {
+    fun modifyExistingOrder() {
         val broker = SimBroker()
         val asset = Stock("TEST")
         val order = Order(asset,Size.ONE, 99.0)

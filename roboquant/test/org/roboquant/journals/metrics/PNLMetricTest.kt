@@ -24,7 +24,7 @@ import kotlin.test.assertEquals
 internal class PNLMetricTest {
 
     @Test
-    fun basic() {
+    fun calculatePNLMetric() {
         val metric = PNLMetric()
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(event, account, listOf(), listOf())

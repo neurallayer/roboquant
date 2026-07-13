@@ -29,7 +29,7 @@ import kotlin.test.assertTrue
 internal class PriceChartTest {
 
     @Test
-    fun test() {
+    fun renderPriceChart() {
         val feed = RandomWalk.lastYears()
         val asset = feed.assets.first()
         val chart = PriceChart(feed, asset)
@@ -44,7 +44,7 @@ internal class PriceChartTest {
 
 
     @Test
-    fun indicators() {
+    fun priceChartWithIndicators() {
         class MyIndicator : Indicator {
             override fun calculate(item: Item, time: Instant): Map<String, Double> {
                 return mapOf("one" to 1.0, "two" to 2.0)

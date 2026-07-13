@@ -28,7 +28,7 @@ import kotlin.test.assertEquals
 internal class PriceParserTest {
 
     @Test
-    fun priceBarParser() {
+    fun priceBarParserWithDefaults() {
         val parser = PriceBarParser()
 
         assertThrows<IllegalArgumentException> {
@@ -45,7 +45,7 @@ internal class PriceParserTest {
     }
 
     @Test
-    fun priceBarParser2() {
+    fun priceBarParserWithCustomIndices() {
         val parser = PriceBarParser(open = 4, high = 3, low = 2, close = 1, volume = 5)
         val asset = Stock("TEST")
         val pb = parser.parse(listOf("dummy", "10.50", "9.0", "11.0", "10", "100"), asset)
@@ -55,7 +55,7 @@ internal class PriceParserTest {
     }
 
     @Test
-    fun priceQuoteParser() {
+    fun priceQuoteParserWithDefaults() {
         val parser = PriceQuoteParser()
 
         assertThrows<IllegalArgumentException> {

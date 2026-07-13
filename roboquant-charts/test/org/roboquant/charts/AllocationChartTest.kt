@@ -24,14 +24,14 @@ import kotlin.test.assertTrue
 internal class AllocationChartTest {
 
     @Test
-    fun test() {
+    fun renderAllocationChart() {
         val account = TestData.usAccount()
         val chart = AllocationChart(account)
         assertTrue(chart.renderJson().isNotBlank())
     }
 
     @Test
-    fun option() {
+    fun allocationChartOptionHasPieSeries() {
         val account = TestData.usAccount()
         val series = AllocationChart(account).getOption().series
         assertTrue(series is Array<*> && series.isArrayOf<SeriesOption>())

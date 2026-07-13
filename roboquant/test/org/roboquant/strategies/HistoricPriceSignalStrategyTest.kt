@@ -49,7 +49,7 @@ internal class HistoricPriceSignalStrategyTest {
     private class MySubclass3 : HistoricPriceStrategy(1)
 
     @Test
-    fun test() {
+    fun historicPriceStrategyGeneratesSignalAfterWarmup() {
         val c = MySubClass1()
         val event = TestData.event()
         val signals = c.createSignals(event)
@@ -66,7 +66,7 @@ internal class HistoricPriceSignalStrategyTest {
     }
 
     @Test
-    fun test2() {
+    fun historicPriceStrategyWithPriceType() {
         val c = MySubClass2()
         val signals = c.createSignals(TestData.event2())
         assertTrue(signals.isEmpty())
@@ -82,7 +82,7 @@ internal class HistoricPriceSignalStrategyTest {
     }
 
     @Test
-    fun test3() {
+    fun historicPriceStrategyThrowsWhenMinSizeExceeded() {
         val c = MySubclass3()
         assertThrows<RoboquantException> {
             c.createSignals(TestData.event())
