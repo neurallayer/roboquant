@@ -10,6 +10,7 @@ import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
 import java.io.File
 import java.nio.file.Paths
+import java.time.temporal.ChronoUnit
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -41,12 +42,12 @@ class HtmlPageTest {
         val account = run(feed, EMACrossover(), journal = journal)
         val ts = journal.getMetric("account.equity")
 
-        page.addChart(BoxChart(ts))
+        page.addChart(BoxChart(ts, ChronoUnit.YEARS))
         page.addChart(CalendarChart(ts, height = 900))
         page.addChart(PriceChart(feed, assets[0]))
         page.addChart(PriceChart(feed, assets[1]))
         page.addChart(SignalChart(feed, EMACrossover()))
-        page.addChart(TradeChart(account.trades))
+        page.addChart(TradeChart(account.trades, dropZeroPNL = true))
         page.addChart(PerformanceChart(feed))
         page.addChart(TimeSeriesChart(ts))
         page.addChart(CorrelationChart(feed, assets))

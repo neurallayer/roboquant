@@ -30,6 +30,7 @@ import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Currency
 import org.roboquant.common.Trade
+import org.roboquant.common.iszero
 import java.math.BigDecimal
 import java.time.Instant
 
@@ -50,7 +51,8 @@ internal fun Trade.getTooltip(): String {
 class TradeChart(
     private val trades: List<Trade>,
     private val currency: Currency? = null,
-    private val perAsset: Boolean = false
+    private val perAsset: Boolean = false,
+    private val dropZeroPNL: Boolean = false
 ) : Chart(containsJavaScript = true) {
 
 
@@ -59,6 +61,7 @@ class TradeChart(
         val curr = currency ?: trades.first().asset.currency
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (trade in trades.sortedBy { it.time }) {
+            if (dropZeroPNL && trade.pnl.iszero) continue
             val value = Amount(trade.asset.currency, trade.pnl).convert(curr, trade.time).toBigDecimal()
             val tooltip = trade.getTooltip()
             d.add(Triple(trade.time, value, tooltip))
@@ -79,7 +82,6 @@ class TradeChart(
         val vm = getVisualMap(min, max).setDimension(1)
 
         val tooltip = Tooltip()
-            .setFormatter("{c}")
             .setFormatter("return p.value[2];")
 
         val chart = Scatter()
