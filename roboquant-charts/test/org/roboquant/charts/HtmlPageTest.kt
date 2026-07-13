@@ -3,15 +3,12 @@ package org.roboquant.charts
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.avro.AvroFeed
-import org.roboquant.common.Stock
 import org.roboquant.feeds.assets
-import org.roboquant.feeds.filter
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.journals.metrics.AccountMetric
 import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
 import java.io.File
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
