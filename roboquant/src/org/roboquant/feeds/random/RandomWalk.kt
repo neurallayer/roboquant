@@ -44,6 +44,7 @@ import java.time.LocalDate
  * @property volumeRange what is the volume range, default = 1000
  * @property priceChange the price range, the default is 10 bips.
  * @property seed seed to use for initializing the random generator, default is 42
+ * @param nameLen length of the symbol names that are being generated, default is 5
  */
 class RandomWalk(
     override val timeframe: Timeframe,
@@ -52,13 +53,14 @@ class RandomWalk(
     private val priceType: PriceItemType = PriceItemType.BAR,
     private val volumeRange: Int = 1000,
     private val priceChange: Double = 10.bips,
-    private val seed: Int = 42
+    private val seed: Int = 42,
+    nameLen: Int = 5
 ) : HistoricFeed {
 
     /**
      * The assets contained in this feed. Each asset has a unique symbol name of `template.symbol<nr>`
      */
-    override val assets = randomAssets(nAssets)
+    override val assets = randomAssets(nAssets, nameLen)
 
     /**
      * The timeline

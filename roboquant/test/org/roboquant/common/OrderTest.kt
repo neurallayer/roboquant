@@ -24,16 +24,28 @@ import kotlin.test.assertTrue
 
 internal class OrderTest {
 
-
-
     @Test
-    fun marketOrderProperties() {
+    fun limitOrderProperties() {
         val asset = TestData.usStock()
         val order = Order(asset, Size(100), 100.0)
         assertTrue(order.size.nonzero)
         assertFalse(order.size.iszero)
         assertEquals(order.limit, 100.0)
         assertTrue(order.fill.iszero)
+    }
+    
+    @Test
+    fun limitOrderExecutable() {
+        val asset = TestData.usStock()
+        //Buy Order
+        var order = Order(asset, Size(100), 110.0)
+        assertFalse(order.isExecutable(120.0))
+        assertTrue(order.isExecutable(100.0))
+
+        //Sell Order
+        order = Order(asset, Size(-100), 110.0)
+        assertTrue(order.isExecutable(120.0))
+        assertFalse(order.isExecutable(100.0))
     }
 
 

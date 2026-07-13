@@ -58,7 +58,7 @@ internal class RandomPriceGenerator(
         }
     }
 
-    private fun priceQupte(asset: Asset, price: Double): PriceItem {
+    private fun priceQuote(asset: Asset, price: Double): PriceItem {
         val midPoint = price.nextPrice()
         val volume = random.nextInt(volumeRange / 2, volumeRange * 2).toDouble()
         return PriceQuote(asset, midPoint * 0.99, volume, midPoint * 1.01, volume)
@@ -79,7 +79,7 @@ internal class RandomPriceGenerator(
             val item = when (priceType) {
                 PriceItemType.BAR -> priceBar(asset, price)
                 PriceItemType.TRADE -> tradePrice(asset, price)
-                PriceItemType.QUOTE -> priceQupte(asset, price)
+                PriceItemType.QUOTE -> priceQuote(asset, price)
                 else -> throw UnsupportedOperationException("Unknown price type: $priceType")
             }
 
@@ -105,8 +105,8 @@ private fun randomNames(size: Int, len: Int): Set<String> {
 /**
  * Create assets with random names based on a template
  */
-internal fun randomAssets(nAssets: Int): Set<Asset> {
-    val uniqueNames = randomNames(nAssets, 5)
+internal fun randomAssets(nAssets: Int, nameLen: Int = 5): Set<Asset> {
+    val uniqueNames = randomNames(nAssets, nameLen)
     val assets = uniqueNames.map {
         Stock(symbol = it, Currency.USD)
     }

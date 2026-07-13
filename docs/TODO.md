@@ -76,7 +76,7 @@ The topics mentioned here are some of the ideas for the future releases:
 * [x] Remove Jupyter Notebook support since JetBrains dropped it
 * [x] Move to Kotlin 2.4 or higher
 * [x] Move to Maven 4 or Amper once stable (Kotlin Toolchain)
-* [ ] Add standalone HTML rendering to charts since no more Jupyter Notebooks.
+* [x] Add standalone HTML rendering to charts since no more Jupyter Notebooks.
 * [ ] Re-assess which 3rd party data providers to support
-* [ ] Improve live trading capabilities (especially around visualizations and monitoring)
-* [ ] Improve code documentation and examples
+* [x] Improve code documentation and examples
+* [ ] Update to Alpaca lib 11.x once there is support for websockets
