@@ -40,7 +40,7 @@ class CalendarChart(
     height: Int = 800,
     private val fractionDigits: Int = 2,
     private val zoneId: ZoneId = ZoneId.of("UTC")
-) : Chart(height = height, containsJavaScript = true) {
+) : Chart(title = timeSeries.name, height = height, containsJavaScript = true) {
 
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(zoneId)
     private val metricsData = timeSeries.filter { it.value.isFinite() }

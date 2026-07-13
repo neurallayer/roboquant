@@ -36,7 +36,7 @@ import java.math.RoundingMode
  * @property fractionDigits how many digits to use for presenting the metric values
  */
 class TimeSeriesChart(
-    private val data: Map<String, TimeSeries>,
+    private val data: List<TimeSeries>,
     private val useTime: Boolean = true,
     private val fractionDigits: Int = 2
 ) : Chart() {
@@ -45,7 +45,10 @@ class TimeSeriesChart(
      * Plot a single time-series
      */
     constructor(timeSeries: TimeSeries, useTime: Boolean = true, fractionDigits: Int = 2) :
-            this(mapOf(timeSeries.name to timeSeries), useTime, fractionDigits)
+        this(listOf(timeSeries), useTime, fractionDigits) {
+            title = timeSeries.name
+        }
+
 
 
     /**
@@ -79,13 +82,13 @@ class TimeSeriesChart(
             .setTooltip(tooltip)
 
         // Every combination of a run and metric name will be its own series
-        val suffix = commonSuffix(data.keys)
-        data.forEach { (name, entries) ->
+        val suffix = commonSuffix(data.map { it.name }.toSet())
+        data.forEach { entries ->
             val d = reduce(entries.toSeriesData())
             val lineSeries = LineSeries()
                 .setData(d)
                 .setShowSymbol(showSymbol)
-                .setName(name.removeSuffix(suffix))
+                .setName(entries.name.removeSuffix(suffix))
                 .setLineStyle(LineStyle().setWidth(1))
 
             chart.addSeries(lineSeries)
