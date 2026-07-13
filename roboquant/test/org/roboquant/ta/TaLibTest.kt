@@ -39,7 +39,7 @@ internal class TaLibTest {
     @Test
     fun smaThrowsWithInsufficientData() {
         val lib = TaLib()
-        val series = getSeries(10)
+        val series = getSeries(11)
         assertDoesNotThrow {
             lib.sma(series, 8)
         }
