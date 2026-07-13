@@ -19,5 +19,4 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Verify
-        run: ./kotlin check -m 'roboquant' -m 'roboquant-avro' -m 'roboquant-charts' -m 'roboquant-questdb' -m 'roboquant-alpaca'
-
+        run: ./kotlin test --exclude-module=roboquant-ibkr
