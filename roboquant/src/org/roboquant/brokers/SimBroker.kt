@@ -131,7 +131,7 @@ open class SimBroker(
 
         // Increase position
         if (position.size.sign == fill.sign) {
-            val avgPrice = (fill.toDouble() * position.avgPrice + fill.toDouble() * price) / newSize.toDouble()
+            val avgPrice = (position.size.toDouble() * position.avgPrice + fill.toDouble() * price) / newSize.toDouble()
             account.positions[asset] = Position(newSize, avgPrice = avgPrice, mktPrice = price)
             return 0.0
         }

@@ -53,10 +53,15 @@ class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
     fun getRuns() : Set<String> = journals.keys
 
     /**
-     * Get the metric with the given [name] for all runs
+     * Get the metric timeseries for the given name for all runs. The metric name
+     * is prepended with the run name and a slash
      */
-    fun getMetric(name: String) : Map<String, TimeSeries> {
-        return journals.mapValues { it.value.getMetric(name) }
+    fun getMetric(name: String) : List<TimeSeries> {
+        return journals.map {
+            val v = it.value.getMetric(name)
+            v.copy(name = it.key + "/" + v.name)
+        }
+
     }
 
     /**

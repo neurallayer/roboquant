@@ -50,7 +50,7 @@ data class Observation(val time: Instant, val value: Double) : Comparable<Observ
  * @property name the name of the timeseries
  */
 @Suppress("TooManyFunctions")
-class TimeSeries(val timeline: Timeline, val values: DoubleArray, val name: String) : Iterable<Observation> {
+data class TimeSeries(val timeline: Timeline, val values: DoubleArray, val name: String) : Iterable<Observation> {
 
     constructor(values: List<Observation>, name: String) : this(
         values.map { it.time }, values.map { it.value }.toDoubleArray(), name
@@ -231,6 +231,29 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray, val name: Stri
      * Returns true if not empty, false otherwise.
      */
     fun isNotEmpty() = size > 0
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as TimeSeries
+
+        if (timeline != other.timeline) return false
+        if (!values.contentEquals(other.values)) return false
+        if (name != other.name) return false
+        if (size != other.size) return false
+        if (timeframe != other.timeframe) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = timeline.hashCode()
+        result = 31 * result + values.contentHashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + size
+        result = 31 * result + timeframe.hashCode()
+        return result
+    }
 
 
 }

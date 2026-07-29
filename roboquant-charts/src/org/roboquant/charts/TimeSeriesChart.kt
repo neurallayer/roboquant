@@ -49,8 +49,6 @@ class TimeSeriesChart(
             title = timeSeries.name
         }
 
-
-
     /**
      * Identify common suffix (same run), so they can be removed from the series name
      */
