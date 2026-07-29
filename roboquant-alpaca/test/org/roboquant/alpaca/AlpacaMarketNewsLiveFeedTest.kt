@@ -56,14 +56,15 @@ internal class AlpacaMarketNewsLiveFeedTest {
             headline = "AAPL News 2",
             meta = mapOf("source" to "test")
         )
-        feed.sendNews(t0.plusMillis(25), NewsItems(listOf(n2)))
+        val t1 = t0.plusSeconds(1)
+        feed.sendNews(t1, NewsItems(listOf(n2)))
 
         runBlocking {
             var event = channel.receive()
             assertEquals(t0, event.time)
 
             event = channel.receive()
-            assertEquals(t0.plusMillis(25), event.time)
+            assertEquals(t1, event.time)
         }
 
         job.cancel()
