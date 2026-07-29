@@ -24,10 +24,10 @@ repositories:
     url: https://central.sonatype.com/repository/maven-snapshots/
     publish: true
     # have to comment out below otherwise GitHub action fails
-    credentials:
-      file: ./creds.properties
-      usernameKey: username
-      passwordKey: password
+    # credentials:
+      # file: ./creds.properties
+      # usernameKey: username
+      # passwordKey: password
 
 dependencies:
   - org.slf4j:slf4j-api:2.1.0-alpha1

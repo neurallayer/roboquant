@@ -18,7 +18,5 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Create dummy credentials
-        run: echo -e "username=dummy\npassword=dummy" > ./creds.properties
       - name: Verify
         run: ./kotlin test --exclude-module=roboquant-ibkr
