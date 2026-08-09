@@ -117,7 +117,7 @@ open class PriceBarSeries(capacity: Int) {
         doubleArrayOf(open[index], high[index], low[index], close[index], volume[index])
 
     /**
-     * Returns a PriceBarSeries that includes the data that occured within the provided [timeframe]
+     * Returns a PriceBarSeries that includes the data that occurred within the provided [timeframe]
      */
     operator fun get(timeframe: Timeframe): PriceBarSeries {
         val result = PriceBarSeries(size)
