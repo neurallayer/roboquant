@@ -114,6 +114,13 @@ internal data class TickDTO(
     val timestamp: String? = null,
 )
 
+internal data class SessionStartResultDTO(
+    val accountId: String? = null,
+    val isDemo: Boolean? = null,
+    val status: String? = null,
+    val expiresAt: String? = null,
+)
+
 // --- Request bodies (gson omits null fields on serialization).
 
 internal data class PlaceOrderBody(
@@ -134,6 +141,14 @@ internal data class ModifyPendingBody(
 )
 
 internal data class CloseBody(val volume: Double? = null)
+
+internal data class SessionStartBody(
+    val broker: String,
+    val server: String,
+    val account: String,
+    val password: String,
+    val terminalType: String? = null,
+)
 
 /**
  * Minimal REST + WebSocket client for the TickerAll hosted MetaTrader API. It uses only the JDK
@@ -190,6 +205,14 @@ internal class TickerAllClient(private val config: TickerAllConfig) : AutoClosea
         val path = "/v1/accounts/$aid/candles?symbol=${enc(symbol)}&hours=$hours&timeframe=${enc(timeframe)}"
         return get(path, CandlesDTO::class.java).candles ?: emptyList()
     }
+
+    /**
+     * Start a broker session (`POST /v1/sessions`) and return the parsed result, whose `accountId` is the
+     * connected account to use for every subsequent call. This endpoint is not account-scoped, so it works
+     * on a client that has no [TickerAllConfig.accountId] yet.
+     */
+    fun startSession(body: SessionStartBody): SessionStartResultDTO =
+        gson.fromJson(exec("POST", "/v1/sessions", body), SessionStartResultDTO::class.java)
 
     fun placeOrder(body: PlaceOrderBody): OrderAckDTO =
         gson.fromJson(exec("POST", "/v1/accounts/$aid/orders", body), OrderAckDTO::class.java)

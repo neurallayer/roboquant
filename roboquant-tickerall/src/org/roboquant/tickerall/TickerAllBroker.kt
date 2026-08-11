@@ -27,15 +27,39 @@ import java.time.Instant
  * roboquant to trade a MetaTrader broker account through TickerAll, without a local MetaTrader terminal and
  * from any operating system.
  *
- * The [accountId] of the connected broker account is required, along with an [TickerAllConfig.apiKey]. See
- * also [TickerAllLiveFeed] and [TickerAllHistoricFeed] to use TickerAll for market data as well.
+ * Everything on TickerAll is keyed by a connected [accountId]. You get one in either of two ways:
+ *
+ *  1. **From your MetaTrader credentials — [TickerAllBroker.connect] (recommended).** This starts the broker
+ *     session for you and returns a broker already bound to the resulting [accountId], so you go straight
+ *     from credentials to a working broker:
+ *     ```
+ *     val broker = TickerAllBroker.connect {
+ *         apiKey = "cf_api_..."            // or the TICKERALL_API_KEY env var
+ *         broker = "mt5"                   // the MetaTrader platform, "mt4" or "mt5"
+ *         server = "Exness-MT5Trial7"      // the broker/trade server name
+ *         account = "12345678"             // your numeric broker login
+ *         password = "..."                 // never stored beyond the session
+ *         // terminalType = "CLIENT"       // optional; blank/omitted means MOBILE
+ *     }
+ *     val liveFeed = TickerAllLiveFeed { apiKey = "cf_api_..."; accountId = broker.accountId }
+ *     ```
+ *  2. **From an [accountId] you already have** (e.g. an account already connected on the TickerAll dashboard,
+ *     or a [broker.accountId][accountId] from an earlier [connect]) — use the primary constructor:
+ *     ```
+ *     val broker = TickerAllBroker { apiKey = "cf_api_..."; accountId = "..." }
+ *     ```
+ *
+ * The primary constructor assumes the account is **already connected/warm** on TickerAll; if it isn't, the
+ * initial sync fails fast. Use [connect] when you only have MetaTrader credentials. See also
+ * [TickerAllLiveFeed] and [TickerAllHistoricFeed] to use TickerAll for market data, building them from
+ * [accountId] so the whole session is shared and started only once.
  *
  * Note that roboquant models one net position per asset, which maps to a MetaTrader **netting** account.
  * Hedging accounts (multiple open positions per symbol) are not represented one-to-one.
  *
  * @param loadExistingOrders load the resting pending orders already at the account on startup, default true
  * @param configure configuration for connecting to the TickerAll API
- * @constructor Create a new instance of the TickerAllBroker
+ * @constructor Create a new instance of the TickerAllBroker for an already-connected [accountId]
  */
 class TickerAllBroker(
     loadExistingOrders: Boolean = true,
@@ -48,12 +72,55 @@ class TickerAllBroker(
     private val orderPlacer: TickerAllOrderPlacer
     private val logger = Logging.getLogger(TickerAllBroker::class)
 
+    /**
+     * The TickerAll account id this broker is bound to. After [connect] this is the id the session produced;
+     * build a [TickerAllLiveFeed] or [TickerAllHistoricFeed] from it to reuse the same connected account
+     * without starting a second session.
+     */
+    val accountId: String get() = config.accountId
+
     init {
         config.configure()
         client = TickerAll.getClient(config)
         orderPlacer = TickerAllOrderPlacer(client)
         syncAccountAndPositions()
         if (loadExistingOrders) loadExistingOrders()
+    }
+
+    companion object {
+        /**
+         * Connect a MetaTrader account from its credentials and return a [TickerAllBroker] bound to the
+         * resulting account. This performs the session-start step (`POST /v1/sessions`) that TickerAll
+         * requires before an account can be traded or streamed, so you do not have to run a separate connect
+         * step yourself: supply `apiKey`, `broker` (`"mt4"` or `"mt5"`), `server`, `account` (the numeric
+         * broker login) and `password` through [configure], and the returned broker is already synced and
+         * ready. The new account id is available as [accountId] for building matching feeds.
+         *
+         * `terminalType` is optional (blank/omitted means MOBILE); `"WEB"` is not supported here as it needs
+         * additional web fields. The credentials are used only to open the session and are not stored beyond
+         * it.
+         *
+         * This is a plain one-shot session start. Unlike the official TickerAll SDKs' `keep_alive`, the raw
+         * client cannot auto-re-arm a session that later goes cold (that re-arm loop is SDK-side machinery);
+         * for a connection that must stay warm long-term, use a server-side always-hot account or reconnect
+         * periodically.
+         *
+         * @param loadExistingOrders load the resting pending orders already at the account on startup
+         * @param configure supplies the api key and the MetaTrader credentials (see [TickerAllConfig])
+         */
+        fun connect(
+            loadExistingOrders: Boolean = true,
+            configure: TickerAllConfig.() -> Unit = {}
+        ): TickerAllBroker {
+            val config = TickerAllConfig().apply(configure)
+            config.accountId = TickerAll.startSession(config)
+            return TickerAllBroker(loadExistingOrders) {
+                apiKey = config.apiKey
+                accountId = config.accountId
+                baseUrl = config.baseUrl
+                wsUrl = config.wsUrl
+            }
+        }
     }
 
     private fun getAsset(symbol: String): Asset = TickerAll.toAsset(symbol, _account.baseCurrency)

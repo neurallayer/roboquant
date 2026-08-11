@@ -27,6 +27,10 @@ import java.time.Instant
  * Historic price feed that retrieves OHLC candles for one connected MetaTrader account from TickerAll. The
  * retrieved bars are stored in memory and can be replayed like any other roboquant historic feed.
  *
+ * The feed reads an already-connected account, so set the [accountId][TickerAllConfig.accountId] of one. If
+ * you only have MetaTrader credentials, connect once with [TickerAllBroker.connect] and pass
+ * `accountId = broker.accountId` here, so the broker and feed share a single session.
+ *
  * @param configure configuration for connecting to the TickerAll API
  * @constructor Create a new instance of the TickerAllHistoricFeed
  */

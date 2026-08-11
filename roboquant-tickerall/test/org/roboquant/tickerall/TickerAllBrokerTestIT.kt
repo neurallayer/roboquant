@@ -55,6 +55,40 @@ internal class TickerAllBrokerTestIT {
     }
 
     /**
+     * Connect from MetaTrader credentials, exercising [TickerAllBroker.connect] end-to-end against the live
+     * API. Runs only when `TICKERALL_API_KEY`, `TICKERALL_BROKER`, `TICKERALL_SERVER`, `TICKERALL_ACCOUNT`
+     * and `TICKERALL_PASSWORD` are all provided (otherwise it returns early so CI stays green). Optionally
+     * honours `TICKERALL_TERMINAL_TYPE`. It only connects and reads; it never trades. The account must be a
+     * demo account.
+     */
+    @Test
+    fun connectFromCredentials() {
+        val key = Config.getProperty("TICKERALL_API_KEY") ?: return
+        val brokerPlatform = Config.getProperty("TICKERALL_BROKER") ?: return
+        val serverName = Config.getProperty("TICKERALL_SERVER") ?: return
+        val accountLogin = Config.getProperty("TICKERALL_ACCOUNT") ?: return
+        val pw = Config.getProperty("TICKERALL_PASSWORD") ?: return
+        val terminal = Config.getProperty("TICKERALL_TERMINAL_TYPE")
+
+        val broker = TickerAllBroker.connect {
+            apiKey = key
+            broker = brokerPlatform
+            server = serverName
+            account = accountLogin
+            password = pw
+            if (terminal != null) terminalType = terminal
+        }
+
+        // connect must have started the session and bound the resulting accountId.
+        assertTrue(broker.accountId.isNotBlank(), "connect must bind a non-blank accountId")
+
+        val account = broker.sync()
+        // a single deposit currency; a 0.0 balance is a valid (unfunded) state.
+        assertFalse(account.cash.isMultiCurrency())
+        assertTrue(account.buyingPower.value >= 0.0)
+    }
+
+    /**
      * Opt-in live trade round-trip, enabled by setting `TICKERALL_TEST_TRADE`. It places a minimal 0.01
      * market order through the broker and then closes whatever position that opened, so nothing is left
      * behind. It refuses to run against anything other than a demo account.

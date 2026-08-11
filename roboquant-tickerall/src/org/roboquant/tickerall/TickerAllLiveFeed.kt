@@ -28,6 +28,14 @@ import java.time.Instant
  * websocket. Each tick is published as a [PriceQuote], since MetaTrader ticks are bid/ask quotes. After
  * constructing the feed, call [subscribe] with the symbols you want to receive.
  *
+ * The feed streams an already-connected account, so set the [accountId][TickerAllConfig.accountId] of one.
+ * If you only have MetaTrader credentials, connect once with [TickerAllBroker.connect] and pass
+ * `accountId = broker.accountId` here, so the broker and feed share a single session:
+ * ```
+ * val broker = TickerAllBroker.connect { apiKey = "..."; broker = "mt5"; server = "..."; account = "..."; password = "..." }
+ * val feed = TickerAllLiveFeed { apiKey = "..."; accountId = broker.accountId }
+ * ```
+ *
  * @param configure configuration for connecting to the TickerAll API
  * @constructor Create a new instance of the TickerAllLiveFeed
  */
