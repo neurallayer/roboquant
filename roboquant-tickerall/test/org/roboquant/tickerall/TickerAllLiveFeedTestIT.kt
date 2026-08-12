@@ -26,9 +26,11 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * Integration test for the live tick feed. Runs only when `TICKERALL_API_KEY` / `TICKERALL_ACCOUNT_ID` are
- * set; otherwise it returns early so CI stays green. The optional `TICKERALL_SYMBOL` selects the instrument
- * (default `EURUSD`). The run is bounded to a short window so it always terminates.
+ * Integration test for the live tick feed. Runs when `TICKERALL_API_KEY` is set with EITHER a MetaTrader
+ * login (`TICKERALL_BROKER`/`TICKERALL_SERVER`/`TICKERALL_ACCOUNT`/`TICKERALL_PASSWORD`) or a pre-connected
+ * `TICKERALL_ACCOUNT_ID` (derived from the login when only that is given); otherwise it returns early so
+ * CI stays green. The optional `TICKERALL_SYMBOL` selects the instrument (default `EURUSD`). The run is
+ * bounded to a short window so it always terminates.
  */
 internal class TickerAllLiveFeedTestIT {
 
@@ -37,7 +39,7 @@ internal class TickerAllLiveFeedTestIT {
     @Test
     fun subscribeToLiveTicks() {
         val key = Config.getProperty("TICKERALL_API_KEY") ?: return
-        val id = Config.getProperty("TICKERALL_ACCOUNT_ID") ?: return
+        val id = resolveTickerAllAccountId(key) ?: return
         val symbol = Config.getProperty("TICKERALL_SYMBOL") ?: "EURUSD"
 
         val feed = TickerAllLiveFeed {

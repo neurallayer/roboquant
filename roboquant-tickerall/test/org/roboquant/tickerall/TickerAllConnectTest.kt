@@ -171,4 +171,19 @@ internal class TickerAllConnectTest {
             TickerAll.startSession(TickerAllConfig().apply { apiKey = ""; broker = "mt5"; server = "s"; account = "1"; password = "p" })
         }
     }
+
+    @Test
+    fun rejectsBrokerAccountNumberAsAccountId() {
+        // A broker account NUMBER (all digits) is a common mix-up for the TickerAll account id (a cuid);
+        // it is rejected up-front, before any network call, on the broker and both feeds.
+        assertFailsWith<IllegalArgumentException> {
+            TickerAllBroker { apiKey = "cf_api_test"; accountId = "12345678" }
+        }
+        assertFailsWith<IllegalArgumentException> {
+            TickerAllLiveFeed { apiKey = "cf_api_test"; accountId = "12345678" }
+        }
+        assertFailsWith<IllegalArgumentException> {
+            TickerAllHistoricFeed { apiKey = "cf_api_test"; accountId = "12345678" }
+        }
+    }
 }

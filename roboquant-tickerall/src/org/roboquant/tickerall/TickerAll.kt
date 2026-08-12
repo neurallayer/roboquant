@@ -77,6 +77,13 @@ internal object TickerAll {
     internal fun getClient(config: TickerAllConfig): TickerAllClient {
         require(config.apiKey.isNotBlank()) { "no api key provided (tickerall.api.key / TICKERALL_API_KEY)" }
         require(config.accountId.isNotBlank()) { "no account id provided (tickerall.account.id / TICKERALL_ACCOUNT_ID)" }
+        // A broker account NUMBER (all digits) is a common mix-up for the TickerAll account id (a cuid) —
+        // fail fast with the fix rather than a later, opaque "Broker account not found".
+        require(!config.accountId.all { it.isDigit() }) {
+            "accountId='${config.accountId}' looks like a broker account NUMBER, not a TickerAll account id " +
+                "(a TickerAll id is a cuid, not a number). Use TickerAllBroker.connect { ... } with your " +
+                "MetaTrader credentials, or set accountId to the id returned by TickerAll.startSession(...)."
+        }
         return TickerAllClient(config)
     }
 

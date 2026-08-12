@@ -25,16 +25,18 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * Integration test that runs only when a live TickerAll api key and account id are provided through the
- * `TICKERALL_API_KEY` / `TICKERALL_ACCOUNT_ID` environment variables. Without them the test returns early so
- * the CI build stays green. The account must be a connected demo account.
+ * Integration test that runs when a live `TICKERALL_API_KEY` is provided together with EITHER a MetaTrader
+ * login (`TICKERALL_BROKER`/`TICKERALL_SERVER`/`TICKERALL_ACCOUNT`/`TICKERALL_PASSWORD`) or a pre-connected
+ * `TICKERALL_ACCOUNT_ID`. Given only the login, the account id is derived by opening a session — so you
+ * never look up the internal id. Without either the test returns early so the CI build stays green. The
+ * account must be a connected demo account.
  */
 internal class TickerAllBrokerTestIT {
 
     @Test
     fun syncAndPlaceEmpty() {
         val key = Config.getProperty("TICKERALL_API_KEY") ?: return
-        val id = Config.getProperty("TICKERALL_ACCOUNT_ID") ?: return
+        val id = resolveTickerAllAccountId(key) ?: return
 
         val broker = TickerAllBroker {
             apiKey = key
@@ -96,7 +98,7 @@ internal class TickerAllBrokerTestIT {
     @Test
     fun tradeRoundTrip() {
         val key = Config.getProperty("TICKERALL_API_KEY") ?: return
-        val id = Config.getProperty("TICKERALL_ACCOUNT_ID") ?: return
+        val id = resolveTickerAllAccountId(key) ?: return
         Config.getProperty("TICKERALL_TEST_TRADE") ?: return
         val symbol = Config.getProperty("TICKERALL_SYMBOL") ?: "EURUSDm"
 
