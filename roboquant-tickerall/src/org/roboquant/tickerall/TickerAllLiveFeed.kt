@@ -45,6 +45,7 @@ class TickerAllLiveFeed(
 
     private val config = TickerAllConfig()
     private val client: TickerAllClient
+    private val symbolCurrency: SymbolCurrency by lazy { SymbolCurrency(client) }
     private val logger = Logging.getLogger(TickerAllLiveFeed::class)
     private var subscription: AutoCloseable? = null
 
@@ -59,9 +60,11 @@ class TickerAllLiveFeed(
     fun subscribe(vararg symbols: String) {
         require(symbols.isNotEmpty()) { "provide at least one symbol" }
         subscription?.close()
+        // Pre-warm the currency cache (one metadata call) so tick handling never blocks on it.
+        symbolCurrency.get(symbols.first())
         subscription = client.streamTicks(symbols.toSet()) { tick ->
             val symbol = tick.symbol ?: return@streamTicks
-            val asset = TickerAll.toAsset(symbol, Currency.USD)
+            val asset = TickerAll.toAsset(symbol, Currency.USD, symbolCurrency.get(symbol))
             // MetaTrader ticks carry bid/ask but no sizes, so the quote sizes are reported as NaN (unknown).
             val item = PriceQuote(asset, tick.ask ?: Double.NaN, Double.NaN, tick.bid ?: Double.NaN, Double.NaN)
             send(Event(parseTime(tick.timestamp), listOf(item)))

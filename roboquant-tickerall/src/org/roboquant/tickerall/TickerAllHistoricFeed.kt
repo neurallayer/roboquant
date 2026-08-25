@@ -40,6 +40,7 @@ class TickerAllHistoricFeed(
 
     private val config = TickerAllConfig()
     private val client: TickerAllClient
+    private val symbolCurrency: SymbolCurrency by lazy { SymbolCurrency(client) }
     private val logger = Logging.getLogger(TickerAllHistoricFeed::class)
 
     init {
@@ -55,7 +56,7 @@ class TickerAllHistoricFeed(
     fun retrieve(vararg symbols: String, timeframe: String = "H1", hours: Int = 720) {
         val timeSpan = timeSpanFor(timeframe)
         for (symbol in symbols) {
-            val asset = TickerAll.toAsset(symbol, Currency.USD)
+            val asset = TickerAll.toAsset(symbol, Currency.USD, symbolCurrency.get(symbol))
             for (candle in client.getCandles(symbol, hours, timeframe)) {
                 val ts = candle.timestamp ?: continue
                 val open = candle.open ?: continue

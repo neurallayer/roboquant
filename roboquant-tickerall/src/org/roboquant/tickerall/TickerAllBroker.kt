@@ -74,6 +74,7 @@ class TickerAllBroker(
     private val _account = InternalAccount(Currency.USD)
     private val client: TickerAllClient
     private val orderPlacer: TickerAllOrderPlacer
+    private val symbolCurrency: SymbolCurrency by lazy { SymbolCurrency(client) }
     private val logger = Logging.getLogger(TickerAllBroker::class)
 
     /**
@@ -127,7 +128,10 @@ class TickerAllBroker(
         }
     }
 
-    private fun getAsset(symbol: String): Asset = TickerAll.toAsset(symbol, _account.baseCurrency)
+    // The asset currency is the instrument's quote currency from broker metadata (see SymbolCurrency), not
+    // the account currency; the feeds resolve it the same way so a position and its price events match.
+    private fun getAsset(symbol: String): Asset =
+        TickerAll.toAsset(symbol, _account.baseCurrency, symbolCurrency.get(symbol))
 
     private fun sizeOf(volume: Double, side: String?): Size {
         val bd = BigDecimal.valueOf(volume)

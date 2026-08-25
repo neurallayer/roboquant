@@ -20,6 +20,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Config
 import org.roboquant.common.Currency
 import org.roboquant.common.Forex
+import org.roboquant.common.Logging
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -123,12 +124,50 @@ internal object TickerAll {
      * The raw broker symbol is always preserved as the asset symbol, so orders and prices refer to exactly
      * the instrument the broker knows. MetaTrader instruments (FX, metals, indices and crypto CFDs) are all
      * represented as a [Forex] asset so a single symbol maps consistently across the broker and feeds. The
-     * quote currency is derived from the trailing three letters of the symbol when it looks like a standard
-     * pair, otherwise [fallbackCurrency] is used.
+     * asset currency is the instrument's quote currency: [quoteCurrency] when the caller resolved it from the
+     * broker's symbol metadata (authoritative; see [SymbolCurrency]), otherwise it is inferred from the
+     * trailing three letters of a standard pair, and only when the symbol is not a recognizable pair does it
+     * fall back to [fallbackCurrency].
      */
-    internal fun toAsset(symbol: String, fallbackCurrency: Currency): Asset = assetCache.computeIfAbsent(symbol) {
-        val letters = symbol.filter { it in 'A'..'Z' }
-        val currency = if (letters.length >= 6) Currency.getInstance(letters.takeLast(3)) else fallbackCurrency
-        Forex(symbol, currency)
+    internal fun toAsset(symbol: String, fallbackCurrency: Currency, quoteCurrency: Currency? = null): Asset {
+        // An asset's identity includes its currency, so the resolved currency is part of the cache key; the
+        // broker and feeds pass the same metadata-resolved currency, so they share the cached instance.
+        val key = "$symbol|${quoteCurrency?.currencyCode ?: ""}|${fallbackCurrency.currencyCode}"
+        return assetCache.computeIfAbsent(key) {
+            if (quoteCurrency != null) {
+                Forex(symbol, quoteCurrency)
+            } else {
+                val letters = symbol.filter { it in 'A'..'Z' }
+                val currency = if (letters.length >= 6) Currency.getInstance(letters.takeLast(3)) else fallbackCurrency
+                Forex(symbol, currency)
+            }
+        }
+    }
+}
+
+/**
+ * Resolves a symbol's quote currency from the broker's symbol metadata (its profit currency), lazily and
+ * cached. An asset's identity includes its currency, so the broker and the feeds share this resolution to
+ * denote a symbol in the same currency — otherwise a position and its price events would be different assets.
+ * Returns null when the symbol has no metadata currency (e.g. an MT4 account whose spec list is empty),
+ * leaving [TickerAll.toAsset] to infer it from the pair.
+ */
+internal class SymbolCurrency(private val client: TickerAllClient) {
+
+    private val logger = Logging.getLogger(SymbolCurrency::class)
+    private var cache: Map<String, Currency>? = null
+
+    fun get(symbol: String): Currency? {
+        if (cache == null) {
+            cache = try {
+                client.getSymbolSpecs()
+                    .filter { !it.name.isNullOrBlank() && !it.profitCurrency.isNullOrBlank() }
+                    .associate { it.name!! to Currency.getInstance(it.profitCurrency!!) }
+            } catch (e: Exception) {
+                logger.warn { "failed to load symbol specs for currency resolution: ${e.message}" }
+                emptyMap()
+            }
+        }
+        return cache?.get(symbol)
     }
 }

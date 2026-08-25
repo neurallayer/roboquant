@@ -112,6 +112,9 @@ internal data class SymbolSpecDTO(
     val volumeMin: Double? = null,
     val volumeMax: Double? = null,
     val volumeStep: Double? = null,
+    val baseCurrency: String? = null,
+    val profitCurrency: String? = null,
+    val marginCurrency: String? = null,
 )
 
 internal data class TickDTO(
