@@ -20,6 +20,7 @@ import org.roboquant.brokers.Broker
 import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.*
 import java.math.BigDecimal
+import java.math.MathContext
 import java.time.Instant
 
 /**
@@ -54,8 +55,11 @@ import java.time.Instant
  * [TickerAllLiveFeed] and [TickerAllHistoricFeed] to use TickerAll for market data, building them from
  * [accountId] so the whole session is shared and started only once.
  *
- * Note that roboquant models one net position per asset, which maps to a MetaTrader **netting** account.
- * Hedging accounts (multiple open positions per symbol) are not represented one-to-one.
+ * roboquant models one net position per asset. A MetaTrader **netting** account maps to that directly. A
+ * **hedging** account (a separate ticket per trade) is aggregated into a single net position per asset on
+ * sync, and a market order that opposes the current net is executed as a close-by-ticket (plus a market
+ * remainder on a reversal) rather than opening an offsetting ticket — so either account type behaves as the
+ * one-net-position-per-asset model roboquant expects.
  *
  * @param loadExistingOrders load the resting pending orders already at the account on startup, default true
  * @param configure configuration for connecting to the TickerAll API
@@ -150,12 +154,35 @@ class TickerAllBroker(
         _account.cash.deposit(currency, balance)
 
         _account.positions.clear()
-        for (p in acc.positions ?: emptyList()) {
-            val symbol = p.symbol ?: continue
-            val volume = p.volume ?: continue
-            val entry = p.entryPrice ?: 0.0
-            val market = p.currentPrice ?: entry
-            _account.setPosition(getAsset(symbol), Position(sizeOf(volume, p.side), entry, market))
+        // Aggregate the broker's tickets into ONE net position per asset. A MetaTrader account may be HEDGING
+        // (a separate ticket per trade) rather than netting; roboquant models one net position per asset, so
+        // sum the tickets' signed volumes and take a volume-weighted average entry over the net side.
+        // Otherwise same-symbol tickets would overwrite each other and only the last one would survive.
+        val bySymbol = (acc.positions ?: emptyList())
+            .filter { it.symbol != null && it.volume != null }
+            .groupBy { it.symbol!! }
+        for ((symbol, tickets) in bySymbol) {
+            var net = BigDecimal.ZERO
+            for (t in tickets) {
+                val v = BigDecimal.valueOf(t.volume!!)
+                net = if (t.side?.equals("SELL", ignoreCase = true) == true) net.subtract(v) else net.add(v)
+            }
+            if (net.signum() == 0) continue // fully hedged flat — no net exposure to report
+            val netLong = net.signum() > 0
+            // Volume-weighted average entry over the net-side tickets (the side matching the net sign).
+            var num = BigDecimal.ZERO
+            var den = BigDecimal.ZERO
+            for (t in tickets) {
+                val sell = t.side?.equals("SELL", ignoreCase = true) == true
+                if (sell != netLong) {
+                    val v = BigDecimal.valueOf(t.volume!!)
+                    num = num.add(v.multiply(BigDecimal.valueOf(t.entryPrice ?: 0.0)))
+                    den = den.add(v)
+                }
+            }
+            val entry = if (den.signum() != 0) num.divide(den, MathContext.DECIMAL64).toDouble() else 0.0
+            val market = tickets.first().currentPrice ?: entry
+            _account.setPosition(getAsset(symbol), Position(Size(net), entry, market))
         }
         _account.lastUpdate = Instant.now()
     }
@@ -195,7 +222,9 @@ class TickerAllBroker(
      * Place, modify or cancel [orders] at TickerAll. Following roboquant's order model:
      * - a cancellation order (known id, zero size) cancels the pending order,
      * - an order with a known id and non-zero size modifies that pending order's price,
-     * - an order without an id is placed as a new market or limit order.
+     * - an order without an id is placed as a new order; a market order that opposes the current net
+     *   position is net-emulated as a close-by-ticket (plus a market remainder on a reversal), and anything
+     *   else is a straight market or limit order.
      */
     override fun placeOrders(orders: List<Order>) {
         for (order in orders) {
@@ -214,10 +243,12 @@ class TickerAllBroker(
                     val price = if (order.limit.isNaN()) null else order.limit
                     client.modifyPending(order.id, ModifyPendingBody(price = price))
                 }
-                // A fresh order is placed as a new market or limit order.
+                // A fresh order. A market order that opposes the current net position is net-emulated
+                // (close-by-ticket, plus a market remainder on a reversal) so a hedging account reaches the
+                // same net position roboquant models; anything else is placed straight through. Only a raw
+                // placed order rests in the book and is tracked.
                 else -> {
-                    orderPlacer.placeSingleOrder(order)
-                    _account.orders.add(order)
+                    if (orderPlacer.place(order)) _account.orders.add(order)
                 }
             }
         }

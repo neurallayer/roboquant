@@ -105,6 +105,15 @@ internal data class CandleDTO(
 
 internal data class SymbolsDTO(val symbols: List<String>? = null)
 
+internal data class SymbolSpecsDTO(val specs: List<SymbolSpecDTO>? = null)
+
+internal data class SymbolSpecDTO(
+    val name: String? = null,
+    val volumeMin: Double? = null,
+    val volumeMax: Double? = null,
+    val volumeStep: Double? = null,
+)
+
 internal data class TickDTO(
     val type: String? = null,
     val accountId: String? = null,
@@ -200,6 +209,13 @@ internal class TickerAllClient(private val config: TickerAllConfig) : AutoClosea
 
     fun getSymbols(): List<String> =
         get("/v1/accounts/$aid/symbols", SymbolsDTO::class.java).symbols ?: emptyList()
+
+    /**
+     * Per-symbol volume specs (min / max / step) used to quantize order and close volumes. MT5 only; an MT4
+     * account returns an empty list, in which case volumes are left as roboquant supplied them.
+     */
+    fun getSymbolSpecs(): List<SymbolSpecDTO> =
+        get("/v1/accounts/$aid/symbol-specs", SymbolSpecsDTO::class.java).specs ?: emptyList()
 
     fun getCandles(symbol: String, hours: Int, timeframe: String): List<CandleDTO> {
         val path = "/v1/accounts/$aid/candles?symbol=${enc(symbol)}&hours=$hours&timeframe=${enc(timeframe)}"
