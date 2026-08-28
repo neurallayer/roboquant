@@ -45,8 +45,9 @@ object TestData {
         val account = InternalAccount(amount.currency)
         account.cash.deposit(amount)
         account.buyingPower = amount
-        account.setPosition(asset1, Position(Size(100), 10.0))
-        account.setPosition(asset2, Position(Size(100), 10.0))
+        val p1 = Position(asset1, Size(100), 10.0)
+        val p2 = Position(asset2, Size(100), 10.0)
+        account.positions.addAll(listOf(p1, p2))
         account.orders.add(Order(asset1, Size(100), 10.0))
         return account.toAccount()
     }

@@ -187,7 +187,9 @@ open class FlexTrader(
             @Suppress("LoopWithTooManyJumpStatements")
             for (signal in signals) {
                 val asset = signal.asset
-                val position = account.positions.getOrDefault(asset, Position.empty())
+                val size = account.positionSize(asset)
+                val position = Position(asset, size)
+                // val position = account.positions.getOrDefault(asset, Position.empty())
 
                 // Don't create an order if we don't know the current price
                 val priceItem = event.prices[asset]
@@ -208,7 +210,7 @@ open class FlexTrader(
                 val price = priceItem.getPrice(config.priceType)
 
                 if (reducedPositionSignal(position, signal)) {
-                    val order = createOrder(signal, -position.size, priceItem) // close position
+                    val order = createOrder(signal, -size, priceItem) // close position
                     instructions.addNotNull(order)
                 } else {
                     if (position.open) continue // we don't increase position sizing

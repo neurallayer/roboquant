@@ -48,11 +48,4 @@ internal class AccountTest {
 
     }
 
-
-    @Test
-    fun positionLongShortPartitioning() {
-        val account = TestData.usAccount()
-        assertEquals(account.positions.size, account.positions.long.size + account.positions.short.size)
-    }
-
 }

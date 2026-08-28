@@ -42,6 +42,7 @@ open class SimBroker(
     val slippage: Double = 0.0,
     private val accountModel: AccountModel = CashAccountModel(),
     private val exchangeZoneId: ZoneId = ZoneId.of("UTC"),
+    private val positions: MutableMap<Asset, Position> = mutableMapOf()
 ) : Broker {
 
     /**
@@ -113,11 +114,11 @@ open class SimBroker(
      * Update the position of an asset based on a fill and return the realized PNL
      */
     private fun updatePosition(asset: Asset, fill: Size, price: Double): Double {
-        val position = account.positions[asset]
+        val position = positions[asset]
 
         // Open Position
         if (position == null) {
-            account.positions[asset] = Position(fill, price, price)
+            positions[asset] = Position(asset, fill, price, price)
             return 0.0
         }
 
@@ -125,25 +126,25 @@ open class SimBroker(
 
         // Close position
         if (newSize.iszero) {
-            account.positions.remove(asset)
+            positions.remove(asset)
             return asset.value(fill, position.avgPrice - price).value
         }
 
         // Increase position
         if (position.size.sign == fill.sign) {
             val avgPrice = (position.size.toDouble() * position.avgPrice + fill.toDouble() * price) / newSize.toDouble()
-            account.positions[asset] = Position(newSize, avgPrice = avgPrice, mktPrice = price)
+            positions[asset] = Position(asset, newSize, avgPrice = avgPrice, mktPrice = price)
             return 0.0
         }
 
         // Decrease position
         if (fill.absoluteValue <= position.size.absoluteValue) {
-            account.positions[asset] = Position(newSize, position.avgPrice, price)
+            positions[asset] = Position(asset, newSize, position.avgPrice, price)
             return asset.value(fill, position.avgPrice - price).value
         }
 
         // Switch position side
-        account.positions[asset] = Position(newSize, price, price)
+        positions[asset] = Position(asset,newSize, price, price)
         return asset.value(position.size, price - position.avgPrice).value
 
     }
@@ -225,12 +226,33 @@ open class SimBroker(
         pendingOrders.clear()
         if (event != null) {
             simulateMarket(event)
-            account.updateMarketPrices(event)
+            updateMarketPrices(event)
             account.lastUpdate = event.time
             accountModel.updateAccount(account)
         }
         // account.orders.removeAll(newlyClosed)
+        account.positions.clear()
+        account.positions.addAll(positions.values)
+
         return account.toAccount()
+    }
+
+    /**
+     * Update the open positions in the portfolio with the current market prices as found in the [event]
+     */
+    fun updateMarketPrices(event: Event, priceType: String = "DEFAULT") {
+        if (positions.isEmpty()) return
+
+        val prices = event.prices
+
+        for ((asset, p) in positions) {
+            val priceItem = prices[asset]
+            if (priceItem != null) {
+                val price = priceItem.getPrice(priceType)
+                val newPosition = p.copy(mktPrice = price, lastUpdate = event.time)
+                positions[asset] = newPosition
+            }
+        }
     }
 
     /**

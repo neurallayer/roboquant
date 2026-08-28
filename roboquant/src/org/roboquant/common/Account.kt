@@ -1,7 +1,6 @@
 package org.roboquant.common
 
 import java.time.Instant
-import kotlin.collections.iterator
 
 /**
  * An account represents a brokerage trading account and is unified across all broker implementations.
@@ -31,7 +30,7 @@ interface Account {
     val lastUpdate: Instant
     val cash: Wallet
     val orders: List<Order>
-    val positions: Map<Asset, Position>
+    val positions: List<Position>
     val buyingPower: Amount
     val trades: List<Trade>
 
@@ -57,7 +56,7 @@ interface Account {
      * The unique set of assets hold in the [positions]
      */
     val assets: Set<Asset>
-        get() = positions.keys
+        get() = positions.map { it.asset }.toSet()
 
     /**
      * Return the market value of the open [positions], optionally filter by one or more asset.
@@ -65,10 +64,10 @@ interface Account {
      * no match, an empty [Wallet] will be returned.
      */
     fun marketValue(vararg assets: Asset): Wallet {
-        val v = positions.filterKeys { assets.isEmpty() || it in assets }
+        val v = positions.filter { assets.isEmpty() || it.asset in assets }
         val result = Wallet()
-        for ((asset, position) in v) {
-            val positionValue = asset.value(position.size, position.mktPrice)
+        for (position in v) {
+            val positionValue = position.marketValue()
             result.deposit(positionValue)
         }
         return result
@@ -78,7 +77,7 @@ interface Account {
      * Return the position size for the provided asset within this account. If there is no open position,
      * a size of ZERO is returned.
      */
-    fun positionSize(asset: Asset) : Size = positions[asset]?.size ?: Size.ZERO
+    fun positionSize(asset: Asset) : Size = positions.filter { it.asset == asset }.map { it.size }.sum()
 
     /**
      * Return the unrealized PNL of the open [positions], optionally filter by one or more asset. If there is
@@ -86,10 +85,10 @@ interface Account {
      * [positions] is returned.
      */
     fun unrealizedPNL(vararg assets: Asset): Wallet {
-        val v = positions.filterKeys { assets.isEmpty() || it in assets }
+        val v = positions.filter { assets.isEmpty() || it.asset in assets }
         val result = Wallet()
-        for ((asset, position) in v) {
-            val positionValue = asset.value(position.size, position.mktPrice - position.avgPrice)
+        for (position in v) {
+            val positionValue = position.unrealizedPNL()
             result.deposit(positionValue)
         }
         return result
@@ -105,5 +104,12 @@ interface Account {
      * Convert a [wallet] to the account [baseCurrency] using last update of the account as a timestamp
      */
     fun convert(wallet: Wallet): Amount = wallet.convert(baseCurrency, lastUpdate)
+}
 
+private fun List<Size>.sum(): Size {
+    var result = Size(0)
+    for (size in this) {
+        result += size
+    }
+    return result
 }

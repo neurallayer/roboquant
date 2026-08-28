@@ -16,11 +16,8 @@
 package org.roboquant.brokers
 
 import org.roboquant.common.Amount
-import org.roboquant.common.exposure
-import org.roboquant.common.long
-import org.roboquant.common.marketValue
 import org.roboquant.common.percent
-import org.roboquant.common.short
+import org.roboquant.common.sumOf
 
 /**
  * An account model that supports trading with margin. The buying power is calculated using the following steps:
@@ -70,13 +67,15 @@ class MarginAccountModel(
         val currency = account.baseCurrency
         val positions = account.positions
 
-        val excessMargin = account.cash + positions.marketValue()
+        val excessMargin = account.cash + account.marketValue()
         excessMargin.withdraw(Amount(currency, minimumEquity))
 
-        val longExposure = positions.long.exposure().convert(currency, time) * maintenanceMarginLong
+        val tmp = positions.filter { it.long }.sumOf { it.marketValue() }
+        val longExposure = tmp.convert(currency, time) * maintenanceMarginLong
         excessMargin.withdraw(longExposure)
 
-        val shortExposure = positions.short.exposure().convert(currency, time) * maintenanceMarginShort
+        val tmp2 = positions.filter { it.short }.sumOf { it.marketValue().absoluteValue }
+        val shortExposure = tmp2.convert(currency, time) * maintenanceMarginLong
         excessMargin.withdraw(shortExposure)
 
         val buyingPower = excessMargin.convert(currency, time) * (1.0 / initialMargin)

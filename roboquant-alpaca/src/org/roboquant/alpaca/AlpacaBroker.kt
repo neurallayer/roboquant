@@ -70,7 +70,7 @@ class AlpacaBroker(
 
     private fun getAsset(symbol: String, assetClass: AssetClass?): Asset {
         val asset = when (assetClass) {
-            AssetClass.US_EQUITY-> Stock(symbol)
+            AssetClass.US_EQUITY -> Stock(symbol)
             AssetClass.CRYPTO -> Crypto.fromSymbol(symbol)
             else -> throw RoboquantException("Unknown asset class=$assetClass")
         }
@@ -100,8 +100,8 @@ class AlpacaBroker(
         val positions = alpacaAPI.trader().positions().allOpenPositions
         for (openPosition in positions) {
             logger.debug { "received $openPosition" }
-            val (asset, p) = convertPos(openPosition)
-            _account.setPosition(asset, p)
+            val p = convertPos(openPosition)
+            _account.positions.add(p)
         }
     }
 
@@ -110,7 +110,7 @@ class AlpacaBroker(
      * Update the status of the open orders in the account with the latest order status from Alpaca
      */
     private fun syncOrders() {
-       loadExistingOrders()
+        loadExistingOrders()
     }
 
     /**
@@ -126,7 +126,6 @@ class AlpacaBroker(
             _account.orders.add(rqOrder)
         }
     }
-
 
 
     /**
@@ -147,10 +146,10 @@ class AlpacaBroker(
     /**
      * Convert an Alpaca position to a roboquant position
      */
-    private fun convertPos(pos: AlpacaPosition): Pair<Asset, Position> {
+    private fun convertPos(pos: AlpacaPosition): Position {
         val asset = getAsset(pos.symbol, pos.assetClass)
         val size = Size(pos.qty)
-        return Pair(asset, Position(size, pos.avgEntryPrice.toDouble(), pos.currentPrice.toDouble()))
+        return Position(asset, size, pos.avgEntryPrice.toDouble(), pos.currentPrice.toDouble())
     }
 
 
@@ -176,7 +175,7 @@ class AlpacaBroker(
     override fun placeOrders(orders: List<Order>) {
 
         for (order in orders) {
-            when  {
+            when {
                 order.isCancellation() -> {
                     val orderId = UUID.fromString(order.id)
                     alpacaAPI.trader().orders().deleteOrderByOrderID(orderId)

@@ -59,7 +59,7 @@ internal class AlphaBetaMetricTest {
 
         for ((cnt, event) in events.withIndex()) {
             val price = event.prices[asset]!!.getPrice()
-            internalAccount.setPosition(asset, Position(Size(100), startPrice, price))
+            internalAccount.positions.add(Position(asset, Size(100), startPrice, price))
             val account = internalAccount.toAccount()
 
             val r = metric.calculate(event, account, listOf(), listOf())

@@ -37,12 +37,12 @@ class PositionMetric : Metric {
     override fun calculate(event: Event, account: Account, signals: List<Signal>, orders: List<Order>): Map<String, Double> {
         val result = mutableMapOf<String, Double>()
 
-        for ((asset,position) in account.positions) {
-            val name = "position.${asset.symbol}"
+        for (position in account.positions) {
+            val name = "position.${position.asset.symbol}"
             result["$name.size"] = position.size.toDouble()
-            result["$name.value"] = asset.value(position.size, position.mktPrice).value
-            result["$name.cost"] = asset.value(position.size, position.avgPrice).value
-            result["$name.pnl"] = asset.value(position.size, position.mktPrice - position.avgPrice).value
+            result["$name.value"] = position.asset.value(position.size, position.mktPrice).value
+            result["$name.cost"] = position.asset.value(position.size, position.avgPrice).value
+            result["$name.pnl"] = position.asset.value(position.size, position.mktPrice - position.avgPrice).value
         }
         return result
     }

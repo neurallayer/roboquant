@@ -97,7 +97,7 @@ internal class SimBrokerTest {
         assertEquals(0, account.orders.size)
 
         assertEquals(1, account.positions.size)
-        val pos = account.positions.values.first()
+        val pos = account.positions.first()
         assertEquals(Size(10), pos.size)
     }
 

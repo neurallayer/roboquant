@@ -40,8 +40,9 @@ internal object TestData {
         val asset2 = Stock("AAB")
         val account = InternalAccount(Currency.USD)
         account.cash.deposit(100_000.USD)
-        account.setPosition(asset1, Position(Size(100), 10.0))
-        account.setPosition(asset2, Position(Size(100), 10.0))
+        val p1 = Position(asset1, Size(100), 10.0)
+        val p2 = Position(asset2, Size(100), 10.0)
+        account.positions.addAll(listOf(p1, p2))
 
         val order = Order(asset1, Size(100), 100.0)
         // val state = MutableOrderState(order, OrderStatus.COMPLETED, Instant.now(), Instant.now())
@@ -55,8 +56,9 @@ internal object TestData {
         val asset2 = Stock("AAB")
         val account = InternalAccount(Currency.USD)
         account.cash.deposit(100_000.USD)
-        account.setPosition(asset1, Position(Size(100), 10.0))
-        account.setPosition(asset2, Position(Size(100), 10.0))
+        val p1 = Position(asset1, Size(100), 10.0)
+        val p2 = Position(asset2, Size(100), 10.0)
+        account.positions.addAll(listOf(p1, p2))
         account.buyingPower = 100_000.USD
 
         val order = Order(asset1, Size(100), 100.0)
@@ -94,7 +96,7 @@ internal object TestData {
 
     fun metricInput(time: Instant = time()): Pair<Account, Event> {
         val account = usAccount()
-        val asset1 = account.positions.keys.first()
+        val asset1 = account.positions.first().asset
         val moment = Event(time, listOf(TradePrice(asset1, 11.0)))
         return Pair(account, moment)
     }

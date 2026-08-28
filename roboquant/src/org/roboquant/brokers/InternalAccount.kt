@@ -19,7 +19,6 @@ package org.roboquant.brokers
 import org.roboquant.common.*
 import org.roboquant.common.Event
 import java.time.Instant
-import kotlin.collections.iterator
 
 /**
  * Internal Account is meant to be used by broker implementations, like the SimBroker. The broker is the only one with
@@ -62,7 +61,7 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
     /**
      * Portfolio with its open positions. Positions are removed as soon as they are closed
      */
-    override val positions = mutableMapOf<Asset, Position>()
+    override val positions = mutableListOf<Position>()
 
     /**
      * Clear all the state in this account.
@@ -82,37 +81,6 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
         orders.removeIf { it.id == order.id }
     }
 
-
-
-    /**
-     * Set the [position]. If the position is closed, it is removed all together from the [positions].
-     */
-    @Synchronized
-    fun setPosition(asset: Asset, position: Position) {
-        if (position.closed) {
-            positions.remove(asset)
-        } else {
-            positions[asset] = position
-        }
-    }
-
-    /**
-     * Update the open positions in the portfolio with the current market prices as found in the [event]
-     */
-    fun updateMarketPrices(event: Event, priceType: String = "DEFAULT") {
-        if (positions.isEmpty()) return
-
-        val prices = event.prices
-        for ((asset, position) in positions) {
-            val priceItem = prices[asset]
-            if (priceItem != null) {
-                val price = priceItem.getPrice(priceType)
-                val newPosition = position.copy(mktPrice = price, lastUpdate = event.time)
-                positions[asset] = newPosition
-            }
-        }
-    }
-
     /**
      * Create an [Account] instance
      */
@@ -125,7 +93,7 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
      * Short overview of account state
      */
     override fun toString(): String {
-        val pString = positions.map { it.value.size.toString() + "@" + it.key.symbol }.joinToString(separator = ", ")
+        val pString = positions.joinToString(separator = ", ") { it.size.toString() + "@" + it.asset.symbol }
         val oString = orders.joinToString(separator = ", ") { it.size.toString() + "@" + it.asset.symbol }
 
         return """

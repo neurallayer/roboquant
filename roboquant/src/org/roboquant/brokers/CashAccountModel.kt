@@ -15,8 +15,7 @@
  */
 package org.roboquant.brokers
 
-import org.roboquant.common.exposure
-import org.roboquant.common.short
+import org.roboquant.common.sumOf
 
 /**
  * AccountModel that models a plain cash account. No additional leverage or margin is available for trading.
@@ -42,7 +41,9 @@ class CashAccountModel(private val minimum: Double = 0.0) : AccountModel {
      * @see [AccountModel.updateAccount]
      */
     override fun updateAccount(account: InternalAccount) {
-        val remaining = account.cash - account.positions.short.exposure()
+        val shortExposure = account.positions.filter { it.short }.sumOf { it.marketValue() }
+
+        val remaining = account.cash - shortExposure
 
         val buyingPower = remaining.convert(account.baseCurrency, account.lastUpdate) - minimum
         account.buyingPower = buyingPower

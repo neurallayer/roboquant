@@ -32,7 +32,7 @@ internal class PositionMetricTest {
         val result = metric.calculate(Event.empty(), account, listOf(), listOf())
         assertEquals(account.positions.size * 4, result.size)
 
-        val symbol = account.positions.keys.first().symbol
+        val symbol = account.positions.first().asset.symbol
         assertContains(result, "position.$symbol.size")
         assertContains(result, "position.$symbol.value")
         assertContains(result, "position.$symbol.cost")

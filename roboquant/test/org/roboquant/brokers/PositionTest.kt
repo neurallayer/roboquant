@@ -32,27 +32,18 @@ internal class PositionTest {
 
     @Test
     fun direction() {
-        val p1 = Position(Size(10), 10.0, 12.0)
+        val asset = Stock("XYZ")
+        val p1 = Position(asset, Size(10), 10.0, 12.0)
         assertTrue(p1.long)
         assertFalse(p1.short)
         assertTrue(p1.open)
     }
 
-
-
     @Test
     fun size() {
-        val p1 = Position(Size(10), 10.0, 12.0)
+        val asset = Stock("XYZ")
+        val p1 = Position(asset, Size(10), 10.0, 12.0)
         assertEquals(Size(10), p1.size)
-    }
-
-    @Test
-    fun maps() {
-        val m: Map<Asset, Position> = mapOf(
-            Stock("AAA") to Position(Size(100), 100.0, 99.0), // -100 profit
-            Stock("BBB") to Position(Size(100), 100.0, 90.0), // -1_000 lost
-        )
-        assertEquals(-1100.0, m.pnl()[USD])
     }
 
 }

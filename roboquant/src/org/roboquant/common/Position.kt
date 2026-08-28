@@ -33,6 +33,7 @@ import kotlin.collections.iterator
  * @constructor Create a new Position
  */
 data class Position(
+    val asset: Asset,
     val size: Size,
     val avgPrice: Double = 0.0,
     val mktPrice: Double = avgPrice,
@@ -47,7 +48,7 @@ data class Position(
         /**
          * Create an empty position with [size] and [mktPrice] set to 0
          */
-        fun empty(): Position = Position(Size.ZERO, mktPrice = 0.0)
+        fun empty(asset: Asset): Position = Position(asset,Size.ZERO, mktPrice = 0.0)
     }
 
     /**
@@ -73,6 +74,14 @@ data class Position(
      */
     val open: Boolean
         get() = size.nonzero
+
+    fun marketValue(): Amount {
+        return asset.value(size, mktPrice)
+    }
+
+    fun unrealizedPNL(): Amount {
+        return asset.value(size, mktPrice - avgPrice)
+    }
 
 }
 
