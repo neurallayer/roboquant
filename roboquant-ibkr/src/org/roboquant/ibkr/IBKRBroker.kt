@@ -173,7 +173,10 @@ class IBKRBroker(
         val result = IBOrder()
 
         with(result) {
-            orderType(OrderType.LMT); lmtPrice(order.limit)
+            orderType(OrderType.LMT)
+            if (order.limit != null) {
+                lmtPrice(order.limit!!)
+            }
         }
 
         val action = if (order.buy) Action.BUY else Action.SELL

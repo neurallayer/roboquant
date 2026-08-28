@@ -25,7 +25,7 @@ enum class TIF {
 data class Order(
     val asset: Asset,
     val size: Size,
-    val limit: Double,
+    val limit: Double? = null,
     val tif: TIF = TIF.DAY,
     val tag: String = ""
 )  {
@@ -71,7 +71,7 @@ data class Order(
     /**
      * Modify an existing order
      */
-    fun modify(size: Size = this.size, limit: Double = this.limit) : Order {
+    fun modify(size: Size = this.size, limit: Double? = this.limit) : Order {
         require(id != "")
         return copy(size = size, limit = limit)
     }
@@ -87,7 +87,7 @@ data class Order(
      * Given the provided price, is this order executable
      */
     fun isExecutable(price: Double): Boolean {
-        return (buy and (price <= limit)) || (sell and (price >= limit))
+        return limit == null || (buy and (price <= limit)) || (sell and (price >= limit))
     }
 
     /**
