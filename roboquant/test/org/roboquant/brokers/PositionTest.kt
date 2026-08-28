@@ -16,13 +16,9 @@
 
 package org.roboquant.brokers
 
+import org.roboquant.common.Position
 import org.roboquant.common.Size
 import org.roboquant.common.Stock
-import org.roboquant.common.Asset
-import org.roboquant.common.Currency.Companion.USD
-import org.roboquant.common.Position
-import org.roboquant.common.pnl
-
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

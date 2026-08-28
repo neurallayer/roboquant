@@ -17,7 +17,6 @@
 package org.roboquant.brokers
 
 import org.roboquant.common.*
-import org.roboquant.common.Event
 import java.time.Instant
 
 /**

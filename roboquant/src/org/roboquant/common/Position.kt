@@ -99,19 +99,6 @@ val Map<Asset, Position>.short: Map<Asset, Position>
 
 
 /**
- * Return the market value of the positions. If there are no positions,
- * an empty [Wallet] will be returned.
- */
-fun Map<Asset, Position>.marketValue(): Wallet {
-    val result = Wallet()
-    for ((asset, position) in this) {
-        val positionValue = asset.value(position.size, position.mktPrice)
-        result.deposit(positionValue)
-    }
-    return result
-}
-
-/**
  * Return the (unrealized) pnl of the positions. If there are no positions,
  * an empty [Wallet] will be returned.
  */
@@ -124,15 +111,3 @@ fun Map<Asset, Position>.pnl(): Wallet {
     return result
 }
 
-/**
- * Return the exposure of the positions. If there are no positions,
- * an empty [Wallet] will be returned.
- */
-fun Map<Asset, Position>.exposure(): Wallet {
-    val result = Wallet()
-    for ((asset, position) in this) {
-        val positionValue = asset.value(position.size.absoluteValue, position.mktPrice)
-        result.deposit(positionValue)
-    }
-    return result
-}
