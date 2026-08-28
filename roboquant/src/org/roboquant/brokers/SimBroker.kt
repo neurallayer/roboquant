@@ -228,11 +228,11 @@ open class SimBroker(
             simulateMarket(event)
             updateMarketPrices(event)
             account.lastUpdate = event.time
+            account.positions.clear()
+            account.positions.addAll(positions.values)
             accountModel.updateAccount(account)
         }
         // account.orders.removeAll(newlyClosed)
-        account.positions.clear()
-        account.positions.addAll(positions.values)
 
         return account.toAccount()
     }

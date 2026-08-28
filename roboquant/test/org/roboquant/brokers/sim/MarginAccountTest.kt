@@ -54,7 +54,7 @@ internal class MarginAccountTest {
 
     private fun update(broker: Broker, asset: Asset, price: Number, orderSize: Int = 0): Account {
         val p = price.toDouble()
-        val orders = if (orderSize == 0) emptyList() else listOf(Order(asset, Size(orderSize), p))
+        val orders = if (orderSize == 0) emptyList() else listOf(Order(asset, Size(orderSize)))
         val item = TradePrice(asset, p)
         val event = Event(Instant.now(), listOf(item))
         broker.placeOrders(orders)
