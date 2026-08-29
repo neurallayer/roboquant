@@ -92,7 +92,7 @@ open class HistoricPriceFeed : HistoricFeed {
      * Merge the events in another historic [feed] into this feed.
      */
     fun merge(feed: HistoricPriceFeed) {
-        for (event in feed.events) addAll(event.key, event.value)
+        for ((time, items) in feed.events) addAll(time, items)
     }
 
     /**

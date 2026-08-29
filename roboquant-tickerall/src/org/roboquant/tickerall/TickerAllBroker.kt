@@ -17,10 +17,8 @@
 package org.roboquant.tickerall
 
 import org.roboquant.brokers.Broker
-import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.*
 import java.math.BigDecimal
-import java.math.MathContext
 import java.time.Instant
 
 /**
@@ -61,21 +59,19 @@ import java.time.Instant
  * remainder on a reversal) rather than opening an offsetting ticket — so either account type behaves as the
  * one-net-position-per-asset model roboquant expects.
  *
- * @param loadExistingOrders load the resting pending orders already at the account on startup, default true
  * @param configure configuration for connecting to the TickerAll API
  * @constructor Create a new instance of the TickerAllBroker for an already-connected [accountId]
  */
 class TickerAllBroker(
-    loadExistingOrders: Boolean = true,
     configure: TickerAllConfig.() -> Unit = {}
 ) : Broker {
 
     private val config = TickerAllConfig()
-    private val _account = InternalAccount(Currency.USD)
     private val client: TickerAllClient
     private val orderPlacer: TickerAllOrderPlacer
     private val symbolCurrency: SymbolCurrency by lazy { SymbolCurrency(client) }
     private val logger = Logging.getLogger(TickerAllBroker::class)
+    var baseCurrency: Currency = Currency.USD
 
     /**
      * The TickerAll account id this broker is bound to. After [connect] this is the id the session produced;
@@ -88,8 +84,6 @@ class TickerAllBroker(
         config.configure()
         client = TickerAll.getClient(config)
         orderPlacer = TickerAllOrderPlacer(client)
-        syncAccountAndPositions()
-        if (loadExistingOrders) loadExistingOrders()
     }
 
     companion object {
@@ -110,16 +104,14 @@ class TickerAllBroker(
          * for a connection that must stay warm long-term, use a server-side always-hot account or reconnect
          * periodically.
          *
-         * @param loadExistingOrders load the resting pending orders already at the account on startup
          * @param configure supplies the api key and the MetaTrader credentials (see [TickerAllConfig])
          */
         fun connect(
-            loadExistingOrders: Boolean = true,
             configure: TickerAllConfig.() -> Unit = {}
         ): TickerAllBroker {
             val config = TickerAllConfig().apply(configure)
             config.accountId = TickerAll.startSession(config)
-            return TickerAllBroker(loadExistingOrders) {
+            return TickerAllBroker {
                 apiKey = config.apiKey
                 accountId = config.accountId
                 baseUrl = config.baseUrl
@@ -131,7 +123,7 @@ class TickerAllBroker(
     // The asset currency is the instrument's quote currency from broker metadata (see SymbolCurrency), not
     // the account currency; the feeds resolve it the same way so a position and its price events match.
     private fun getAsset(symbol: String): Asset =
-        TickerAll.toAsset(symbol, _account.baseCurrency, symbolCurrency.get(symbol))
+        TickerAll.toAsset(symbol, baseCurrency, symbolCurrency.get(symbol))
 
     private fun sizeOf(volume: Double, side: String?): Size {
         val bd = BigDecimal.valueOf(volume)
@@ -143,62 +135,27 @@ class TickerAllBroker(
      * Sync the roboquant account cash, buying power and open positions from the TickerAll account. TickerAll
      * (the broker) is always leading.
      */
-    private fun syncAccountAndPositions() {
-        val acc = client.getAccount()
-        // Financials are nested under `account`. A missing account block or balance means the account is not
-        // connected/warm; a real 0.0 balance is a valid (unfunded) account state and must not be rejected.
-        val financials = acc.account
-            ?: throw TickerAllException("account ${config.accountId} is not connected/warm; reconnect it via TickerAll first")
-        val balance = financials.balance
-            ?: throw TickerAllException("account ${config.accountId} is not connected/warm; reconnect it via TickerAll first")
-        val currency = financials.currency?.let { Currency.getInstance(it) } ?: _account.baseCurrency
-        _account.baseCurrency = currency
-        _account.buyingPower = Amount(currency, financials.freeMargin ?: balance)
-        _account.cash.clear()
-        _account.cash.deposit(currency, balance)
+    private fun syncAccountAndPositions(acc: AccountDTO): List<Position> {
+        val result = mutableListOf<Position>()
 
-        _account.positions.clear()
-        // Aggregate the broker's tickets into ONE net position per asset. A MetaTrader account may be HEDGING
-        // (a separate ticket per trade) rather than netting; roboquant models one net position per asset, so
-        // sum the tickets' signed volumes and take a volume-weighted average entry over the net side.
-        // Otherwise same-symbol tickets would overwrite each other and only the last one would survive.
-        val bySymbol = (acc.positions ?: emptyList())
-            .filter { it.symbol != null && it.volume != null }
-            .groupBy { it.symbol!! }
-        for ((symbol, tickets) in bySymbol) {
-            var net = BigDecimal.ZERO
-            for (t in tickets) {
-                val v = BigDecimal.valueOf(t.volume!!)
-                net = if (t.side?.equals("SELL", ignoreCase = true) == true) net.subtract(v) else net.add(v)
-            }
-            if (net.signum() == 0) continue // fully hedged flat — no net exposure to report
-            val netLong = net.signum() > 0
-            // Volume-weighted average entry over the net-side tickets (the side matching the net sign).
-            var num = BigDecimal.ZERO
-            var den = BigDecimal.ZERO
-            for (t in tickets) {
-                val sell = t.side?.equals("SELL", ignoreCase = true) == true
-                if (sell != netLong) {
-                    val v = BigDecimal.valueOf(t.volume!!)
-                    num = num.add(v.multiply(BigDecimal.valueOf(t.entryPrice ?: 0.0)))
-                    den = den.add(v)
-                }
-            }
-            val entry = if (den.signum() != 0) num.divide(den, MathContext.DECIMAL64).toDouble() else 0.0
-            val market = tickets.first().currentPrice ?: entry
-            _account.setPosition(getAsset(symbol), Position(Size(net), entry, market))
+        for (p in acc.positions ?: emptyList()) {
+            val symbol = p.symbol ?: continue
+            val volume = p.volume ?: continue
+            val entry = p.entryPrice ?: 0.0
+            val market = p.currentPrice ?: entry
+            val asset = getAsset(symbol)
+            val p = Position(asset,sizeOf(volume, p.side), entry, market)
+            result.add(p)
         }
-        _account.lastUpdate = Instant.now()
+        return result
     }
-
-    private fun syncOrders() = loadExistingOrders()
 
     /**
      * Load the resting pending orders at the account. Filled or cancelled orders are not returned by the
      * pending endpoint, so this always reflects the live open orders.
      */
-    private fun loadExistingOrders() {
-        _account.orders.clear()
+    private fun syncOrders(): List<Order> {
+        val result = mutableListOf<Order>()
         for (o in client.getPendingOrders()) {
             val symbol = o.symbol ?: continue
             val volume = o.volume ?: continue
@@ -206,8 +163,9 @@ class TickerAllBroker(
             val price = o.limitPrice ?: o.price ?: Double.NaN
             val rqOrder = Order(getAsset(symbol), sizeOf(volume, o.side), price)
             rqOrder.id = ticket.toString()
-            _account.orders.add(rqOrder)
+            result.add(rqOrder)
         }
+        return result
     }
 
     /**
@@ -217,9 +175,26 @@ class TickerAllBroker(
         if (event != null && event.time < Instant.now() - 1.hours) {
             throw UnsupportedException("cannot place orders in the past")
         }
-        syncAccountAndPositions()
-        syncOrders()
-        return _account.toAccount()
+        val acc = client.getAccount()
+        val financials = acc.account
+            ?: throw TickerAllException("account ${config.accountId} is not connected/warm; reconnect it via TickerAll first")
+        val balance = financials.balance
+            ?: throw TickerAllException("account ${config.accountId} is not connected/warm; reconnect it via TickerAll first")
+        val currency = financials.currency!!.let { Currency.getInstance(it) }
+
+        val buyingPower = Amount(currency, financials.freeMargin ?: balance)
+
+
+        val positions = syncAccountAndPositions(acc)
+        val orders = syncOrders()
+        return Account(
+            buyingPower = buyingPower,
+            cash = Amount(currency, balance).toWallet(),
+            orders = orders,
+            positions = positions,
+            lastUpdate = Instant.now(),
+            trades = listOf()
+        )
     }
 
     /**
@@ -237,14 +212,13 @@ class TickerAllBroker(
                 order.size.iszero -> {
                     if (order.id.isNotEmpty()) {
                         client.cancelPending(order.id)
-                        _account.orders.removeAll { it.id == order.id }
                     } else {
                         logger.warn { "ignoring a zero-size order without an id (nothing to cancel)" }
                     }
                 }
                 // A known id with a non-zero size modifies that resting pending order.
                 order.id.isNotEmpty() -> {
-                    val price = if (order.limit.isNaN()) null else order.limit
+                    val price = order.limit
                     client.modifyPending(order.id, ModifyPendingBody(price = price))
                 }
                 // A fresh order. A market order that opposes the current net position is net-emulated
@@ -252,7 +226,7 @@ class TickerAllBroker(
                 // same net position roboquant models; anything else is placed straight through. Only a raw
                 // placed order rests in the book and is tracked.
                 else -> {
-                    if (orderPlacer.place(order)) _account.orders.add(order)
+                    orderPlacer.place(order)
                 }
             }
         }

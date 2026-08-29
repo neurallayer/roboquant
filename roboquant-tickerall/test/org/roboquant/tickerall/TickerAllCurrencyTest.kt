@@ -72,7 +72,7 @@ internal class TickerAllCurrencyTest {
         val positions = """[{"ticket":1,"symbol":"US30","side":"BUY","volume":1.0,"entryPrice":39000.0,"currentPrice":39010.0}]"""
         val specs = """{"specs":[{"name":"US30","volumeMin":0.1,"volumeStep":0.1,"profitCurrency":"EUR"}]}"""
         Stub(positions, specs).use { stub ->
-            val asset = broker(stub).sync().positions.keys.first { it.symbol == "US30" }
+            val asset = broker(stub).sync().positions.first { it.asset.symbol == "US30" }.asset
             assertEquals(Currency.getInstance("EUR"), asset.currency, "currency from the spec, not the account's USD")
         }
     }
@@ -82,7 +82,7 @@ internal class TickerAllCurrencyTest {
         // No spec currency (e.g. an MT4 account): infer the quote from the pair — still not the account currency.
         val positions = """[{"ticket":1,"symbol":"EURGBP","side":"BUY","volume":1.0,"entryPrice":0.85,"currentPrice":0.85}]"""
         Stub(positions, """{"specs":[]}""").use { stub ->
-            val asset = broker(stub).sync().positions.keys.first { it.symbol == "EURGBP" }
+            val asset = broker(stub).sync().positions.first { it.asset.symbol == "EURGBP" }.asset
             assertEquals(Currency.getInstance("GBP"), asset.currency, "inferred quote currency, not the account's USD")
         }
     }
