@@ -34,7 +34,7 @@ internal object TestData {
 
     fun usStock() = Stock("XYZ")
 
-    fun internalAccount(): Account {
+    fun createAccount(): Account {
         val asset1 = Stock("AAA")
         val asset2 = Stock("AAB")
         val p1 = Position(asset1, Size(100), 10.0)

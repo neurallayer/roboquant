@@ -36,7 +36,7 @@ internal class MarginAccountTest {
 
     @Test
     fun marginAccountIncreasesBuyingPower() {
-        val account = TestData.internalAccount()
+        val account = TestData.createAccount()
         val cc = account.baseCurrency
         val uc = MarginAccountModel()
         val bp = uc.updateAccount(account)
@@ -45,7 +45,7 @@ internal class MarginAccountTest {
 
     @Test
     fun marginAccountWithCustomMultiplier() {
-        val account = TestData.internalAccount()
+        val account = TestData.createAccount()
         val cc = account.baseCurrency
         val uc = MarginAccountModel(20.0)
         val bp = uc.updateAccount(account)
