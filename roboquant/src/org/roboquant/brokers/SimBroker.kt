@@ -23,6 +23,7 @@ import org.roboquant.common.TIF
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import kotlin.collections.set
 
 /**
  * Simulated Broker that is used as the broker during back testing and live testing. It simulates both broker and
@@ -37,7 +38,7 @@ import java.time.ZoneId
  * @constructor Create a new instance of SimBroker
  */
 open class SimBroker(
-    val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
+    private val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     val baseCurrency: Currency = initialDeposit.currencies.first(),
     val slippage: Double = 0.0,
     private val accountModel: AccountModel = CashAccountModel(),
@@ -54,11 +55,9 @@ open class SimBroker(
     )
 
     private lateinit var lastUpdate: Instant
-    private val cash: Wallet = initialDeposit
+    private val cash: Wallet = Wallet()
     private val trades = mutableListOf<Trade>()
     private val orderEntry: MutableMap<String, LocalDate> = mutableMapOf()
-
-    private val pendingOrders = mutableListOf<Order>()
 
 
     // Logger to use
@@ -66,13 +65,8 @@ open class SimBroker(
 
     private var nextOrderId = 0
 
-
     init {
         this.reset()
-    }
-
-    private fun deleteOrder(order: Order) {
-        orders.remove(order.id)
     }
 
     /**
@@ -169,9 +163,9 @@ open class SimBroker(
     private fun simulateMarket(event: Event) {
         // Add new orders to the execution engine and run it with the latest events
         val time = event.time
-        for (order in orders.values) {
+        for (order in orders.values.toList()) {
             if (isExpired(order, time)) {
-                deleteOrder(order)
+                orders.remove(order.id)
                 continue
             }
             val priceItem = event.prices[order.asset]
@@ -188,7 +182,7 @@ open class SimBroker(
                     val trade = Trade(order.asset, event.time, order.size, price, pnl)
                     order.fill += fill
                     trades.add(trade)
-                    if (order.remaining.iszero) deleteOrder(order)
+                    if (order.remaining.iszero) orders.remove(order.id)
                 }
             }
         }
@@ -200,38 +194,14 @@ open class SimBroker(
     @Synchronized
     override fun sync(event: Event?): Account {
 
-        for (order in pendingOrders) {
-            when {
-                order.size.iszero -> {
-                    // Cancellation Order
-                    assert(order.id.isNotEmpty())
-                    val removed = orders.remove(order.id)
-                    if (removed != null) logger.warn("Skipping cancellation $order")
-                }
-
-                order.id.isNotEmpty() -> {
-                    // Modify order
-                    orders[order.id] = order
-                }
-
-                else -> {
-                    // Regular create order
-                    order.id = nextOrderId++.toString()
-                    orders[order.id] = order
-                }
-            }
+        if (event != null) {
+            simulateMarket(event)
+            updateMarketPrices(event)
+            lastUpdate = event.time
         }
-        pendingOrders.clear()
-        if (event == null) {
-            throw Exception("no event")
-        }
-
-        simulateMarket(event)
-        updateMarketPrices(event)
-        lastUpdate = event.time
 
         val account = Account(
-            lastUpdate = event.time,
+            lastUpdate = lastUpdate,
             cash = cash,
             orders = orders.values.toList(),
             positions = positions.values.toList(),
@@ -267,7 +237,28 @@ open class SimBroker(
     @Synchronized
     override fun placeOrders(orders: List<Order>) {
         logger.trace { "Received orders=${orders.size}" }
-        pendingOrders.addAll(orders)
+
+        for (order in orders) {
+            when {
+                order.size.iszero -> {
+                    // Cancellation Order
+                    assert(order.id.isNotEmpty())
+                    val removed = this.orders.remove(order.id)
+                    if (removed != null) logger.warn("Skipping cancellation $order")
+                }
+
+                order.id.isNotEmpty() -> {
+                    // Modify order
+                    this.orders[order.id] = order
+                }
+
+                else -> {
+                    // Regular create order
+                    order.id = nextOrderId++.toString()
+                    this.orders[order.id] = order
+                }
+            }
+        }
     }
 
 

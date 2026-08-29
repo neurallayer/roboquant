@@ -32,7 +32,6 @@ internal class SimBrokerTest {
     @Test
     fun defaults() {
         val broker = SimBroker()
-        assertEquals(Wallet(1_000_000.USD), broker.initialDeposit)
         val account = broker.sync()
         assertEquals(USD, account.baseCurrency)
         assertEquals(Wallet(1_000_000.USD), account.cash)
@@ -51,11 +50,9 @@ internal class SimBrokerTest {
         assertEquals(USD, account.baseCurrency)
 
         val broker2 = SimBroker(100_000.00.USD.toWallet())
-        assertEquals(Wallet(100_000.USD), broker2.initialDeposit)
         assertEquals(USD, broker2.sync().baseCurrency)
 
-        // broker2.refresh()
-        assertEquals(Wallet(100_000.USD), broker2.initialDeposit)
+
     }
 
 
