@@ -114,10 +114,10 @@ internal class TaLibSignalStrategyTest {
         }
     }
 
-    private fun getPriceBarBuffer(size: Int): PriceBarSeries {
+    private fun getPriceBarBuffer(): PriceBarSeries {
         val asset = Stock("XYZ")
-        val result = PriceBarSeries(size)
-        repeat(size) {
+        val result = PriceBarSeries(20)
+        repeat(20) {
             val pb = PriceBar(asset, 10.0, 12.0, 8.0, 11.0, 100 + it)
             result.add(pb, Instant.now())
         }
@@ -167,7 +167,7 @@ internal class TaLibSignalStrategyTest {
 
     @Test
     fun testExtraIndicators() {
-        val data = getPriceBarBuffer(30)
+        val data = getPriceBarBuffer()
         val taLib = TaLib()
 
         var a = taLib.recordHigh(data.close, 10)
