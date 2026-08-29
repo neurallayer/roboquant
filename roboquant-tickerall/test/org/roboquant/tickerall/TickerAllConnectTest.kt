@@ -47,7 +47,7 @@ internal class TickerAllConnectTest {
      * an empty, valid, unfunded (balance 0.0) account so the broker's initial sync succeeds. Every request is
      * recorded in [captured].
      */
-    private inner class Stub(private val sessionAccountId: String = "acc-connected-1") : AutoCloseable {
+    private class Stub(private val sessionAccountId: String = "acc-connected-1") : AutoCloseable {
         val captured = ConcurrentLinkedQueue<Captured>()
         private val server: HttpServer = HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0)
         val baseUrl: String get() = "http://127.0.0.1:${server.address.port}"

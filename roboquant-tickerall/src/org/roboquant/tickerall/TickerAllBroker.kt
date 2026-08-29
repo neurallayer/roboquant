@@ -68,7 +68,7 @@ class TickerAllBroker(
 
     private val config = TickerAllConfig()
     private val client: TickerAllClient
-    private val orderPlacer: TickerAllOrderPlacer
+    private var account: Account
     private val symbolCurrency: SymbolCurrency by lazy { SymbolCurrency(client) }
     private val logger = Logging.getLogger(TickerAllBroker::class)
     var baseCurrency: Currency = Currency.USD
@@ -83,7 +83,7 @@ class TickerAllBroker(
     init {
         config.configure()
         client = TickerAll.getClient(config)
-        orderPlacer = TickerAllOrderPlacer(client)
+        account = sync()
     }
 
     companion object {
@@ -135,7 +135,7 @@ class TickerAllBroker(
      * Sync the roboquant account cash, buying power and open positions from the TickerAll account. TickerAll
      * (the broker) is always leading.
      */
-    private fun syncAccountAndPositions(acc: AccountDTO): List<Position> {
+    private fun syncPositions(acc: AccountDTO): List<Position> {
         val result = mutableListOf<Position>()
 
         for (p in acc.positions ?: emptyList()) {
@@ -144,7 +144,8 @@ class TickerAllBroker(
             val entry = p.entryPrice ?: 0.0
             val market = p.currentPrice ?: entry
             val asset = getAsset(symbol)
-            val p = Position(asset,sizeOf(volume, p.side), entry, market)
+            val id = p.ticket?.toString() ?: ""
+            val p = Position(asset, sizeOf(volume, p.side), entry, market, id = id)
             result.add(p)
         }
         return result
@@ -184,10 +185,9 @@ class TickerAllBroker(
 
         val buyingPower = Amount(currency, financials.freeMargin ?: balance)
 
-
-        val positions = syncAccountAndPositions(acc)
+        val positions = syncPositions(acc)
         val orders = syncOrders()
-        return Account(
+        val result = Account(
             buyingPower = buyingPower,
             cash = Amount(currency, balance).toWallet(),
             orders = orders,
@@ -195,7 +195,38 @@ class TickerAllBroker(
             lastUpdate = Instant.now(),
             trades = listOf()
         )
+        account = result
+        return result
     }
+
+    /**
+     * Place a single [order] straight through as a new market or limit order (the original netting-account
+     * behavior), writing the broker-assigned ticket back into [Order.id].
+     */
+    fun placeSingleOrder(order: Order) {
+        if (order.positionId.isNotEmpty()) {
+            val position = account.positions.firstOrNull { it.id == order.positionId }
+            if (position == null || position.size != - order.size) {
+                return
+            }
+            client.closePosition(order.positionId)
+            return
+        }
+
+        val side = if (order.buy) "BUY" else "SELL"
+        val volume = order.size.toBigDecimal().abs().toDouble()
+        val body = PlaceOrderBody(
+            type = "limit",
+            symbol = order.asset.symbol,
+            side = side,
+            volume = volume,
+            price = order.limit
+        )
+        val ack = client.placeOrder(body)
+        order.id = ack.ticket?.toString()
+            ?: throw UnsupportedException("no ticket returned by TickerAll for order=$order")
+    }
+
 
     /**
      * Place, modify or cancel [orders] at TickerAll. Following roboquant's order model:
@@ -226,7 +257,7 @@ class TickerAllBroker(
                 // same net position roboquant models; anything else is placed straight through. Only a raw
                 // placed order rests in the book and is tracked.
                 else -> {
-                    orderPlacer.place(order)
+                    placeSingleOrder(order)
                 }
             }
         }
