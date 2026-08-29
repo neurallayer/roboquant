@@ -17,7 +17,6 @@
 package org.roboquant.common
 
 import java.time.Instant
-import kotlin.collections.iterator
 
 /**
  * This class holds the position of an asset in the portfolio. The implementation makes no assumptions about the
