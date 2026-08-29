@@ -30,6 +30,7 @@ import kotlin.collections.iterator
  * @property avgPrice average price paid, in the currency denoted by the asset
  * @property mktPrice last known market price for this asset
  * @property lastUpdate When was this position last updated, typically with a new market price
+ * @property id An optional unique id for this position, used for Hedging positions
  * @constructor Create a new Position
  */
 data class Position(
@@ -91,31 +92,5 @@ data class Position(
         return asset.value(size, mktPrice - avgPrice)
     }
 
-}
-
-/**
- * Get all the long positions for a collection of positions
- */
-val Map<Asset, Position>.long: Map<Asset, Position>
-    get() = filterValues { it.long }
-
-/**
- * Get all the short positions for a collection of positions
- */
-val Map<Asset, Position>.short: Map<Asset, Position>
-    get() = filterValues { it.short }
-
-
-/**
- * Return the (unrealized) pnl of the positions. If there are no positions,
- * an empty [Wallet] will be returned.
- */
-fun Map<Asset, Position>.pnl(): Wallet {
-    val result = Wallet()
-    for ((asset, position) in this) {
-        val positionValue = asset.value(position.size, position.mktPrice - position.avgPrice)
-        result.deposit(positionValue)
-    }
-    return result
 }
 
