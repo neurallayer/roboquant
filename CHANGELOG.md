@@ -1,5 +1,12 @@
 # Changelog
 
+## Major changes in 3.3
+* Support for hedging positions added
+* Added MT4/MT5 integration (via TickerAll)
+* Removed IBKR integration
+* Cleaner API for account
+* Support for market orders
+
 ## Major changes in 3.2
 * Further improved the new build system
 * Easy way to generate HTML pages with charts (`HtmlPage` class)

@@ -29,7 +29,7 @@ import java.time.Instant
  * @property avgPrice average price paid, in the currency denoted by the asset
  * @property mktPrice last known market price for this asset
  * @property lastUpdate When was this position last updated, typically with a new market price
- * @property id An optional unique id for this position, used for Hedging positions
+ * @property id An optional id for this position, used for Hedging positions
  * @constructor Create a new Position
  */
 data class Position(
