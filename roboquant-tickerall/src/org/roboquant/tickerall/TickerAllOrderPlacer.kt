@@ -16,10 +16,8 @@
 
 package org.roboquant.tickerall
 
-import org.roboquant.common.Logging
 import org.roboquant.common.Order
 import org.roboquant.common.UnsupportedException
-import java.math.BigDecimal
 
 /**
  * Translates a roboquant [Order] into TickerAll REST calls.
