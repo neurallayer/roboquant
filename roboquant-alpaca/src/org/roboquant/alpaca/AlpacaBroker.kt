@@ -21,7 +21,6 @@ import net.jacobpeterson.alpaca.openapi.trader.model.AssetClass
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderSide
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderType
 import org.roboquant.brokers.*
-import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.common.Currency
 import org.roboquant.common.Event
@@ -41,14 +40,11 @@ import net.jacobpeterson.alpaca.openapi.trader.model.Position as AlpacaPosition
  * @constructor Create a new instance of the AlpacaBroker
  */
 class AlpacaBroker(
-    loadExistingOrders: Boolean = true,
     configure: AlpacaConfig.() -> Unit = {}
 ) : Broker {
 
-    private val _account = InternalAccount(Currency.USD)
     private val config = AlpacaConfig()
-
-
+    var baseCurrency = Currency.USD
     private val alpacaAPI: AlpacaAPI
     private val logger = Logging.getLogger(AlpacaBroker::class)
     private val orderPlacer: AlpacaOrderPlacer
@@ -62,11 +58,7 @@ class AlpacaBroker(
 
         alpacaAPI = Alpaca.getAPI(config)
         orderPlacer = AlpacaOrderPlacer(alpacaAPI, config.extendedHours)
-        syncAccount()
-        syncPositions()
-        if (loadExistingOrders) loadExistingOrders()
     }
-
 
     private fun getAsset(symbol: String, assetClass: AssetClass?): Asset {
         val asset = when (assetClass) {
@@ -77,55 +69,37 @@ class AlpacaBroker(
         return asset
     }
 
-    /**
-     * Sync the roboquant account with the current state from an Alpaca account. Alpaca state is always leading.
-     */
-    private fun syncAccount() {
-        val acc = alpacaAPI.trader().accounts().account
-
-        // Alpaca accounts are always in USD
-        // _account.baseCurrency = Currency.getInstance(acc.currency)
-        _account.buyingPower = Amount(_account.baseCurrency, acc.buyingPower!!.toDouble())
-
-        _account.cash.clear()
-        _account.cash.deposit(_account.baseCurrency, acc.cash!!.toDouble())
-        _account.lastUpdate = Instant.now()
-    }
 
     /**
      * Sync positions in the portfolio based on positions received from Alpaca.
      */
-    private fun syncPositions() {
-        _account.positions.clear()
+    private fun syncPositions(): List<Position> {
+        val result = mutableListOf<Position>()
         val positions = alpacaAPI.trader().positions().allOpenPositions
         for (openPosition in positions) {
             logger.debug { "received $openPosition" }
             val p = convertPos(openPosition)
-            _account.positions.add(p)
+            result.add(p)
         }
+        return result
     }
 
 
     /**
      * Update the status of the open orders in the account with the latest order status from Alpaca
      */
-    private fun syncOrders() {
-        loadExistingOrders()
-    }
-
-    /**
-     * Load the open orders already at the Alpaca account when starting. This is only called once during initialization.
-     * Closed orders will be ignored all together.
-     */
-    private fun loadExistingOrders() {
-        _account.orders.clear()
+    private fun syncOrders(): List<Order> {
+        val result = mutableListOf<Order>()
         val openOrders = alpacaAPI.trader().orders().getAllOrders("open", 500, null, null, null, false, "", "")
         for (order in openOrders) {
             logger.debug { "received open $order" }
             val rqOrder = toOrder(order)
-            _account.orders.add(rqOrder)
+            result.add(rqOrder)
         }
+        return result
     }
+
+
 
 
     /**
@@ -161,10 +135,23 @@ class AlpacaBroker(
             if (event.time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
         }
 
-        syncAccount()
-        syncPositions()
-        syncOrders()
-        return _account.toAccount()
+        val acc = alpacaAPI.trader().accounts().account
+
+        // Alpaca accounts are always in USD
+        // _account.baseCurrency = Currency.getInstance(acc.currency)
+        val buyingPower = Amount(baseCurrency, acc.buyingPower!!.toDouble())
+        val cash = Wallet()
+        cash.deposit(baseCurrency, acc.cash!!.toDouble())
+        val pos = syncPositions()
+        val orders = syncOrders()
+        return Account(
+            buyingPower = buyingPower,
+            cash = cash,
+            lastUpdate = Instant.now(),
+            orders = orders,
+            positions = pos,
+            trades = emptyList(),
+        )
     }
 
     /**
@@ -183,7 +170,6 @@ class AlpacaBroker(
 
                 else -> {
                     orderPlacer.placeSingleOrder(order)
-                    _account.orders.add(order)
                 }
             }
         }

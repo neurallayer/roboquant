@@ -17,6 +17,7 @@
 package org.roboquant.brokers
 
 
+import org.roboquant.common.Account
 import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import org.roboquant.common.Size
@@ -29,8 +30,7 @@ internal class AccountTest {
 
     @Test
     fun initialAccountProperties() {
-        val iAccount = InternalAccount(Currency.USD)
-        val account = iAccount.toAccount()
+        val account = Account.empty(Currency.USD)
         val amount = account.equityAmount().value
         assertEquals(0.00, amount)
         assertEquals(Amount(Currency.USD, 0.0), account.cashAmount)

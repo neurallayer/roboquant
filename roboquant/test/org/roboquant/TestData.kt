@@ -19,7 +19,6 @@ package org.roboquant
 
 import org.roboquant.common.Account
 import org.roboquant.common.Position
-import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalk
@@ -35,35 +34,39 @@ internal object TestData {
 
     fun usStock() = Stock("XYZ")
 
-    fun internalAccount(): InternalAccount {
+    fun internalAccount(): Account {
         val asset1 = Stock("AAA")
         val asset2 = Stock("AAB")
-        val account = InternalAccount(Currency.USD)
-        account.cash.deposit(100_000.USD)
         val p1 = Position(asset1, Size(100), 10.0)
         val p2 = Position(asset2, Size(100), 10.0)
-        account.positions.addAll(listOf(p1, p2))
-
         val order = Order(asset1, Size(100), 100.0)
         // val state = MutableOrderState(order, OrderStatus.COMPLETED, Instant.now(), Instant.now())
-        account.orders.add(order)
         // account.updateOrder(order, Instant.now(), OrderStatus.COMPLETED)
-        return account
+        return Account(
+            buyingPower = 100_000.USD,
+            lastUpdate = Instant.now(),
+            cash = 100_000.USD.toWallet(),
+            orders = listOf(order),
+            positions = listOf(p1, p2),
+            trades = listOf(),
+        )
     }
 
     fun usAccount(): Account {
         val asset1 = Stock("AAA")
         val asset2 = Stock("AAB")
-        val account = InternalAccount(Currency.USD)
-        account.cash.deposit(100_000.USD)
         val p1 = Position(asset1, Size(100), 10.0)
         val p2 = Position(asset2, Size(100), 10.0)
-        account.positions.addAll(listOf(p1, p2))
-        account.buyingPower = 100_000.USD
-
         val order = Order(asset1, Size(100), 100.0)
-        account.orders.add(order)
-        return account.toAccount()
+
+        return Account(
+            buyingPower = 100_000.USD,
+            lastUpdate = Instant.now(),
+            cash = 100_000.USD.toWallet(),
+            orders = listOf(order),
+            positions = listOf(p1, p2),
+            trades = listOf(),
+        )
     }
 
     fun euStock() = Stock("ABC", Currency.EUR)

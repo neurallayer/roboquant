@@ -24,15 +24,30 @@ import java.time.Instant
  * @property trades List of [Trade] that have been executed
  * @constructor Create a new Account
  */
-interface Account {
+data class Account(
+    val lastUpdate: Instant,
+    val cash: Wallet,
+    val orders: List<Order>,
+    val positions: List<Position>,
+    val buyingPower: Amount,
+    val trades: List<Trade>,
+){
 
     val baseCurrency: Currency
-    val lastUpdate: Instant
-    val cash: Wallet
-    val orders: List<Order>
-    val positions: List<Position>
-    val buyingPower: Amount
-    val trades: List<Trade>
+        get() = buyingPower.currency
+
+    companion object {
+        fun empty(currency: Currency = Currency.USD) : Account {
+            return Account(
+                lastUpdate = Instant.now(),
+                cash = Wallet(),
+                orders = emptyList(),
+                positions = emptyList(),
+                buyingPower = Amount(currency, 0),
+                trades = emptyList(),
+            )
+        }
+    }
 
     /**
      * Cash balances converted to a single amount denoted in the [baseCurrency] of the account. If you want to know

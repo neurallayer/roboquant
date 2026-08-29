@@ -16,6 +16,9 @@
 
 package org.roboquant.brokers
 
+import org.roboquant.common.Account
+import org.roboquant.common.Amount
+
 /**
  * Interface for modeling different types of Accounts used in the [SimBroker], like a [CashAccountModel] or [MarginAccountModel]
  *
@@ -30,7 +33,7 @@ interface AccountModel {
     /**
      * Update the [account] based on the rules within the account model.
      */
-    fun updateAccount(account: InternalAccount)
+    fun updateAccount(account: Account) : Amount
 
 }
 

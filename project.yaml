@@ -3,5 +3,4 @@ modules:
   - roboquant-alpaca
   - roboquant-avro
   - roboquant-charts
-  - roboquant-ibkr
   - roboquant-questdb

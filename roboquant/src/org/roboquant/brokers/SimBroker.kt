@@ -38,11 +38,12 @@ import java.time.ZoneId
  */
 open class SimBroker(
     val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
-    baseCurrency: Currency = initialDeposit.currencies.first(),
+    val baseCurrency: Currency = initialDeposit.currencies.first(),
     val slippage: Double = 0.0,
     private val accountModel: AccountModel = CashAccountModel(),
     private val exchangeZoneId: ZoneId = ZoneId.of("UTC"),
-    private val positions: MutableMap<Asset, Position> = mutableMapOf()
+    private val positions: MutableMap<Asset, Position> = mutableMapOf(),
+    private val orders: MutableMap<String, Order> = mutableMapOf()
 ) : Broker {
 
     /**
@@ -52,12 +53,13 @@ open class SimBroker(
         Amount(Currency.getInstance(currencyCode), deposit).toWallet()
     )
 
+    private lateinit var lastUpdate: Instant
+    private val cash: Wallet = initialDeposit
+    private val trades = mutableListOf<Trade>()
     private val orderEntry: MutableMap<String, LocalDate> = mutableMapOf()
 
     private val pendingOrders = mutableListOf<Order>()
 
-    // Internally used account to store the state
-    private val account = InternalAccount(baseCurrency)
 
     // Logger to use
     private val logger = Logging.getLogger(SimBroker::class)
@@ -70,7 +72,7 @@ open class SimBroker(
     }
 
     private fun deleteOrder(order: Order) {
-        account.deleteOrder(order)
+        orders.remove(order.id)
     }
 
     /**
@@ -167,7 +169,7 @@ open class SimBroker(
     private fun simulateMarket(event: Event) {
         // Add new orders to the execution engine and run it with the latest events
         val time = event.time
-        for (order in account.orders.toList()) {
+        for (order in orders.values) {
             if (isExpired(order, time)) {
                 deleteOrder(order)
                 continue
@@ -182,10 +184,10 @@ open class SimBroker(
                     val fee = getFee(order, fill, price)
                     val pnl = updatePosition(order.asset, fill, price) - fee
                     val cost = order.asset.value(fill, price) + fee
-                    account.cash.withdraw(cost)
+                    cash.withdraw(cost)
                     val trade = Trade(order.asset, event.time, order.size, price, pnl)
                     order.fill += fill
-                    account.trades.add(trade)
+                    trades.add(trade)
                     if (order.remaining.iszero) deleteOrder(order)
                 }
             }
@@ -203,38 +205,42 @@ open class SimBroker(
                 order.size.iszero -> {
                     // Cancellation Order
                     assert(order.id.isNotEmpty())
-                    val removed = account.orders.removeAll { it.id == order.id }
-                    if (! removed) logger.warn("Skipping cancellation $order")
+                    val removed = orders.remove(order.id)
+                    if (removed != null) logger.warn("Skipping cancellation $order")
                 }
 
                 order.id.isNotEmpty() -> {
                     // Modify order
-                    val removed = account.orders.removeIf { it.id == order.id }
-                    if (removed)
-                        account.orders.add(order)
-                    else
-                        logger.warn("Skipping modify $order")
+                    orders[order.id] = order
                 }
 
                 else -> {
                     // Regular create order
                     order.id = nextOrderId++.toString()
-                    account.orders.add(order)
+                    orders[order.id] = order
                 }
             }
         }
         pendingOrders.clear()
-        if (event != null) {
-            simulateMarket(event)
-            updateMarketPrices(event)
-            account.lastUpdate = event.time
-            account.positions.clear()
-            account.positions.addAll(positions.values)
-            accountModel.updateAccount(account)
+        if (event == null) {
+            throw Exception("no event")
         }
-        // account.orders.removeAll(newlyClosed)
 
-        return account.toAccount()
+        simulateMarket(event)
+        updateMarketPrices(event)
+        lastUpdate = event.time
+
+        val account = Account(
+            lastUpdate = event.time,
+            cash = cash,
+            orders = orders.values.toList(),
+            positions = positions.values.toList(),
+            buyingPower = Amount(baseCurrency, 0),
+            trades = trades
+        )
+
+        val bp = accountModel.updateAccount(account)
+        return account.copy(buyingPower = bp)
     }
 
     /**
@@ -269,9 +275,12 @@ open class SimBroker(
      * Reset all the state and set the cash balance back to the [initialDeposit].
      */
     fun reset() {
-        account.clear()
-        account.cash.deposit(initialDeposit)
-        accountModel.updateAccount(account)
+        positions.clear()
+        orders.clear()
+        trades.clear()
+        cash.clear()
+        cash.deposit(initialDeposit)
+        lastUpdate = Instant.MIN
     }
 
 }

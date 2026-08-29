@@ -15,6 +15,7 @@
  */
 package org.roboquant.brokers
 
+import org.roboquant.common.Account
 import org.roboquant.common.Amount
 import org.roboquant.common.percent
 import org.roboquant.common.sumOf
@@ -62,7 +63,7 @@ class MarginAccountModel(
     /**
      * @see [AccountModel.updateAccount]
      */
-    override fun updateAccount(account: InternalAccount) {
+    override fun updateAccount(account: Account): Amount {
         val time = account.lastUpdate
         val currency = account.baseCurrency
         val positions = account.positions
@@ -79,7 +80,7 @@ class MarginAccountModel(
         excessMargin.withdraw(shortExposure)
 
         val buyingPower = excessMargin.convert(currency, time) * (1.0 / initialMargin)
-        account.buyingPower = buyingPower
+        return buyingPower
     }
 
 }

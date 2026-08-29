@@ -17,8 +17,8 @@
 package org.roboquant.journals.metrics
 
 import org.roboquant.TestData
+import org.roboquant.common.Account
 import org.roboquant.common.Position
-import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.Currency
 import org.roboquant.common.Size
 import org.roboquant.feeds.random.RandomWalk
@@ -51,16 +51,18 @@ internal class AlphaBetaMetricTest {
     fun test2() {
         val feed = RandomWalk.lastYears(nAssets = 5)
         val asset = feed.assets.first()
-        val internalAccount = InternalAccount(Currency.USD)
+        val internalAccount = Account.empty(Currency.USD)
         val metric = AlphaBetaMetric(50)
 
         val events = feed.toList()
         val startPrice = events.first().prices[asset]!!.getPrice()
 
+        val positions = internalAccount.positions.toMutableList()
         for ((cnt, event) in events.withIndex()) {
             val price = event.prices[asset]!!.getPrice()
-            internalAccount.positions.add(Position(asset, Size(100), startPrice, price))
-            val account = internalAccount.toAccount()
+
+            positions.add(Position(asset, Size(100), startPrice, price))
+            val account = internalAccount.copy(positions = positions)
 
             val r = metric.calculate(event, account, listOf(), listOf())
             if (cnt < 50) {

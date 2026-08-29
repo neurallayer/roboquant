@@ -17,7 +17,7 @@
 package org.roboquant.ta
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.brokers.InternalAccount
+import org.roboquant.common.Account
 import org.roboquant.common.Currency
 import org.roboquant.common.Event
 import org.roboquant.common.PriceBar
@@ -37,7 +37,7 @@ internal class TaLibMetricTest {
             mapOf("ema10" to ema(series.close, 10))
         }
 
-        val account = InternalAccount(Currency.USD).toAccount()
+        val account = Account.empty(Currency.USD)
 
 
         val results = metric.calculate(Event(Instant.now(), emptyList()), account, listOf(), listOf())

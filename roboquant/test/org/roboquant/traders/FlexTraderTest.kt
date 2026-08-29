@@ -17,7 +17,6 @@
 package org.roboquant.traders
 
 import org.roboquant.TestData
-import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.common.Event
 import org.roboquant.common.TradePrice
@@ -34,7 +33,7 @@ internal class FlexTraderTest {
         val policy = FlexTrader()
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
-        val account = InternalAccount(Currency.USD).toAccount()
+        val account = Account.empty(Currency.USD)
         val orders = policy.createOrders(signals, event, account)
         assertTrue(orders.isEmpty())
     }
@@ -87,7 +86,7 @@ internal class FlexTraderTest {
             .circuitBreaker(10, 1.days)
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
-        val account = InternalAccount(Currency.USD).toAccount()
+        val account = Account.empty(Currency.USD)
         val orders = policy.createOrders(signals, event, account)
         assertTrue(orders.isEmpty())
     }

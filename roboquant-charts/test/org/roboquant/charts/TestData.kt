@@ -18,13 +18,13 @@ package org.roboquant.charts
 
 import org.roboquant.common.Account
 import org.roboquant.common.Position
-import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.journals.metrics.AccountMetric
 import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
+import java.time.Instant
 
 /**
  * Remove end-of-line characters so test results are the same on different operating-systems.
@@ -42,14 +42,19 @@ object TestData {
         val amount: Amount = 100_000.USD
         val asset1 = Stock("AAA")
         val asset2 = Stock("AAB")
-        val account = InternalAccount(amount.currency)
-        account.cash.deposit(amount)
-        account.buyingPower = amount
+
         val p1 = Position(asset1, Size(100), 10.0)
         val p2 = Position(asset2, Size(100), 10.0)
-        account.positions.addAll(listOf(p1, p2))
-        account.orders.add(Order(asset1, Size(100), 10.0))
-        return account.toAccount()
+
+        val order = Order(asset1, Size(100), 10.0)
+        return Account(
+            buyingPower = amount,
+            cash = amount.toWallet(),
+            positions = listOf(p1, p2),
+            orders = listOf(order),
+            trades = listOf(),
+            lastUpdate = Instant.now(),
+        )
     }
 
 

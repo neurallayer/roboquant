@@ -15,6 +15,8 @@
  */
 package org.roboquant.brokers
 
+import org.roboquant.common.Account
+import org.roboquant.common.Amount
 import org.roboquant.common.sumOf
 
 /**
@@ -40,13 +42,13 @@ class CashAccountModel(private val minimum: Double = 0.0) : AccountModel {
     /**
      * @see [AccountModel.updateAccount]
      */
-    override fun updateAccount(account: InternalAccount) {
+    override fun updateAccount(account: Account): Amount {
         val shortExposure = account.positions.filter { it.short }.sumOf { it.marketValue() }
 
         val remaining = account.cash - shortExposure
 
         val buyingPower = remaining.convert(account.baseCurrency, account.lastUpdate) - minimum
-        account.buyingPower = buyingPower
+        return buyingPower
     }
 
 }
