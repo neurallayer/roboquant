@@ -167,7 +167,7 @@ internal class TaLibSignalStrategyTest {
 
     @Test
     fun testExtraIndicators() {
-        val data = getPriceBarBuffer(20)
+        val data = getPriceBarBuffer(30)
         val taLib = TaLib()
 
         var a = taLib.recordHigh(data.close, 10)
