@@ -30,7 +30,7 @@ internal class OrderTest {
         val order = Order(asset, Size(100), 100.0)
         assertTrue(order.size.nonzero)
         assertFalse(order.size.iszero)
-        assertEquals(order.limit, 100.0)
+        assertEquals(100.0, order.limit)
         assertTrue(order.fill.iszero)
     }
     

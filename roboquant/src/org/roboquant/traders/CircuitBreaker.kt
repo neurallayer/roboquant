@@ -40,9 +40,9 @@ class CircuitBreaker(val trader: Trader, private val maxOrders: Int, private val
         if (newOrders > maxOrders) return true
         val lookbackTime = time - period
         var orders = newOrders
-        for (entry in history) {
-            if (entry.first < lookbackTime) return false
-            orders += entry.second
+        for ((first, second) in history) {
+            if (first < lookbackTime) return false
+            orders += second
             if (orders > maxOrders) return true
         }
         return false

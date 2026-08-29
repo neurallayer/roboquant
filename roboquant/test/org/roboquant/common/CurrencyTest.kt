@@ -49,7 +49,7 @@ internal class CurrencyTest {
     fun currencyGetInstance() {
         val x = Currency.USD
         val y = Currency.getInstance("USD")
-        assertEquals(x, y)
+        assertEquals(y, x)
     }
 
     @Test

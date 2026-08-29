@@ -16,7 +16,6 @@
 
 package org.roboquant.common
 
-import org.roboquant.common.Config.random
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths

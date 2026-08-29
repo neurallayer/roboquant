@@ -49,6 +49,7 @@ open class FlexPolicyConfig(
     var oneOrderOnly: Boolean = true,
     var safetyMargin: Double = orderPercentage,
     var minPrice: Amount? = null,
+    var tif : TIF = TIF.DAY
 )
 
 /**
@@ -210,7 +211,7 @@ open class FlexTrader(
                 val price = priceItem.getPrice(config.priceType)
 
                 if (reducedPositionSignal(position, signal)) {
-                    val order = createOrder(signal, -size, priceItem) // close position
+                    val order = position.closeOrder(tif=config.tif) // close position
                     instructions.addNotNull(order)
                 } else {
                     if (position.open) continue // we don't increase position sizing

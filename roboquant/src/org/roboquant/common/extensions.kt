@@ -67,7 +67,7 @@ operator fun <T> List<T>.get(range: IntRange): List<T> = subList(max(0, range.fi
  * @return True is the collection has been modified, false otherwise
  */
 fun <T> MutableCollection<T>.addNotNull(elem: T?): Boolean {
-    return if (elem !== null) add(elem) else false
+    return elem !== null && add(elem)
 }
 
 /***********************************************************

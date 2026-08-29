@@ -234,8 +234,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * Does the timeframe contain the provided [time].
      */
     operator fun contains(time: Instant): Boolean {
-        if (isInfinite()) return true
-        return (time >= start) && (beforeEnd(time))
+        return isInfinite() || (time >= start) && (beforeEnd(time))
     }
 
     /**

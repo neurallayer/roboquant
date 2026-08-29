@@ -80,8 +80,6 @@ internal class SimBrokerTest {
         assertEquals(account1.equity(), account2.equity())
     }
 
-
-
     @Test
     fun fillSingleCurrencyOrder() {
         val broker = SimBroker()

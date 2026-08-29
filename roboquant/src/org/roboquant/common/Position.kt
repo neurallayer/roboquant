@@ -37,7 +37,8 @@ data class Position(
     val size: Size,
     val avgPrice: Double = 0.0,
     val mktPrice: Double = avgPrice,
-    val lastUpdate: Instant = Instant.MIN
+    val lastUpdate: Instant = Instant.MIN,
+    val id: String = ""
 ) {
 
     /**
@@ -74,6 +75,13 @@ data class Position(
      */
     val open: Boolean
         get() = size.nonzero
+
+    /**
+     * Create an order that will close this position
+     */
+    fun closeOrder(limit: Double? = null, tif: TIF = TIF.DAY): Order {
+        return Order(asset, - size, limit, tif, positionId = id)
+    }
 
     fun marketValue(): Amount {
         return asset.value(size, mktPrice)

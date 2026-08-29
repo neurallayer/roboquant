@@ -21,13 +21,15 @@ enum class TIF {
  * @property limit the limit price
  * @property tif the time-in-force policy, default is DAY
  * @property tag any optional tag string, default is empty string
+ * @property positionId an optional position id, mostly used for Hedging positions
  */
 data class Order(
     val asset: Asset,
     val size: Size,
     val limit: Double? = null,
     val tif: TIF = TIF.DAY,
-    val tag: String = ""
+    val tag: String = "",
+    val positionId: String = ""
 )  {
 
     /**

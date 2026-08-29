@@ -56,8 +56,7 @@ internal class TaLibSignalStrategyTest {
 
         val x = run(strategy, 60)
         assertEquals(60, x.size)
-
-        assertEquals(strategy.taLib.core.compatibility, Compatibility.Default)
+        assertEquals(Compatibility.Default, strategy.taLib.core.compatibility)
     }
 
     @Test
@@ -74,7 +73,7 @@ internal class TaLibSignalStrategyTest {
 
         val x = run(strategy, 30)
         assertEquals(30, x.size)
-        assertEquals(strategy.taLib.core.compatibility, Compatibility.Default)
+        assertEquals(Compatibility.Default, strategy.taLib.core.compatibility)
     }
 
     @Test
@@ -115,7 +114,6 @@ internal class TaLibSignalStrategyTest {
         }
     }
 
-
     private fun getPriceBarBuffer(size: Int): PriceBarSeries {
         val asset = Stock("XYZ")
         val result = PriceBarSeries(size)
@@ -132,8 +130,8 @@ internal class TaLibSignalStrategyTest {
         val events = feed.filter<PriceBar>()
         val result = mutableMapOf<Instant, List<Signal>>()
         var now = Instant.now()
-        for (event in events) {
-            val signals = s.createSignals(Event(event.first, listOf(event.second)))
+        for ((time, priceBar) in events) {
+            val signals = s.createSignals(Event(time, listOf(priceBar)))
             result[now] = signals
             now += 1.seconds
         }

@@ -53,8 +53,8 @@ class BoxChart(
     private fun toSeriesData(): List<Pair<String, Any>> {
         val result = mutableListOf<Pair<String, Any>>()
         val ctx = MathContext(precision, RoundingMode.HALF_DOWN)
-        for (d in timeSeries.groupBy(period)) {
-            val arr = d.value.toDoubleArray().clean()
+        for ((key, value) in timeSeries.groupBy(period)) {
+            val arr = value.toDoubleArray().clean()
             if (arr.isNotEmpty()) {
                 val p = Percentile()
                 p.data = arr
@@ -65,7 +65,7 @@ class BoxChart(
                     p.evaluate(highPercentile).toBigDecimal(ctx),
                     arr.max().toBigDecimal(ctx)
                 )
-                result.add(Pair(d.key, entry))
+                result.add(Pair(key, entry))
             }
         }
         result.sortBy { it.first }

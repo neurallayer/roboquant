@@ -46,8 +46,8 @@ internal class TaLibMetricTest {
         val feed = HistoricTestFeed(100 until 111, priceBar = true)
         val events = feed.filter<PriceBar>()
         var mResult = emptyMap<String, Double>()
-        for (event in events) {
-            mResult = metric.calculate(Event(event.first, listOf(event.second)), account, listOf(), listOf())
+        for ((time, priceBar) in events) {
+            mResult = metric.calculate(Event(time, listOf(priceBar)), account, listOf(), listOf())
         }
         assertTrue(mResult.isNotEmpty())
         assertEquals(feed.assets.size, mResult.size)
