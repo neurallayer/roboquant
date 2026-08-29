@@ -1,0 +1,10 @@
+product: jvm/lib
+
+description: roboquant support for TickerAll (hosted MetaTrader 4 and 5) broker and feeds
+
+apply:
+  - ../project.module-template.yaml
+
+dependencies:
+  - ../roboquant
+  - com.google.code.gson:gson:2.14.0

@@ -4,3 +4,4 @@ modules:
   - roboquant-avro
   - roboquant-charts
   - roboquant-questdb
+  - roboquant-tickerall
