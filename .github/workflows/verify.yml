@@ -19,4 +19,4 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Verify
-        run: ./kotlin test --exclude-module=roboquant-ibkr
+        run: ./kotlin test
