@@ -28,8 +28,8 @@ data class Order(
     val size: Size,
     val limit: Double? = null,
     val tif: TIF = TIF.DAY,
-    val tag: String = "",
-    val positionId: String = ""
+    val tag: String? = null,
+    val positionId: String? = null
 )  {
 
     /**

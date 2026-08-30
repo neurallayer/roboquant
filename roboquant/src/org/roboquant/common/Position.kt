@@ -16,8 +16,6 @@
 
 package org.roboquant.common
 
-import java.time.Instant
-
 /**
  * This class holds the position of an asset in the portfolio. The implementation makes no assumptions about the
  * asset class, so it supports any type of asset class, ranging from stocks and options to cryptocurrencies.
@@ -28,7 +26,6 @@ import java.time.Instant
  * @property size size of the position, not including any contract multiplier defined at the asset contract level
  * @property avgPrice average price paid, in the currency denoted by the asset
  * @property mktPrice last known market price for this asset
- * @property lastUpdate When was this position last updated, typically with a new market price
  * @property id An optional id for this position, used for Hedging positions
  * @constructor Create a new Position
  */
@@ -37,8 +34,7 @@ data class Position(
     val size: Size,
     val avgPrice: Double = 0.0,
     val mktPrice: Double = avgPrice,
-    val lastUpdate: Instant = Instant.MIN,
-    val id: String = ""
+    val id: String? = null
 ) {
 
     /**

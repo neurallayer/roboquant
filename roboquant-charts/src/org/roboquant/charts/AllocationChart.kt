@@ -48,7 +48,7 @@ class AllocationChart(
 
         for (position in positions) {
             val exposure = position.marketValue().absoluteValue
-            val localAmount = exposure.convert(currency, position.lastUpdate).toBigDecimal()
+            val localAmount = exposure.convert(currency, account.lastUpdate).toBigDecimal()
             result.add(Entry(position.asset.symbol, localAmount))
         }
         return result

@@ -225,7 +225,7 @@ open class SimBroker(
             val priceItem = prices[asset]
             if (priceItem != null) {
                 val price = priceItem.getPrice(priceType)
-                val newPosition = p.copy(mktPrice = price, lastUpdate = event.time)
+                val newPosition = p.copy(mktPrice = price)
                 positions[asset] = newPosition
             }
         }

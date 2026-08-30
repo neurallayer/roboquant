@@ -47,12 +47,13 @@ internal class TickerAllCurrencyTest {
         private fun handle(ex: HttpExchange) {
             ex.requestBody.readBytes()
             val path = ex.requestURI.path
-            val response: String = when {
-                path == "/v1/accounts/$aid" ->
+            val response: String = when (path) {
+                "/v1/accounts/$aid" ->
                     """{"account":{"balance":100.0,"currency":"USD","equity":100.0,"freeMargin":100.0},""" +
-                        """"positions":$positionsJson,"status":"connected","isDemo":true}"""
-                path == "/v1/accounts/$aid/orders/pending" -> """{"orders":[]}"""
-                path == "/v1/accounts/$aid/symbol-specs" -> specsJson
+                            """"positions":$positionsJson,"status":"connected","isDemo":true}"""
+
+                "/v1/accounts/$aid/orders/pending" -> """{"orders":[]}"""
+                "/v1/accounts/$aid/symbol-specs" -> specsJson
                 else -> "{}"
             }
             val bytes = response.toByteArray()

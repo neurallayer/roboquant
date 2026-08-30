@@ -53,12 +53,6 @@ import java.time.Instant
  * [TickerAllLiveFeed] and [TickerAllHistoricFeed] to use TickerAll for market data, building them from
  * [accountId] so the whole session is shared and started only once.
  *
- * roboquant models one net position per asset. A MetaTrader **netting** account maps to that directly. A
- * **hedging** account (a separate ticket per trade) is aggregated into a single net position per asset on
- * sync, and a market order that opposes the current net is executed as a close-by-ticket (plus a market
- * remainder on a reversal) rather than opening an offsetting ticket — so either account type behaves as the
- * one-net-position-per-asset model roboquant expects.
- *
  * @param configure configuration for connecting to the TickerAll API
  * @constructor Create a new instance of the TickerAllBroker for an already-connected [accountId]
  */
@@ -203,28 +197,31 @@ class TickerAllBroker(
      * Place a single [order] straight through as a new market or limit order (the original netting-account
      * behavior), writing the broker-assigned ticket back into [Order.id].
      */
-    fun placeSingleOrder(order: Order) {
-        if (order.positionId.isNotEmpty()) {
-            val position = account.positions.firstOrNull { it.id == order.positionId }
-            if (position == null || position.size != - order.size) {
-                return
+    private fun placeSingleOrder(order: Order) {
+        val positionId = order.positionId
+        if (positionId != null) {
+            // For now can refer to positions to close them
+            val position = account.positions.firstOrNull { it.id == positionId }
+            if (position != null && position.size == -order.size) {
+                client.closePosition(positionId)
+            } else {
+                logger.warn { "Cannot find position with id $positionId for order $order and position $position" }
             }
-            client.closePosition(order.positionId)
             return
         }
 
         val side = if (order.buy) "BUY" else "SELL"
         val volume = order.size.toBigDecimal().abs().toDouble()
+        val type = if (order.limit == null) "market" else "limit"
         val body = PlaceOrderBody(
-            type = "limit",
+            type = type,
             symbol = order.asset.symbol,
             side = side,
             volume = volume,
             price = order.limit
         )
         val ack = client.placeOrder(body)
-        order.id = ack.ticket?.toString()
-            ?: throw UnsupportedException("no ticket returned by TickerAll for order=$order")
+        logger.info { "Placing order $order with response $ack" }
     }
 
 
@@ -249,8 +246,7 @@ class TickerAllBroker(
                 }
                 // A known id with a non-zero size modifies that resting pending order.
                 order.id.isNotEmpty() -> {
-                    val price = order.limit
-                    client.modifyPending(order.id, ModifyPendingBody(price = price))
+                    client.modifyPending(order.id, ModifyPendingBody(price = order.limit))
                 }
                 // A fresh order. A market order that opposes the current net position is net-emulated
                 // (close-by-ticket, plus a market remainder on a reversal) so a hedging account reaches the

@@ -28,7 +28,7 @@ import org.roboquant.common.Config
  */
 internal fun resolveTickerAllAccountId(key: String): String? {
     val id = Config.getProperty("TICKERALL_ACCOUNT_ID")
-    if (id != null && id.isNotBlank() && !id.all { it.isDigit() }) return id
+    if (!id.isNullOrBlank() && !id.all { it.isDigit() }) return id
     val brokerPlatform = Config.getProperty("TICKERALL_BROKER") ?: return null
     val serverName = Config.getProperty("TICKERALL_SERVER") ?: return null
     val accountLogin = Config.getProperty("TICKERALL_ACCOUNT") ?: return null

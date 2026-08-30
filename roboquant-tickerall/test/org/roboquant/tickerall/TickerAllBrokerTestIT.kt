@@ -18,6 +18,7 @@ package org.roboquant.tickerall
 
 import org.roboquant.common.Config
 import org.roboquant.common.Currency
+import org.roboquant.common.Forex
 import org.roboquant.common.Order
 import org.roboquant.common.Size
 import kotlin.test.Test
@@ -56,6 +57,38 @@ internal class TickerAllBrokerTestIT {
         assertFalse(account2.cash.isMultiCurrency())
     }
 
+
+    @Test
+    fun retrieveAccount() {
+        val key = Config.getProperty("TICKERALL_API_KEY")!!
+        val brokerPlatform = Config.getProperty("MT5_BROKER", "mt5")
+        val serverName = Config.getProperty("MT5_SERVER")!!
+        val accountLogin = Config.getProperty("MT5_ACCOUNT")!!
+        val accountPassword = Config.getProperty("MT5_PASSWORD")!!
+
+        val broker = TickerAllBroker.connect {
+            apiKey = key
+            broker = brokerPlatform
+            server = serverName
+            account = accountLogin
+            password = accountPassword
+        }
+
+        var account = broker.sync()
+        println(account)
+
+        val asset = Forex("BTCUSD", Currency.USD)
+        val order = Order(asset, Size("0.01"))
+        broker.placeOrders(listOf(order))
+        account = broker.sync()
+        println(account)
+
+        val orders = account.positions.map { it.closeOrder() }
+        broker.placeOrders(orders)
+        account = broker.sync()
+        println(account)
+    }
+
     /**
      * Connect from MetaTrader credentials, exercising [TickerAllBroker.connect] end-to-end against the live
      * API. Runs only when `TICKERALL_API_KEY`, `TICKERALL_BROKER`, `TICKERALL_SERVER`, `TICKERALL_ACCOUNT`
@@ -66,7 +99,7 @@ internal class TickerAllBrokerTestIT {
     @Test
     fun connectFromCredentials() {
         val key = Config.getProperty("TICKERALL_API_KEY") ?: return
-        val brokerPlatform = Config.getProperty("TICKERALL_BROKER") ?: return
+        val brokerPlatform = Config.getProperty("TICKERALL_BROKER", "mt5")
         val serverName = Config.getProperty("TICKERALL_SERVER") ?: return
         val accountLogin = Config.getProperty("TICKERALL_ACCOUNT") ?: return
         val pw = Config.getProperty("TICKERALL_PASSWORD") ?: return
