@@ -75,7 +75,7 @@ class TickerAllLiveFeed(
         if (ts.isNullOrBlank()) return Instant.now()
         return try {
             Instant.parse(ts)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             ts.toLongOrNull()?.let { Instant.ofEpochMilli(it) } ?: Instant.now()
         }
     }

@@ -21,6 +21,7 @@ import org.roboquant.common.Currency
 import org.roboquant.common.Forex
 import org.roboquant.common.Order
 import org.roboquant.common.Size
+import java.lang.Thread.sleep
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -77,16 +78,19 @@ internal class TickerAllBrokerTestIT {
         var account = broker.sync()
         println(account)
 
-        val asset = Forex("BTCUSD", Currency.USD)
-        val order = Order(asset, Size("0.01"))
-        broker.placeOrders(listOf(order))
-        account = broker.sync()
-        println(account)
-
-        val orders = account.positions.map { it.closeOrder() }
-        broker.placeOrders(orders)
-        account = broker.sync()
-        println(account)
+        repeat(5) {
+            val asset = Forex("BTCUSD", Currency.USD)
+            val order = Order(asset, Size("0.01"))
+            broker.placeOrders(listOf(order))
+            account = broker.sync()
+            println(account)
+            sleep(3_000)
+            val orders = account.positions.map { it.closeOrder() }
+            broker.placeOrders(orders)
+            account = broker.sync()
+            println(account)
+            sleep(3_000)
+        }
     }
 
     /**
