@@ -151,14 +151,14 @@ internal class TickerAllBrokerTestIT {
         val order = Order(asset, Size("0.01"), Double.NaN)
         broker.placeOrders(listOf(order))
         assertTrue(order.id.isNotEmpty(), "broker must assign a ticket after placing the order")
-        Thread.sleep(4000)
+        sleep(4000)
 
         val opened = client.getAccount().positions.orEmpty().filter { it.ticket != null && it.ticket !in ticketsBefore }
         println("[tradeRoundTrip] placed order id=${order.id}; opened=${opened.map { it.ticket to it.symbol }}")
 
         // always clean up: close whatever we just opened
         for (pos in opened) client.closePosition(pos.ticket!!.toString())
-        Thread.sleep(4000)
+        sleep(4000)
 
         val ticketsAfter = client.getAccount().positions.orEmpty().mapNotNull { it.ticket }.toSet()
         val stillOpen = opened.mapNotNull { it.ticket }.filter { it in ticketsAfter }
@@ -173,7 +173,7 @@ internal class TickerAllBrokerTestIT {
             val pending = Order(asset, Size("0.01"), lastPrice * 0.90)
             broker.placeOrders(listOf(pending))
             assertTrue(pending.id.isNotEmpty(), "broker must assign a ticket to the pending order")
-            Thread.sleep(3000)
+            sleep(3000)
             val resting = client.getPendingOrders().mapNotNull { it.ticket?.toString() }
             println("[tradeRoundTrip] placed pending id=${pending.id}; resting=$resting")
             assertTrue(pending.id in resting, "the pending order should be resting")
@@ -185,7 +185,7 @@ internal class TickerAllBrokerTestIT {
             val modify = Order(asset, Size("0.01"), newPrice)
             modify.id = pending.id
             broker.placeOrders(listOf(modify))
-            Thread.sleep(3000)
+            sleep(3000)
             val modified = client.getPendingOrders().firstOrNull { it.ticket?.toString() == pending.id }
             val shownPrice = modified?.limitPrice ?: modified?.price
             println("[tradeRoundTrip] after modify, price=$shownPrice (target ~$newPrice)")
@@ -200,7 +200,7 @@ internal class TickerAllBrokerTestIT {
             val cancel = pending.copy(size = Size.ZERO)
             cancel.id = pending.id
             broker.placeOrders(listOf(cancel))
-            Thread.sleep(3000)
+            sleep(3000)
             val afterCancel = client.getPendingOrders().mapNotNull { it.ticket?.toString() }
             println("[tradeRoundTrip] after cancel, resting=$afterCancel")
             assertTrue(pending.id !in afterCancel, "the pending order should be cancelled")
