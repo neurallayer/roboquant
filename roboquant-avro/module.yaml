@@ -7,7 +7,7 @@ apply:
 
 dependencies:
   - ../roboquant
-  - org.xerial.snappy:snappy-java:1.1.10.5
-  - org.apache.avro:avro:1.12.1
-  - com.fasterxml.jackson.core:jackson-core:2.22.1
+  - org.xerial.snappy:snappy-java:1.1.10.8
+  - org.apache.avro:avro:1.12.2
+  - com.fasterxml.jackson.core:jackson-core:2.22.2
 

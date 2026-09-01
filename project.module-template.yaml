@@ -17,13 +17,13 @@ settings:
         - name: The Apache License, Version 2.0
           url: https://opensource.org/license/apache-2.0
   kotlin:
-    version: 2.4.0
+    version: 2.4.10
 
 repositories:
   - id: snapshots
     url: https://central.sonatype.com/repository/maven-snapshots/
     publish: true
-    # have to comment out below otherwise GitHub action fails
+    # have to comment out below otherwise GitHub Action fails
     # credentials:
     #  file: ../creds.properties
     #  usernameKey: username
