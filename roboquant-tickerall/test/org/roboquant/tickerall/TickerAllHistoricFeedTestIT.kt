@@ -21,6 +21,7 @@ import org.roboquant.common.PriceBar
 import org.roboquant.common.PriceItem
 import org.roboquant.feeds.filter
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -50,7 +51,7 @@ internal class TickerAllHistoricFeedTestIT {
             assertTrue(actions.all { it.second.asset.symbol == symbol })
             // bars must be time-ordered
             val times = actions.map { it.first }
-            assertTrue(times == times.sorted())
+            assertEquals(times, times.sorted())
         } else {
             println("No candles returned (market closed or symbol not available?)")
         }

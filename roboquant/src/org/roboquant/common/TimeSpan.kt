@@ -110,7 +110,7 @@ class TimeSpan internal constructor(internal val period: Period, internal val du
      */
     override fun equals(other: Any?): Boolean {
         return this === other || other is TimeSpan && @Suppress("ReplaceCallWithBinaryOperator")
-        period.equals(other.period) && duration.equals(other.duration)
+        period.equals(other.period) && duration == other.duration
     }
 
     /**

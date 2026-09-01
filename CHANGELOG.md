@@ -2,7 +2,7 @@
 
 ## Major changes in 3.3
 * Support for hedging positions added
-* Added MT4/MT5 integration (via TickerAll)
+* Added MT4/MT5 integration (via TickerAll), thanks to miguelangelo78.
 * Removed IBKR integration
 * Cleaner API for account
 * Support for market orders

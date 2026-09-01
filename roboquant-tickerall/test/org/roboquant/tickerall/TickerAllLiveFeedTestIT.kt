@@ -23,6 +23,7 @@ import org.roboquant.common.Timeframe
 import org.roboquant.common.seconds
 import org.roboquant.feeds.filter
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -54,7 +55,7 @@ internal class TickerAllLiveFeedTestIT {
         if (actions.isNotEmpty()) {
             val action = actions.first().second
             assertTrue(action is PriceQuote)
-            assertTrue(action.asset.symbol == symbol)
+            assertEquals(action.asset.symbol, symbol)
         } else {
             println("No ticks received (market closed?)")
         }

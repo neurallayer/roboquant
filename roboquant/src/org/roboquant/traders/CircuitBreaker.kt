@@ -38,10 +38,10 @@ class CircuitBreaker(val trader: Trader, private val maxOrders: Int, private val
 
     private fun exceeds(newOrders: Int, time: Instant): Boolean {
         if (newOrders > maxOrders) return true
-        val lookbackTime = time - period
+        val lookBackTime = time - period
         var orders = newOrders
         for ((first, second) in history) {
-            if (first < lookbackTime) return false
+            if (first < lookBackTime) return false
             orders += second
             if (orders > maxOrders) return true
         }
