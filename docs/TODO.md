@@ -77,6 +77,6 @@ The topics mentioned here are some of the ideas for the future releases:
 * [x] Move to Kotlin 2.4 or higher
 * [x] Move to Maven 4 or Amper once stable (Kotlin Toolchain)
 * [x] Add standalone HTML rendering to charts since no more Jupyter Notebooks.
-* [ ] Re-assess which 3rd party data providers to support
+* [x] Re-assess which 3rd party data providers and brokers to support
 * [x] Improve code documentation and examples
 * [ ] Update to Alpaca lib 11.x once there is support for websockets
