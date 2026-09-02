@@ -138,8 +138,8 @@ class TickerAllBroker(
             val entry = p.entryPrice ?: 0.0
             val market = p.currentPrice ?: entry
             val asset = getAsset(symbol)
-            val id = p.ticket?.toString() ?: ""
-            val p = Position(asset, sizeOf(volume, p.side), entry, market, id = id)
+            val info: Map<String, Any> = if (p.ticket == null) mapOf() else mapOf("ticket" to p.ticket)
+            val p = Position(asset, sizeOf(volume, p.side), entry, market, info = info)
             result.add(p)
         }
         return result
@@ -198,14 +198,14 @@ class TickerAllBroker(
      * behavior), writing the broker-assigned ticket back into [Order.id].
      */
     private fun placeSingleOrder(order: Order) {
-        val positionId = order.positionId
-        if (positionId != null) {
+        val ticket = order.info["ticket"]
+        if (ticket != null) {
             // For now can refer to positions to close them
-            val position = account.positions.firstOrNull { it.id == positionId }
+            val position = account.positions.firstOrNull { it.info["ticket"] == ticket }
             if (position != null && position.size == -order.size) {
-                client.closePosition(positionId)
+                client.closePosition(ticket.toString())
             } else {
-                logger.warn { "Cannot find position with id $positionId for order $order and position $position" }
+                logger.warn { "Cannot find position with id $ticket for order $order and position $position" }
             }
             return
         }
