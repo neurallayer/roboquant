@@ -26,7 +26,7 @@ package org.roboquant.common
  * @property size size of the position, not including any contract multiplier defined at the asset contract level
  * @property avgPrice average price paid, in the currency denoted by the asset
  * @property mktPrice last known market price for this asset
- * @property info optional info for this position, used for Hedging positions
+ * @property info optional info for this position, can be used by Brokers
  * @constructor Create a new Position
  */
 data class Position(
@@ -35,7 +35,6 @@ data class Position(
     val avgPrice: Double = 0.0,
     val mktPrice: Double = avgPrice,
     val info: Map<String, Any> = mapOf()
-
 ) {
 
     /**
@@ -74,7 +73,8 @@ data class Position(
         get() = size.nonzero
 
     /**
-     * Create an order that will close this position
+     * Create an order that will close this position.
+     * The info from the Position will be included in the Order
      */
     fun closeOrder(limit: Double? = null, tif: TIF = TIF.DAY): Order {
         return Order(asset, - size, limit, tif, info = info)
