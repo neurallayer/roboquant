@@ -46,10 +46,23 @@ interface Asset : Comparable<Asset> {
     fun serialize(): String
 
     /**
+     * Register an asset with a certain symbol name
+     */
+    fun register(symbol: String = this.symbol) {
+        mapping[symbol] = this
+    }
+
+    /**
      * Contains methods to create specific asset types, like options or futures using international standards to
      * generate the appropriate symbol name.
      */
     companion object {
+        private val mapping: MutableMap<String, Asset> = mutableMapOf()
+
+        fun getAsset(symbol: String): Asset? {
+            return mapping[symbol]
+        }
+
         internal val registry: MutableMap<String, (String) -> Asset> = mutableMapOf()
 
         init {
@@ -68,9 +81,15 @@ interface Asset : Comparable<Asset> {
          */
         fun deserialize(value: String): Asset {
             return deserializedCache.getOrPut(value) {
-                val (assetType, serString) = value.split(SEP, limit = 2)
-                val deserializerFunction = registry.getValue(assetType)
-                deserializerFunction(serString)
+                val (assetType, symbol, _) = value.split(SEP, limit = 3)
+                val asset = getAsset(symbol)
+                if (asset != null) {
+                    return asset
+                } else {
+                    val deserializerFunction = registry.getValue(assetType)
+                    val (_, serString) = value.split(SEP, limit = 2)
+                    deserializerFunction(serString)
+                }
             }
         }
 
