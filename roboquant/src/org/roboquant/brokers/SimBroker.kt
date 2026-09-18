@@ -56,7 +56,6 @@ open class SimBroker(
 
     private lateinit var lastUpdate: Instant
     private val cash: Wallet = Wallet()
-    private val trades = mutableListOf<Trade>()
     private val orderEntry: MutableMap<String, LocalDate> = mutableMapOf()
 
 
@@ -160,9 +159,10 @@ open class SimBroker(
     }
 
 
-    private fun simulateMarket(event: Event) {
+    private fun simulateMarket(event: Event) : List<Trade> {
         // Add new orders to the execution engine and run it with the latest events
         val time = event.time
+        val trades = mutableListOf<Trade>()
         for (order in orders.values.toList()) {
             if (isExpired(order, time)) {
                 orders.remove(order.id)
@@ -186,6 +186,7 @@ open class SimBroker(
                 }
             }
         }
+        return trades
     }
 
     /**
@@ -193,9 +194,9 @@ open class SimBroker(
      */
     @Synchronized
     override fun sync(event: Event?): Account {
-
+        var trades: List<Trade> = listOf()
         if (event != null) {
-            simulateMarket(event)
+            trades = simulateMarket(event)
             updateMarketPrices(event)
             lastUpdate = event.time
         }
@@ -268,7 +269,6 @@ open class SimBroker(
     fun reset() {
         positions.clear()
         orders.clear()
-        trades.clear()
         cash.clear()
         cash.deposit(initialDeposit)
         lastUpdate = Instant.MIN

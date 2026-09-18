@@ -2,7 +2,7 @@ settings:
   publishing:
     enabled: true
     group: org.roboquant
-    version: 3.3.0
+    version: 3.3.1
     publishSources: true
     signArtifacts: true
     mavenCentral:
@@ -17,7 +17,7 @@ settings:
         - name: The Apache License, Version 2.0
           url: https://opensource.org/license/apache-2.0
   kotlin:
-    version: 2.4.10
+    version: 2.4.20
 
 repositories:
   - id: snapshots
